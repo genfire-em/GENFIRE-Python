@@ -20,7 +20,7 @@ def GENFIRE_main_InteractivelySetParameters():
     # by either the command line or the GUI will override these momentarily
 
     # filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
-    filename_projections = './data/tiffImages/projections.tif'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
+    filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
     filename_angles = './data/angles.mat'  #angles can be either a 1xN_projections array containing a single tilt series, or 3xN_projections array containing 3 Euler angles for each projections in the form [phi;theta;psi]
     filename_support = './data/support60.mat'  #NxNxN binary array specifying a region of 1's in which the reconstruction can exist
     # filename_initialObject = ''  #initial object to use in reconstruction; comment this line out if you have no initial guess and want to start with all zeros
