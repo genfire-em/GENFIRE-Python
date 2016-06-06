@@ -112,6 +112,8 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
 
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
+
+
         # ## Message Log
         # sys.stdout = GenfireLog(self.ui.log, sys.stdout )
         # sys.stderr = GenfireLog(self.ui.log, sys.stderr, QtGui.QColor(255,0,0))
