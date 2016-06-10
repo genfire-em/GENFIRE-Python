@@ -14,115 +14,172 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>9</x>
       <y>9</y>
-      <width>671</width>
-      <height>391</height>
+      <width>781</width>
+      <height>431</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0" colspan="4">
-      <layout class="QVBoxLayout" name="verticalLayout_figure"/>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0" rowspan="3" colspan="4">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" colspan="4">
+        <layout class="QVBoxLayout" name="verticalLayout_figure"/>
+       </item>
+       <item row="0" column="4">
+        <widget class="QSlider" name="verticalSlider_BGlevel">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="maximum">
+          <number>3600</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="pageStep">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::NoTicks</enum>
+         </property>
+         <property name="tickInterval">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QSlider" name="verticalSlider_satThresh">
+         <property name="maximum">
+          <number>3600</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="pageStep">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="3">
+        <widget class="QLineEdit" name="lineEdit_BGlevel"/>
+       </item>
+       <item row="1" column="3" colspan="2">
+        <widget class="QLineEdit" name="lineEdit_satThresh"/>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="lbl_BGlevel">
+         <property name="text">
+          <string>BG Level</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3" colspan="2">
+        <widget class="QLabel" name="lbl_satThresh">
+         <property name="text">
+          <string>Saturation Threshold</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="lbl_diffpat">
+         <property name="text">
+          <string>Diffraction Pattern Filename</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2" colspan="2">
+        <widget class="QLineEdit" name="lineEdit_diffpatFile"/>
+       </item>
+       <item row="3" column="4">
+        <widget class="QPushButton" name="btn_selectDiffpat">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" rowspan="2" colspan="5">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="3">
+        <widget class="QPushButton" name="btn_go">
+         <property name="text">
+          <string>Launch Reconstruction</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item row="0" column="4">
-      <widget class="QSlider" name="verticalSlider_BGlevel">
-       <property name="layoutDirection">
-        <enum>Qt::LeftToRight</enum>
+     <item row="1" column="3">
+      <widget class="QCheckBox" name="checkBox_takeSqrt">
+       <property name="enabled">
+        <bool>true</bool>
        </property>
-       <property name="maximum">
-        <number>3600</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="pageStep">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::NoTicks</enum>
-       </property>
-       <property name="tickInterval">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5">
-      <widget class="QSlider" name="verticalSlider_satThresh">
-       <property name="maximum">
-        <number>3600</number>
-       </property>
-       <property name="singleStep">
-        <number>10</number>
-       </property>
-       <property name="pageStep">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="QLineEdit" name="lineEdit_BGlevel"/>
-     </item>
-     <item row="1" column="3" colspan="2">
-      <widget class="QLineEdit" name="lineEdit_satThresh"/>
-     </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QLabel" name="lbl_BGlevel">
        <property name="text">
-        <string>BG Level</string>
+        <string>Take Square Root</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="2" column="3" colspan="2">
-      <widget class="QLabel" name="lbl_satThresh">
+     <item row="2" column="2" colspan="2">
+      <widget class="QPushButton" name="btn_refineCenter">
        <property name="text">
-        <string>Saturation Threshold</string>
+        <string>Optimize Center</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
-      <widget class="QLabel" name="lbl_diffpat">
-       <property name="text">
-        <string>Diffraction Pattern</string>
-       </property>
-      </widget>
+     <item row="3" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="btn_savePattern">
+         <property name="text">
+          <string>Save Pattern</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_saveFilename"/>
+       </item>
+      </layout>
      </item>
-     <item row="3" column="2" colspan="2">
-      <widget class="QLineEdit" name="lineEdit_diffpatFile"/>
-     </item>
-     <item row="3" column="4">
-      <widget class="QPushButton" name="btn_selectDiffpatl">
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" rowspan="2" colspan="5">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1" colspan="3">
-      <widget class="QPushButton" name="btn_go">
-       <property name="text">
-        <string>Launch Reconstruction</string>
-       </property>
-      </widget>
+     <item row="3" column="1" colspan="3">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="lbl_BGfilename">
+         <property name="text">
+          <string>BG Filename</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_BGfilename">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_BGfilename"/>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
-   <zorder></zorder>
-   <zorder>verticalLayoutWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -140,7 +197,7 @@
   <tabstop>lineEdit_BGlevel</tabstop>
   <tabstop>lineEdit_satThresh</tabstop>
   <tabstop>lineEdit_diffpatFile</tabstop>
-  <tabstop>btn_selectDiffpatl</tabstop>
+  <tabstop>btn_selectDiffpat</tabstop>
   <tabstop>btn_go</tabstop>
  </tabstops>
  <resources/>
