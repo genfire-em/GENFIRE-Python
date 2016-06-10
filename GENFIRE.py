@@ -359,7 +359,7 @@ if __name__ != "__main__":
                     masterConfidenceWeights=np.append(masterConfidenceWeights, tmpConfidenceWeights[goodInd])
 
 
-                    t = 0;
+                    t = 0
 
         masterInd = np.array(masterInd).astype(np.int64)
         masterVals = np.array(masterVals)
@@ -421,20 +421,20 @@ if __name__ != "__main__":
         University of California, Los Angeles
         Copyright 2015-2016. All rights reserved.
 
-        :param filename: Filename of project images to load
+        :param filename: Filename of images to load
         :return: NumPy array containing projections
         """
-
+        import GENFIRE_io
         filename, file_extension = os.path.splitext(filename)
         if file_extension == ".mat":
             print ("GENFIRE: reading projections from MATLAB file.\n")
-            return readMAT(filename + file_extension)
+            return GENFIRE_io.readMAT(filename + file_extension)
         elif file_extension == ".tif":
             print ("GENFIRE: reading projections from .tif file.\n")
-            return readTIFF(filename + file_extension)
+            return GENFIRE_io.readTIFF(filename + file_extension)
         elif file_extension == ".mrc":
             print ("GENFIRE: reading projections from .mrc file.\n")
-            return readMRC(filename + file_extension)
+            return GENFIRE_io.readMRC(filename + file_extension)
         else:
             raise Exception('GENFIRE: File format %s not supported.', file_extension)
 

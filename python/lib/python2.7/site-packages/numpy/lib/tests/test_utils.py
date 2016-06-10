@@ -9,7 +9,7 @@ from numpy.lib import deprecate
 import numpy.lib.utils as utils
 
 if sys.version_info[0] >= 3:
-    from io import StringIO
+    from GENFIRE_io import StringIO
 else:
     from StringIO import StringIO
 

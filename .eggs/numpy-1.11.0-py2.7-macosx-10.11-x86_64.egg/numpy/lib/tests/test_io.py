@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 import time
 import warnings
 import gc
-from io import BytesIO
+from GENFIRE_io import BytesIO
 from datetime import datetime
 
 import numpy as np

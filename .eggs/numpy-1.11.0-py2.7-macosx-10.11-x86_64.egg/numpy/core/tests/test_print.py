@@ -11,7 +11,7 @@ from numpy.testing import (
 
 
 if sys.version_info[0] >= 3:
-    from io import StringIO
+    from GENFIRE_io import StringIO
 else:
     from StringIO import StringIO
 

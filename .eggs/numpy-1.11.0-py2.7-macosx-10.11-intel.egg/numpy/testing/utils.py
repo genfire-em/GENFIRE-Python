@@ -19,7 +19,7 @@ from numpy.core import float32, empty, arange, array_repr, ndarray
 from numpy.lib.utils import deprecate
 
 if sys.version_info[0] >= 3:
-    from io import StringIO
+    from GENFIRE_io import StringIO
 else:
     from StringIO import StringIO
 

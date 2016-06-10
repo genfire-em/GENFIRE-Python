@@ -151,7 +151,7 @@ from __future__ import division, absolute_import, print_function
 
 import numpy
 import sys
-import io
+import GENFIRE_io
 import warnings
 from numpy.lib.utils import safe_eval
 from numpy.compat import asbytes, asstr, isfileobj, long, basestring
@@ -441,7 +441,7 @@ def _filter_header(s):
     """
     import tokenize
     if sys.version_info[0] >= 3:
-        from io import StringIO
+        from GENFIRE_io import StringIO
     else:
         from StringIO import StringIO
 
@@ -804,7 +804,7 @@ def _read_bytes(fp, size, error_template="ran out of data"):
             data += r
             if len(r) == 0 or len(data) == size:
                 break
-        except io.BlockingIOError:
+        except GENFIRE_io.BlockingIOError:
             pass
     if len(data) != size:
         msg = "EOF: reading %s, expected %d bytes got %d"

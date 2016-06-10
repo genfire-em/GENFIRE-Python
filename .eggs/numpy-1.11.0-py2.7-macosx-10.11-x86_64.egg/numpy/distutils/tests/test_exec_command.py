@@ -9,7 +9,7 @@ from numpy.distutils import exec_command
 # In python 3 stdout, stderr are text (unicode compliant) devices, so to
 # emulate them import StringIO from the io module.
 if sys.version_info[0] >= 3:
-    from io import StringIO
+    from GENFIRE_io import StringIO
 else:
     from StringIO import StringIO
 

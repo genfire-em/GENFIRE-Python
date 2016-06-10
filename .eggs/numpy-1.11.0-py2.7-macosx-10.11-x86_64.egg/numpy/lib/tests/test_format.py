@@ -281,7 +281,7 @@ import os
 import shutil
 import tempfile
 import warnings
-from io import BytesIO
+from GENFIRE_io import BytesIO
 
 import numpy as np
 from numpy.compat import asbytes, asbytes_nested, sixu
