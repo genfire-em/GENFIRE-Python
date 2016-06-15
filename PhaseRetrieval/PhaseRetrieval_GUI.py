@@ -1,3 +1,4 @@
+from __future__ import division
 from PyQt4 import QtCore, QtGui
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -9,7 +10,7 @@ import os
 import sys
 import GENFIRE_io
 
-
+SLIDER_SCALE = 100
 class PhaseRetrieval_GUI(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(QtGui.QMainWindow,self).__init__()
@@ -20,9 +21,14 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.lineEdit_diffpatFile.textEdited.connect(self.CurrentReconstructionParameters.setDiffPatFile)
         self.ui.lineEdit_BGfilename.textEdited.connect(self.CurrentReconstructionParameters.setBGFile)
         self.ui.lineEdit_diffpatFile.textChanged.connect(self.loadDiffractionPattern)
+        self.ui.lineEdit_contrastHigh.textChanged.connect(self.setHighContrast_Qstring)
+        self.ui.lineEdit_contrastLow.textChanged.connect(self.setLowContrast_Qstring)
 
-        self.ui.slder_contrastHigh.valueChanged.connect(self.setHighContrast)
-        self.ui.slder_contrastLow.valueChanged.connect(self.setLowContrast)
+        self.ui.slder_contrastHigh.valueChanged.connect(self.setHighContrast_slider)
+        self.ui.slder_contrastLow.valueChanged.connect(self.setLowContrast_slider)
+        self.ui.slder_contrastHigh.valueChanged.connect(self.setLineEditText_contrastHigh)
+        self.ui.slder_contrastLow.valueChanged.connect(self.setLineEditText_contrastLow)
+
 
         self.setupSliders()
 
@@ -38,7 +44,18 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.verticalLayout_figure.addWidget(self.navigationToolbar)
         self.ui.verticalLayout_figure.addWidget(self.canvas)
 
+        self._lowContrastSetting = 0
+        self._highContrastSetting = 1
+        self._saturated_threshold = 1e30 #default to large
+
+    def setLineEditText_contrastHigh(self, value):
+        self.ui.lineEdit_contrastHigh.setText(str(value))
+
+    def setLineEditText_contrastLow(self, value):
+        self.ui.lineEdit_contrastLow.setText(str(value))
+
     def setupSliders(self):
+
         print "setting up sliders"
         if self.CurrentReconstructionParameters._DiffractionPattern is None:
             minVal = 0
@@ -46,24 +63,25 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         else:
             # minVal = np.amin(self.CurrentReconstructionParameters._DiffractionPattern.data)
             # maxVal = np.amax(self.CurrentReconstructionParameters._DiffractionPattern.data)
-            minVal = np.amin(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
-            maxVal = np.amax(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
-        # minVal/=maxVal
-        # maxVal/=maxVal
-        self.ui.slder_contrastHigh.setValue(minVal)
-        self.ui.slder_contrastHigh.setMinimum(minVal)
-        self.ui.slder_contrastHigh.setMaximum(maxVal)
+            minVal = np.max((0,np.amin(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))))
+            maxVal = np.min((self._saturated_threshold,np.amax(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))))
+        print ("minval = ", minVal)
+        print ("maxVal = ", maxVal)
+        self.ui.slder_contrastHigh.setValue(minVal * SLIDER_SCALE)
+        self.ui.slder_contrastHigh.setMinimum(minVal * SLIDER_SCALE)
+        self.ui.slder_contrastHigh.setMaximum(maxVal * SLIDER_SCALE)
 
-        self.ui.slder_contrastLow.setValue(minVal)
-        self.ui.slder_contrastLow.setMinimum(minVal)
-        self.ui.slder_contrastLow.setMaximum(maxVal)
+        self.ui.slder_contrastLow.setValue(minVal * SLIDER_SCALE)
+        self.ui.slder_contrastLow.setMinimum(minVal * SLIDER_SCALE)
+        self.ui.slder_contrastLow.setMaximum(maxVal * SLIDER_SCALE)
 
-    def updateDisplay(self,image=None, min_contrast=0, max_contrast=1): ##need to fix
+    def updateDisplay(self,image=None): ##need to fix
         handle = self.figure.add_subplot(111)
-        handle.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
-        self.current_image_handle = plt.gci()
-        print (self.current_image_handle)
-
+        handle.hold(False)
+        display_copy = np.copy(self.CurrentReconstructionParameters._DiffractionPattern.data)
+        display_copy[display_copy < 0]=0
+        handle.imshow(np.log(display_copy),clim=[self._lowContrastSetting, self._highContrastSetting])
+        # handle.imshow(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
         # myFig.imshow(np.log(np.abs(np.load('diffraction_pattern.npy'))))
         self.canvas.draw()
 
@@ -71,37 +89,36 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         print "adjusting high contrast"
         try:
             print "trying"
-            # print (plt.get(plt.gci(),'clim'))
-            # current_setting = plt.get(plt.get(plt.get(self.figure,'axes')[0],'images')[0],'clim')
-            current_setting = plt.get(self.current_image_handle,'clim')
-            # a = plt.get(plt.get(plt.get(self.figure,'axes'),'images')[0],'clim')
-            # print("a = " , a)
-            # print(current_setting)
-
-            # current_setting[1] = value
-            new_setting = (current_setting[0], max(current_setting[0],value))
-            handle = self.figure.add_subplot(111)
-            handle.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)),clim=new_setting)
-            self.current_image_handle = plt.gci()
-            self.canvas.draw()
+            self._highContrastSetting = max(value, self._lowContrastSetting)
+            print("self._highContrastSetting = " , self._highContrastSetting)
+            self.updateDisplay()
         except AttributeError:
             print "caught"
             pass
 
     def setLowContrast(self, value):
+        print "adjusting low contrast"
         try:
-            current_setting = plt.get(plt.gci(),'clim')
-            new_setting = (value,current_setting[1])
-            print new_setting
-            # current_setting[0] = value
-            new_setting = (min(value, current_setting[1]),current_setting[1])
-
-            handle = self.figure.add_subplot(111)
-            handle.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)),clim=new_setting)
-            self.current_image_handle = plt.gci()
-            self.canvas.draw()
+            self._lowContrastSetting = min(value, self._highContrastSetting)
+            print("self._lowContrastSetting = ",self._lowContrastSetting)
+            self.updateDisplay()
         except AttributeError:
             pass
+
+    def setHighContrast_Qstring(self, value):
+        self.setHighContrast(value.toInt()[0])
+
+    def setLowContrast_Qstring(self, value):
+        self.setLowContrast(value.toInt()[0])
+
+    def setHighContrast_slider(self, value):
+        self.setHighContrast(value / SLIDER_SCALE)
+        print ("setHighContrast_slider value = " , value / SLIDER_SCALE)
+
+    def setLowContrast_slider(self, value):
+        self.setLowContrast(value / SLIDER_SCALE)
+        print ("setLowContrast_slider value = " , value / SLIDER_SCALE)
+
 
     def selectDiffPatFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Diffraction Pattern",filter="MATLAB files (*.mat);;TIFF images (*.tif* *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -119,7 +136,10 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
             self.ui.lineEdit_BGfilename.setText(QtCore.QString(filename))
 
     def loadDiffractionPattern(self, str=None):
-        self.CurrentReconstructionParameters._DiffractionPattern = DiffractionPattern(loadImage(self.CurrentReconstructionParameters._diffpatFile))
+        self.CurrentReconstructionParameters._DiffractionPattern = DiffractionPattern(np.abs(loadImage(self.CurrentReconstructionParameters._diffpatFile)))
+        self._lowContrastSetting = np.min(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
+        self._highContrastSetting = np.max(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
+
         self.updateDisplay(self.CurrentReconstructionParameters._DiffractionPattern)
         self.setupSliders()
 
@@ -158,6 +178,7 @@ class ReconstructionParameters(object):
     def __init__(self):
         self._diffpatFile = ""
         self._DiffractionPattern = None
+        self._displayDiffractionPattern = None #copy to display, avoids problem of losing thresholded data
 
         self._bgFile = ""
         self.__BGImage = None

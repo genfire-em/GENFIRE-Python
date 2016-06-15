@@ -7,23 +7,137 @@
     <x>0</x>
     <y>0</y>
     <width>808</width>
-    <height>483</height>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>698</width>
-      <height>438</height>
+      <x>-3</x>
+      <y>-3</y>
+      <width>711</width>
+      <height>481</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="4" column="0">
+      <widget class="QLineEdit" name="lineEdit_BGlevel"/>
+     </item>
+     <item row="3" column="0">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="8" column="0" rowspan="2" colspan="8">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" rowspan="2" colspan="2">
+      <layout class="QVBoxLayout" name="verticalLayout_figure"/>
+     </item>
+     <item row="4" column="5" colspan="2">
+      <widget class="QLineEdit" name="lineEdit_satThresh"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="lbl_BGlevel">
+       <property name="text">
+        <string>BG Level</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3" colspan="2">
+      <widget class="QLineEdit" name="lineEdit_diffpatFile"/>
+     </item>
+     <item row="5" column="5" colspan="2">
+      <widget class="QLabel" name="lbl_satThresh">
+       <property name="text">
+        <string>Saturation Threshold</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="7">
+      <widget class="QPushButton" name="btn_selectDiffpat">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2" colspan="2">
+      <widget class="QPushButton" name="btn_go">
+       <property name="text">
+        <string>Launch Reconstruction</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="7" colspan="2">
+      <widget class="QCheckBox" name="checkBox_takeSqrt">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Take Square Root</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="2">
+      <widget class="QLineEdit" name="lineEdit_saveFilename"/>
+     </item>
+     <item row="9" column="6" rowspan="2" colspan="2">
+      <widget class="QPushButton" name="btn_refineCenter">
+       <property name="text">
+        <string>Optimize Center</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QPushButton" name="btn_savePattern">
+       <property name="text">
+        <string>Save Pattern</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="7" colspan="2">
+      <widget class="QLineEdit" name="lineEdit_BGfilename"/>
+     </item>
+     <item row="11" column="4" colspan="2">
+      <widget class="QLabel" name="lbl_BGfilename">
+       <property name="text">
+        <string>BG Filename</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="6">
+      <widget class="QPushButton" name="btn_BGfilename">
+       <property name="text">
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="3">
+      <widget class="QLabel" name="lbl_diffpat">
+       <property name="text">
+        <string>Diffraction Pattern Filename</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QSlider" name="slder_contrastLow">
        <property name="orientation">
@@ -31,7 +145,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="6" rowspan="3">
+     <item row="0" column="7" rowspan="4">
       <widget class="QSlider" name="verticalSlider_BGlevel">
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>
@@ -56,7 +170,14 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="7" rowspan="3">
+     <item row="1" column="0">
+      <widget class="QSlider" name="slder_contrastHigh">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="8" rowspan="4">
       <widget class="QSlider" name="verticalSlider_satThresh">
        <property name="maximum">
         <number>3600</number>
@@ -72,126 +193,11 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QSlider" name="slder_contrastHigh">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit_contrastHigh"/>
      </item>
-     <item row="2" column="0">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLineEdit" name="lineEdit_BGlevel"/>
-     </item>
-     <item row="3" column="4" colspan="2">
-      <widget class="QLineEdit" name="lineEdit_satThresh"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="lbl_BGlevel">
-       <property name="text">
-        <string>BG Level</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="4" colspan="2">
-      <widget class="QLabel" name="lbl_satThresh">
-       <property name="text">
-        <string>Saturation Threshold</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="2">
-      <widget class="QLabel" name="lbl_diffpat">
-       <property name="text">
-        <string>Diffraction Pattern Filename</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2" colspan="2">
-      <widget class="QLineEdit" name="lineEdit_diffpatFile"/>
-     </item>
-     <item row="5" column="6">
-      <widget class="QPushButton" name="btn_selectDiffpat">
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1" colspan="2">
-      <widget class="QPushButton" name="btn_go">
-       <property name="text">
-        <string>Launch Reconstruction</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="6" colspan="2">
-      <widget class="QCheckBox" name="checkBox_takeSqrt">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Take Square Root</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" rowspan="2" colspan="7">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="5" rowspan="2" colspan="2">
-      <widget class="QPushButton" name="btn_refineCenter">
-       <property name="text">
-        <string>Optimize Center</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QPushButton" name="btn_savePattern">
-       <property name="text">
-        <string>Save Pattern</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="1">
-      <widget class="QLineEdit" name="lineEdit_saveFilename"/>
-     </item>
-     <item row="10" column="3" colspan="2">
-      <widget class="QLabel" name="lbl_BGfilename">
-       <property name="text">
-        <string>BG Filename</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="5">
-      <widget class="QPushButton" name="btn_BGfilename">
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="6" colspan="2">
-      <widget class="QLineEdit" name="lineEdit_BGfilename"/>
-     </item>
-     <item row="0" column="1" rowspan="2" colspan="2">
-      <layout class="QVBoxLayout" name="verticalLayout_figure"/>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEdit_contrastLow"/>
      </item>
     </layout>
    </widget>
