@@ -21,22 +21,87 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.lineEdit_BGfilename.textEdited.connect(self.CurrentReconstructionParameters.setBGFile)
         self.ui.lineEdit_diffpatFile.textChanged.connect(self.loadDiffractionPattern)
 
+        self.ui.slder_contrastHigh.valueChanged.connect(self.setHighContrast)
+        self.ui.slder_contrastLow.valueChanged.connect(self.setLowContrast)
+
+        self.setupSliders()
+
         self.ui.btn_selectDiffpat.clicked.connect(self.selectDiffPatFile)
         self.ui.btn_BGfilename.clicked.connect(self.selectBGFile)
 
 
         self.figure = plt.figure(1)
+        plt.imshow(np.random.rand(50,50))
+        self.current_image_handle = plt.gci()
         self.canvas = FigureCanvas(self.figure)
         self.navigationToolbar = NavigationToolbar(self.canvas, self)
         self.ui.verticalLayout_figure.addWidget(self.navigationToolbar)
         self.ui.verticalLayout_figure.addWidget(self.canvas)
 
+    def setupSliders(self):
+        print "setting up sliders"
+        if self.CurrentReconstructionParameters._DiffractionPattern is None:
+            minVal = 0
+            maxVal = 1
+        else:
+            # minVal = np.amin(self.CurrentReconstructionParameters._DiffractionPattern.data)
+            # maxVal = np.amax(self.CurrentReconstructionParameters._DiffractionPattern.data)
+            minVal = np.amin(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
+            maxVal = np.amax(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
+        # minVal/=maxVal
+        # maxVal/=maxVal
+        self.ui.slder_contrastHigh.setValue(minVal)
+        self.ui.slder_contrastHigh.setMinimum(minVal)
+        self.ui.slder_contrastHigh.setMaximum(maxVal)
 
-    def updateDisplay(self,image):
-        myFig = self.figure.add_subplot(111)
-        myFig.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
+        self.ui.slder_contrastLow.setValue(minVal)
+        self.ui.slder_contrastLow.setMinimum(minVal)
+        self.ui.slder_contrastLow.setMaximum(maxVal)
+
+    def updateDisplay(self,image=None, min_contrast=0, max_contrast=1): ##need to fix
+        handle = self.figure.add_subplot(111)
+        handle.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))
+        self.current_image_handle = plt.gci()
+        print (self.current_image_handle)
+
         # myFig.imshow(np.log(np.abs(np.load('diffraction_pattern.npy'))))
         self.canvas.draw()
+
+    def setHighContrast(self, value):
+        print "adjusting high contrast"
+        try:
+            print "trying"
+            # print (plt.get(plt.gci(),'clim'))
+            # current_setting = plt.get(plt.get(plt.get(self.figure,'axes')[0],'images')[0],'clim')
+            current_setting = plt.get(self.current_image_handle,'clim')
+            # a = plt.get(plt.get(plt.get(self.figure,'axes'),'images')[0],'clim')
+            # print("a = " , a)
+            # print(current_setting)
+
+            # current_setting[1] = value
+            new_setting = (current_setting[0], max(current_setting[0],value))
+            handle = self.figure.add_subplot(111)
+            handle.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)),clim=new_setting)
+            self.current_image_handle = plt.gci()
+            self.canvas.draw()
+        except AttributeError:
+            print "caught"
+            pass
+
+    def setLowContrast(self, value):
+        try:
+            current_setting = plt.get(plt.gci(),'clim')
+            new_setting = (value,current_setting[1])
+            print new_setting
+            # current_setting[0] = value
+            new_setting = (min(value, current_setting[1]),current_setting[1])
+
+            handle = self.figure.add_subplot(111)
+            handle.imshow(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)),clim=new_setting)
+            self.current_image_handle = plt.gci()
+            self.canvas.draw()
+        except AttributeError:
+            pass
 
     def selectDiffPatFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Diffraction Pattern",filter="MATLAB files (*.mat);;TIFF images (*.tif* *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -56,6 +121,7 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
     def loadDiffractionPattern(self, str=None):
         self.CurrentReconstructionParameters._DiffractionPattern = DiffractionPattern(loadImage(self.CurrentReconstructionParameters._diffpatFile))
         self.updateDisplay(self.CurrentReconstructionParameters._DiffractionPattern)
+        self.setupSliders()
 
     def loadBGImage(self):
         self.CurrentReconstructionParameters._BGImage = loadImage(self.CurrentReconstructionParameters._bgFile)
