@@ -16,6 +16,8 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         super(QtGui.QMainWindow,self).__init__()
         self.ui = PhaseRetrieval_GUI_ui.Ui_ProjectionCalculator()
         self.ui.setupUi(self)
+        self.resize(1200,600)
+
         self.CurrentReconstructionParameters = ReconstructionParameters()
 
         self.ui.lineEdit_diffpatFile.textEdited.connect(self.CurrentReconstructionParameters.setDiffPatFile)
@@ -24,10 +26,10 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.lineEdit_contrastHigh.textChanged.connect(self.setHighContrast_Qstring)
         self.ui.lineEdit_contrastLow.textChanged.connect(self.setLowContrast_Qstring)
 
-        self.ui.slder_contrastHigh.valueChanged.connect(self.setHighContrast_slider)
-        self.ui.slder_contrastLow.valueChanged.connect(self.setLowContrast_slider)
-        self.ui.slder_contrastHigh.valueChanged.connect(self.setLineEditText_contrastHigh)
-        self.ui.slder_contrastLow.valueChanged.connect(self.setLineEditText_contrastLow)
+        # self.ui.slder_contrastHigh.valueChanged.connect(self.setHighContrast_slider)
+        # self.ui.slder_contrastLow.valueChanged.connect(self.setLowContrast_slider)
+        self.ui.slder_contrastHigh.valueChanged.connect(self.setLineEditText_contrastHigh_fromSlider)
+        self.ui.slder_contrastLow.valueChanged.connect(self.setLineEditText_contrastLow_fromSlider)
 
 
         self.setupSliders()
@@ -38,6 +40,8 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
 
         self.figure = plt.figure(1)
         plt.imshow(np.random.rand(50,50))
+        self.handle = self.figure.add_subplot(111)
+        self.handle.hold(False)
         self.current_image_handle = plt.gci()
         self.canvas = FigureCanvas(self.figure)
         self.navigationToolbar = NavigationToolbar(self.canvas, self)
@@ -48,11 +52,11 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self._highContrastSetting = 1
         self._saturated_threshold = 1e30 #default to large
 
-    def setLineEditText_contrastHigh(self, value):
-        self.ui.lineEdit_contrastHigh.setText(str(value))
+    def setLineEditText_contrastHigh_fromSlider(self, value):
+        self.ui.lineEdit_contrastHigh.setText(str(value / SLIDER_SCALE))
 
-    def setLineEditText_contrastLow(self, value):
-        self.ui.lineEdit_contrastLow.setText(str(value))
+    def setLineEditText_contrastLow_fromSlider(self, value):
+        self.ui.lineEdit_contrastLow.setText(str(value / SLIDER_SCALE))
 
     def setupSliders(self):
 
@@ -76,11 +80,11 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.slder_contrastLow.setMaximum(maxVal * SLIDER_SCALE)
 
     def updateDisplay(self,image=None): ##need to fix
-        handle = self.figure.add_subplot(111)
-        handle.hold(False)
+
         display_copy = np.copy(self.CurrentReconstructionParameters._DiffractionPattern.data)
         display_copy[display_copy < 0]=0
-        handle.imshow(np.log(display_copy),clim=[self._lowContrastSetting, self._highContrastSetting])
+        print ("contrast = " , (self._lowContrastSetting, self._highContrastSetting))
+        self.handle.imshow(np.log(display_copy),clim=[self._lowContrastSetting, self._highContrastSetting])
         # handle.imshow(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
         # myFig.imshow(np.log(np.abs(np.load('diffraction_pattern.npy'))))
         self.canvas.draw()
@@ -88,7 +92,7 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
     def setHighContrast(self, value):
         print "adjusting high contrast"
         try:
-            print "trying"
+            print "trying either {0} or {1}".format(value,self._lowContrastSetting)
             self._highContrastSetting = max(value, self._lowContrastSetting)
             print("self._highContrastSetting = " , self._highContrastSetting)
             self.updateDisplay()
