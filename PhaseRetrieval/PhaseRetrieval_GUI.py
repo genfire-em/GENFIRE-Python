@@ -53,6 +53,7 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self._saturated_threshold = 1e30 #default to large
 
     def setLineEditText_contrastHigh_fromSlider(self, value):
+        print ("setting line edit value to " ,str(value / SLIDER_SCALE) )
         self.ui.lineEdit_contrastHigh.setText(str(value / SLIDER_SCALE))
 
     def setLineEditText_contrastLow_fromSlider(self, value):
@@ -110,10 +111,12 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
             pass
 
     def setHighContrast_Qstring(self, value):
-        self.setHighContrast(value.toInt()[0])
+        print ("setting high contrast to " , value)
+        self.setHighContrast(value.toFloat()[0])
 
     def setLowContrast_Qstring(self, value):
-        self.setLowContrast(value.toInt()[0])
+        print
+        self.setLowContrast(value.toFloat()[0])
 
     def setHighContrast_slider(self, value):
         self.setHighContrast(value / SLIDER_SCALE)
@@ -143,8 +146,10 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.CurrentReconstructionParameters._DiffractionPattern = DiffractionPattern(np.abs(loadImage(self.CurrentReconstructionParameters._diffpatFile)))
         self._lowContrastSetting = np.min(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
         self._highContrastSetting = np.max(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
-
         self.updateDisplay(self.CurrentReconstructionParameters._DiffractionPattern)
+        self._originalDiffractionPattern = np.copy(self.CurrentReconstructionParameters._DiffractionPattern.data)
+        if self.CurrentReconstructionParameters._BGImage is None: #use array of ones if no BG has been provided
+            self.CurrentReconstructionParameters._BGImage = np.ones_like(self.CurrentReconstructionParameters._DiffractionPattern.data)
         self.setupSliders()
 
     def loadBGImage(self):
@@ -182,10 +187,10 @@ class ReconstructionParameters(object):
     def __init__(self):
         self._diffpatFile = ""
         self._DiffractionPattern = None
-        self._displayDiffractionPattern = None #copy to display, avoids problem of losing thresholded data
+        self._originalDiffractionPattern = None #saved copy to avoid problem of losing thresholded data
 
         self._bgFile = ""
-        self.__BGImage = None
+        self._BGImage = None
         self._bgScale = ""
 
     def setDiffPatFile(self, filename):
