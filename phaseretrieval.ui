@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="4" column="0">
-       <widget class="QLineEdit" name="lineEdit_BGlevel"/>
+       <widget class="QLineEdit" name="lineEdit_BGscale"/>
       </item>
       <item row="3" column="0">
        <spacer name="horizontalSpacer">
@@ -49,7 +49,7 @@
       <item row="5" column="0">
        <widget class="QLabel" name="lbl_BGlevel">
         <property name="text">
-         <string>BG Level</string>
+         <string>BG Scale (%)</string>
         </property>
        </widget>
       </item>
@@ -139,7 +139,7 @@
        </widget>
       </item>
       <item row="0" column="7" rowspan="4">
-       <widget class="QSlider" name="verticalSlider_BGlevel">
+       <widget class="QSlider" name="slder_BGscale">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -171,7 +171,7 @@
        </widget>
       </item>
       <item row="0" column="8" rowspan="4">
-       <widget class="QSlider" name="verticalSlider_satThresh">
+       <widget class="QSlider" name="slder_satThresh">
         <property name="maximum">
          <number>3600</number>
         </property>
@@ -213,7 +213,7 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
-  <tabstop>lineEdit_BGlevel</tabstop>
+  <tabstop>lineEdit_BGscale</tabstop>
   <tabstop>lineEdit_satThresh</tabstop>
   <tabstop>lineEdit_diffpatFile</tabstop>
   <tabstop>btn_selectDiffpat</tabstop>
