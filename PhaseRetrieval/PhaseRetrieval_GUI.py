@@ -80,7 +80,7 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
             maxVal = np.min((self._saturated_threshold,np.amax(np.abs(self.parameters._DiffractionPattern.data))))
             minVal_log = np.log(minVal)
             maxVal_log = np.log(maxVal)
-        self.ui.slder_contrastHigh.setValue(minVal_log * SLIDER_SCALE)
+        self.ui.slder_contrastHigh.setValue(maxVal_log * SLIDER_SCALE)
         self.ui.slder_contrastHigh.setMinimum(minVal_log * SLIDER_SCALE)
         self.ui.slder_contrastHigh.setMaximum(maxVal_log * SLIDER_SCALE)
 
