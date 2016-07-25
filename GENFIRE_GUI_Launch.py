@@ -150,9 +150,9 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
 
     def toggleUseDefaultSupport(self):
         if self.ui.checkBox_default_support.isEnabled():
-            self.GENFIRE_ReconstructionParameters._useDefaultSupport = True
+            self.GENFIRE_ReconstructionParameters.useDefaultSupport = True
         else:
-            self.GENFIRE_ReconstructionParameters._useDefaultSupport = False
+            self.GENFIRE_ReconstructionParameters.useDefaultSupport = False
 
     def enableDisplayFrequencyChange(self):
         global displayFrequency
@@ -246,34 +246,34 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
 # Define ReconstructionParameters class to hold reconstruction parameters
 # class ReconstructionParameters():
 #     def __init__(self):
-#         self._projectionFilename = ""
-#         self._angleFilename = ""
-#         self._supportFilename = ""
-#         self._resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
-#         self._numIterations = 50
+#         self.projectionFilename = ""
+#         self.angleFilename = ""
+#         self.supportFilename = ""
+#         self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
+#         self.numIterations = 50
 #         self.displayFigure = GENFIRE.DisplayFigure()
 #         self._supportedFiletypes = ['.tif', '.mrc', '.mat']
 #         self._supportedAngleFiletypes = ['.txt', '.mat']
-#         self._oversamplingRatio = 3
-#         self._interpolationCutoffDistance = 0.7
-#         self._isInitialObjectDefined = False
-#         self._resultsFilename = os.path.join(os.getcwd(),'results.mrc')
-#         self._useDefaultSupport = True
+#         self.oversamplingRatio = 3
+#         self.interpolationCutoffDistance = 0.7
+#         self.isInitialObjectDefined = False
+#         self.resultsFilename = os.path.join(os.getcwd(),'results.mrc')
+#         self.useDefaultSupport = True
 #         self.calculateRfree = False
 
     # def checkParameters(self): #verify file extensions are supported
     #     parametersAreGood = 1
     #
-    #     projection_extension = os.path.splitext(self._projectionFilename)
+    #     projection_extension = os.path.splitext(self.projectionFilename)
     #     if projection_extension[1] not in self._supportedFiletypes:
     #         parametersAreGood = 0
     #
-    #     angle_extension = os.path.splitext(self._angleFilename)
+    #     angle_extension = os.path.splitext(self.angleFilename)
     #     if angle_extension[1] not in self._supportedAngleFiletypes:
     #         parametersAreGood = 0
     #
-    #     if self._supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
-    #         support_extension = os.path.splitext(self._supportFilename)
+    #     if self.supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
+    #         support_extension = os.path.splitext(self.supportFilename)
     #         if support_extension[1] not in self._supportedFiletypes:
     #             parametersAreGood = 0
     #
@@ -287,36 +287,36 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     # # Define setters/getters
     # def setProjectionFilename(self, projectionFilename):
     #     if projectionFilename:
-    #         self._projectionFilename = os.path.join(os.getcwd(),unicode(projectionFilename.toUtf8(), encoding='UTF-8'))
+    #         self.projectionFilename = os.path.join(os.getcwd(),unicode(projectionFilename.toUtf8(), encoding='UTF-8'))
     #
     # def getProjectionFilename(self):
-    #     return self._projectionFilename
+    #     return self.projectionFilename
     #
     # def setAngleFilename(self, angleFilename):
     #     if angleFilename:
-    #         self._angleFilename = os.path.join(os.getcwd(),unicode(angleFilename.toUtf8(), encoding='UTF-8'))
+    #         self.angleFilename = os.path.join(os.getcwd(),unicode(angleFilename.toUtf8(), encoding='UTF-8'))
     #
     # def getAngleFilename(self):
-    #     return self._angleFilename
+    #     return self.angleFilename
     #
     # def setSupportFilename(self, supportFilename):
     #     if supportFilename:
-    #         self._supportFilename = os.path.join(os.getcwd(),unicode(supportFilename.toUtf8(), encoding='UTF-8'))
+    #         self.supportFilename = os.path.join(os.getcwd(),unicode(supportFilename.toUtf8(), encoding='UTF-8'))
     #
     # def getSupportFilename(self):
-    #     return self._supportFilename
+    #     return self.supportFilename
     #
     # def setResultsFilename(self, resultsFilename):
     #     if resultsFilename:
-    #         self._resultsFilename = os.path.join(os.getcwd(),unicode(resultsFilename.toUtf8(), encoding='UTF-8'))
+    #         self.resultsFilename = os.path.join(os.getcwd(),unicode(resultsFilename.toUtf8(), encoding='UTF-8'))
     #
     # def getResultsFilename(self):
-    #     return self._resultsFilename
+    #     return self.resultsFilename
     #
     #
     # def setInitialObjectFilename(self, initialObjectFilename):
     #     self._initialObjectFilename = os.path.join(os.getcwd(),unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
-    #     self._isInitialObjectDefined = True
+    #     self.isInitialObjectDefined = True
     #
     # def getInitialObjectFilename(self):
     #     if self.CheckIfInitialObjectIsDefined():
@@ -325,23 +325,23 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     #         pass
     #
     # def CheckIfInitialObjectIsDefined(self):
-    #     return self._isInitialObjectDefined
+    #     return self.isInitialObjectDefined
     #
     # def setResolutionExtensionSuppressionState(self, state):
-    #     self._resolutionExtensionSuppressionState = state
+    #     self.resolutionExtensionSuppressionState = state
     #
     # def getResolutionExtensionSuppressionState(self):
-    #     return self._resolutionExtensionSuppressionState
+    #     return self.resolutionExtensionSuppressionState
     #
     # def setNumberOfIterations(self,numIterations):
     #     numIterations = numIterations.toInt()
     #     if numIterations[1]:
     #         numIterations = numIterations[0]
     #         if numIterations > 0:
-    #             self._numIterations = numIterations
+    #             self.numIterations = numIterations
     #
     # def getNumberOfIterations(self):
-    #     return self._numIterations
+    #     return self.numIterations
     #
     # def toggleDisplayFigure(self): # whether or not to display figure during reconstruction
     #     if self.displayFigure.DisplayFigureON:
@@ -358,16 +358,16 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     #     return self.displayFigure
     #
     # def setOversamplingRatio(self, oversamplingRatio):
-    #     self._oversamplingRatio = oversamplingRatio.toInt()[0]
+    #     self.oversamplingRatio = oversamplingRatio.toInt()[0]
     #
     # def getOversamplingRatio(self):
-    #     return self._oversamplingRatio
+    #     return self.oversamplingRatio
     #
     # def setInterpolationCutoffDistance(self, interpolationCutoffDistance):
-    #     self._interpolationCutoffDistance = interpolationCutoffDistance.toFloat()[0]
+    #     self.interpolationCutoffDistance = interpolationCutoffDistance.toFloat()[0]
     #
     # def getInterpolationCutoffDistance(self):
-    #     return self._interpolationCutoffDistance
+    #     return self.interpolationCutoffDistance
 
 class GenfireLogger:
     def __init__(self, textEdit, output=None, textColor=None):

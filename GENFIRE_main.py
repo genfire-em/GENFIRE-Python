@@ -39,15 +39,15 @@ def GENFIRE_main_InteractivelySetParameters():
 
 
     reconstruction_parameters                                      = ReconstructionParameters()
-    reconstruction_parameters._projectionFilename                  = filename_projections
-    reconstruction_parameters._angleFilename                       = filename_angles
-    reconstruction_parameters._supportFilename                     = filename_support
-    reconstruction_parameters._interpolationCutoffDistance         = interpolationCutoffDistance
-    reconstruction_parameters._numIterations                       = numIterations
-    reconstruction_parameters._oversamplingRatio                   = oversamplingRatio
+    reconstruction_parameters.projectionFilename                  = filename_projections
+    reconstruction_parameters.angleFilename                       = filename_angles
+    reconstruction_parameters.supportFilename                     = filename_support
+    reconstruction_parameters.interpolationCutoffDistance         = interpolationCutoffDistance
+    reconstruction_parameters.numIterations                       = numIterations
+    reconstruction_parameters.oversamplingRatio                   = oversamplingRatio
     reconstruction_parameters.displayFigure                        = displayFigure
     reconstruction_parameters.calculateRfree                       = calculateRFree
-    reconstruction_parameters._resolutionExtensionSuppressionState = resolutionExtensionSuppressionState
+    reconstruction_parameters.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState
     if os.path.isfile(filename_results): # If a valid initial object was provided, use it
         reconstruction_parameters._initialObjectFilename           = filename_results
 
@@ -55,18 +55,18 @@ def GENFIRE_main_InteractivelySetParameters():
 
 def GENFIRE_main(reconstruction_parameters):
 
-    filename_projections = reconstruction_parameters._projectionFilename
-    filename_angles = reconstruction_parameters._angleFilename
-    filename_support = reconstruction_parameters._supportFilename
-    filename_results = reconstruction_parameters._resultsFilename
-    numIterations = reconstruction_parameters._numIterations
-    oversamplingRatio = reconstruction_parameters._oversamplingRatio
-    interpolationCutoffDistance = reconstruction_parameters._interpolationCutoffDistance
+    filename_projections = reconstruction_parameters.projectionFilename
+    filename_angles = reconstruction_parameters.angleFilename
+    filename_support = reconstruction_parameters.supportFilename
+    filename_results = reconstruction_parameters.resultsFilename
+    numIterations = reconstruction_parameters.numIterations
+    oversamplingRatio = reconstruction_parameters.oversamplingRatio
+    interpolationCutoffDistance = reconstruction_parameters.interpolationCutoffDistance
     displayFigure = reconstruction_parameters.displayFigure
-    resolutionExtensionSuppressionState = reconstruction_parameters._resolutionExtensionSuppressionState
+    resolutionExtensionSuppressionState = reconstruction_parameters.resolutionExtensionSuppressionState
     calculateRFree = reconstruction_parameters.calculateRfree
-    if reconstruction_parameters._isInitialObjectDefined:
-            filename_initialObject = reconstruction_parameters._initialObjectFilename
+    if reconstruction_parameters.isInitialObjectDefined:
+            filename_initialObject = reconstruction_parameters.initialObjectFilename
     else:
         filename_initialObject = None
 
