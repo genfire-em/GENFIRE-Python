@@ -4,10 +4,6 @@
     <list default="true" id="969482a0-1c59-47a9-9233-6f2cc9d8a00a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debugging.mat" afterPath="$PROJECT_DIR$/debugging.mat" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/results.mrc" afterPath="$PROJECT_DIR$/results.mrc" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GENFIRE.py" afterPath="$PROJECT_DIR$/GENFIRE.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GENFIRE_GUI_Launch.py" afterPath="$PROJECT_DIR$/GENFIRE_GUI_Launch.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GENFIRE_main.py" afterPath="$PROJECT_DIR$/GENFIRE_main.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/results_Rfree.txt" afterPath="$PROJECT_DIR$/results_Rfree.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/results_errK.txt" afterPath="$PROJECT_DIR$/results_errK.txt" />
     </list>
@@ -43,8 +39,8 @@
       <file leaf-file-name="GENFIRE.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GENFIRE.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.40137616">
-              <caret line="736" column="19" selection-start-line="736" selection-start-column="19" selection-end-line="736" selection-end-column="19" />
+            <state vertical-scroll-proportion="0.4701835">
+              <caret line="738" column="32" selection-start-line="738" selection-start-column="13" selection-end-line="738" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -159,7 +155,7 @@
       </console-settings>
     </option>
   </component>
-  <component name="RunManager" selected="Python.GENFIRE_main">
+  <component name="RunManager" selected="Python.GENFIRE_GUI_Launch">
     <configuration default="false" name="GENFIRE_GUI_Launch" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -376,9 +372,9 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.GENFIRE_main" />
-        <item index="1" class="java.lang.String" itemvalue="Python.GENFIRE" />
-        <item index="2" class="java.lang.String" itemvalue="Python.GENFIRE_GUI_Launch" />
+        <item index="0" class="java.lang.String" itemvalue="Python.GENFIRE_GUI_Launch" />
+        <item index="1" class="java.lang.String" itemvalue="Python.GENFIRE_main" />
+        <item index="2" class="java.lang.String" itemvalue="Python.GENFIRE" />
         <item index="3" class="java.lang.String" itemvalue="Python.PhaseRetrieval_GUI" />
         <item index="4" class="java.lang.String" itemvalue="Python.reconstruction_script" />
       </list>
@@ -406,7 +402,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33916554" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33916554" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33916554" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -815,8 +811,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GENFIRE.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.40137616">
-          <caret line="736" column="19" selection-start-line="736" selection-start-column="19" selection-end-line="736" selection-end-column="19" />
+        <state vertical-scroll-proportion="0.4701835">
+          <caret line="738" column="32" selection-start-line="738" selection-start-column="13" selection-end-line="738" selection-end-column="32" />
           <folding />
         </state>
       </provider>
