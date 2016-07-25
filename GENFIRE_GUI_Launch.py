@@ -35,49 +35,49 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
         ## Push Buttons -- connect each to their main function and check if the reconstruction parameters are good each
         ## time a parameter is changed
         self.ui.btn_projections.clicked.connect(self.selectProjectionFile)
-        self.ui.btn_projections.clicked.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.btn_projections.clicked.connect(self.checkParameters)
 
         self.ui.btn_angles.clicked.connect(self.selectAngleFile)
-        self.ui.btn_angles.clicked.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.btn_angles.clicked.connect(self.checkParameters)
 
         self.ui.btn_support.clicked.connect(self.selectSupportFile)
-        self.ui.btn_support.clicked.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.btn_support.clicked.connect(self.checkParameters)
 
         self.ui.btn_io.clicked.connect(self.selectInitialObjectFile)
-        self.ui.btn_io.clicked.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.btn_io.clicked.connect(self.checkParameters)
 
         self.ui.btn_reconstruct.clicked.connect(self.startReconstruction)
-        self.ui.btn_reconstruct.clicked.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.btn_reconstruct.clicked.connect(self.checkParameters)
         self.ui.btn_reconstruct.setStyleSheet("background-color: red")
 
         ## Line Edits -- connect each to their main function and check if the reconstruction parameters are good each
         ## time a parameter is changed
         self.ui.lineEdit_pj.textChanged.connect(self.GENFIRE_ReconstructionParameters.setProjectionFilename)
-        self.ui.lineEdit_pj.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_pj.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_angle.textChanged.connect(self.GENFIRE_ReconstructionParameters.setAngleFilename)
-        self.ui.lineEdit_angle.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_angle.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_support.textChanged.connect(self.GENFIRE_ReconstructionParameters.setSupportFilename)
-        self.ui.lineEdit_support.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_support.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_io.textChanged.connect(self.GENFIRE_ReconstructionParameters.setInitialObjectFilename)
-        self.ui.lineEdit_io.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_io.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_results.textChanged.connect(self.GENFIRE_ReconstructionParameters.setResultsFilename)
-        self.ui.lineEdit_results.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_results.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_numIterations.setText(QtCore.QString("50"))
         self.ui.lineEdit_numIterations.textChanged.connect(self.GENFIRE_ReconstructionParameters.setNumberOfIterations)
-        self.ui.lineEdit_numIterations.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_numIterations.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_oversamplingRatio.setText(QtCore.QString("3"))
         self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.GENFIRE_ReconstructionParameters.setOversamplingRatio)
-        self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_interpolationCutoffDistance.setText(QtCore.QString("0.7"))
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.GENFIRE_ReconstructionParameters.setInterpolationCutoffDistance)
-        self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.GENFIRE_ReconstructionParameters.checkParameters)
+        self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.checkParameters)
 
 
         self.ui.lineEdit_displayFrequency.setDisabled(True)
@@ -122,6 +122,7 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
         # # sys.stdout = GenfireLog()
         #
         # # sys.stdout.write.connect(self.messageWritten)
+
 
     def calculateRfree(self):
         if self.ui.checkBox_rfree.isEnabled() == True:
@@ -208,6 +209,11 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
         else:
             self.GENFIRE_ReconstructionParameters.setResolutionExtensionSuppressionState(2)
 
+    def checkParameters(self):
+        parametersAreGood = self.GENFIRE_ReconstructionParameters.checkParameters()
+        if parametersAreGood: #update "go" button if we are ready
+            GF_window.ui.btn_reconstruct.setStyleSheet("background-color: GREEN")
+            GF_window.ui.btn_reconstruct.setText("Launch Reconstruction!")
     #Function to run GENFIRE reconstruction once all parameters are accounted for
     def startReconstruction(self):
         print('GENFIRE: Launching GENFIRE Reconstruction')
@@ -255,113 +261,113 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
 #         self._useDefaultSupport = True
 #         self.calculateRfree = False
 
-    def checkParameters(self): #verify file extensions are supported
-        parametersAreGood = 1
-
-        projection_extension = os.path.splitext(self._projectionFilename)
-        if projection_extension[1] not in self._supportedFiletypes:
-            parametersAreGood = 0
-
-        angle_extension = os.path.splitext(self._angleFilename)
-        if angle_extension[1] not in self._supportedAngleFiletypes:
-            parametersAreGood = 0
-
-        if self._supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
-            support_extension = os.path.splitext(self._supportFilename)
-            if support_extension[1] not in self._supportedFiletypes:
-                parametersAreGood = 0
-
-        if not self.getResultsFilename():
-            parametersAreGood = 0
-
-        if parametersAreGood: #update "go" button if we are ready
-            GF_window.ui.btn_reconstruct.setStyleSheet("background-color: GREEN")
-            GF_window.ui.btn_reconstruct.setText("Launch Reconstruction!")
-
-    # Define setters/getters
-    def setProjectionFilename(self, projectionFilename):
-        if projectionFilename:
-            self._projectionFilename = os.path.join(os.getcwd(),unicode(projectionFilename.toUtf8(), encoding='UTF-8'))
-
-    def getProjectionFilename(self):
-        return self._projectionFilename
-
-    def setAngleFilename(self, angleFilename):
-        if angleFilename:
-            self._angleFilename = os.path.join(os.getcwd(),unicode(angleFilename.toUtf8(), encoding='UTF-8'))
-
-    def getAngleFilename(self):
-        return self._angleFilename
-
-    def setSupportFilename(self, supportFilename):
-        if supportFilename:
-            self._supportFilename = os.path.join(os.getcwd(),unicode(supportFilename.toUtf8(), encoding='UTF-8'))
-
-    def getSupportFilename(self):
-        return self._supportFilename
-
-    def setResultsFilename(self, resultsFilename):
-        if resultsFilename:
-            self._resultsFilename = os.path.join(os.getcwd(),unicode(resultsFilename.toUtf8(), encoding='UTF-8'))
-
-    def getResultsFilename(self):
-        return self._resultsFilename
-
-
-    def setInitialObjectFilename(self, initialObjectFilename):
-        self._initialObjectFilename = os.path.join(os.getcwd(),unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
-        self._isInitialObjectDefined = True
-
-    def getInitialObjectFilename(self):
-        if self.CheckIfInitialObjectIsDefined():
-            return self._initialObjectFilename
-        else:
-            pass
-
-    def CheckIfInitialObjectIsDefined(self):
-        return self._isInitialObjectDefined
-
-    def setResolutionExtensionSuppressionState(self, state):
-        self._resolutionExtensionSuppressionState = state
-
-    def getResolutionExtensionSuppressionState(self):
-        return self._resolutionExtensionSuppressionState
-
-    def setNumberOfIterations(self,numIterations):
-        numIterations = numIterations.toInt()
-        if numIterations[1]:
-            numIterations = numIterations[0]
-            if numIterations > 0:
-                self._numIterations = numIterations
-
-    def getNumberOfIterations(self):
-        return self._numIterations
-
-    def toggleDisplayFigure(self): # whether or not to display figure during reconstruction
-        if self.displayFigure.DisplayFigureON:
-            self.displayFigure.DisplayFigureON = False
-        else:
-            self.displayFigure.DisplayFigureON = True
-
-        if self.displayFigure.DisplayErrorFigureON:
-            self.displayFigure.DisplayErrorFigureON = False
-        else:
-            self.displayFigure.DisplayErrorFigureON = True
-
-    def getDisplayFigure(self):
-        return self.displayFigure
-
-    def setOversamplingRatio(self, oversamplingRatio):
-        self._oversamplingRatio = oversamplingRatio.toInt()[0]
-
-    def getOversamplingRatio(self):
-        return self._oversamplingRatio
-
-    def setInterpolationCutoffDistance(self, interpolationCutoffDistance):
-        self._interpolationCutoffDistance = interpolationCutoffDistance.toFloat()[0]
-
-    def getInterpolationCutoffDistance(self):
-        return self._interpolationCutoffDistance
+    # def checkParameters(self): #verify file extensions are supported
+    #     parametersAreGood = 1
+    #
+    #     projection_extension = os.path.splitext(self._projectionFilename)
+    #     if projection_extension[1] not in self._supportedFiletypes:
+    #         parametersAreGood = 0
+    #
+    #     angle_extension = os.path.splitext(self._angleFilename)
+    #     if angle_extension[1] not in self._supportedAngleFiletypes:
+    #         parametersAreGood = 0
+    #
+    #     if self._supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
+    #         support_extension = os.path.splitext(self._supportFilename)
+    #         if support_extension[1] not in self._supportedFiletypes:
+    #             parametersAreGood = 0
+    #
+    #     if not self.getResultsFilename():
+    #         parametersAreGood = 0
+    #
+    #     if parametersAreGood: #update "go" button if we are ready
+    #         GF_window.ui.btn_reconstruct.setStyleSheet("background-color: GREEN")
+    #         GF_window.ui.btn_reconstruct.setText("Launch Reconstruction!")
+    #
+    # # Define setters/getters
+    # def setProjectionFilename(self, projectionFilename):
+    #     if projectionFilename:
+    #         self._projectionFilename = os.path.join(os.getcwd(),unicode(projectionFilename.toUtf8(), encoding='UTF-8'))
+    #
+    # def getProjectionFilename(self):
+    #     return self._projectionFilename
+    #
+    # def setAngleFilename(self, angleFilename):
+    #     if angleFilename:
+    #         self._angleFilename = os.path.join(os.getcwd(),unicode(angleFilename.toUtf8(), encoding='UTF-8'))
+    #
+    # def getAngleFilename(self):
+    #     return self._angleFilename
+    #
+    # def setSupportFilename(self, supportFilename):
+    #     if supportFilename:
+    #         self._supportFilename = os.path.join(os.getcwd(),unicode(supportFilename.toUtf8(), encoding='UTF-8'))
+    #
+    # def getSupportFilename(self):
+    #     return self._supportFilename
+    #
+    # def setResultsFilename(self, resultsFilename):
+    #     if resultsFilename:
+    #         self._resultsFilename = os.path.join(os.getcwd(),unicode(resultsFilename.toUtf8(), encoding='UTF-8'))
+    #
+    # def getResultsFilename(self):
+    #     return self._resultsFilename
+    #
+    #
+    # def setInitialObjectFilename(self, initialObjectFilename):
+    #     self._initialObjectFilename = os.path.join(os.getcwd(),unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
+    #     self._isInitialObjectDefined = True
+    #
+    # def getInitialObjectFilename(self):
+    #     if self.CheckIfInitialObjectIsDefined():
+    #         return self._initialObjectFilename
+    #     else:
+    #         pass
+    #
+    # def CheckIfInitialObjectIsDefined(self):
+    #     return self._isInitialObjectDefined
+    #
+    # def setResolutionExtensionSuppressionState(self, state):
+    #     self._resolutionExtensionSuppressionState = state
+    #
+    # def getResolutionExtensionSuppressionState(self):
+    #     return self._resolutionExtensionSuppressionState
+    #
+    # def setNumberOfIterations(self,numIterations):
+    #     numIterations = numIterations.toInt()
+    #     if numIterations[1]:
+    #         numIterations = numIterations[0]
+    #         if numIterations > 0:
+    #             self._numIterations = numIterations
+    #
+    # def getNumberOfIterations(self):
+    #     return self._numIterations
+    #
+    # def toggleDisplayFigure(self): # whether or not to display figure during reconstruction
+    #     if self.displayFigure.DisplayFigureON:
+    #         self.displayFigure.DisplayFigureON = False
+    #     else:
+    #         self.displayFigure.DisplayFigureON = True
+    #
+    #     if self.displayFigure.DisplayErrorFigureON:
+    #         self.displayFigure.DisplayErrorFigureON = False
+    #     else:
+    #         self.displayFigure.DisplayErrorFigureON = True
+    #
+    # def getDisplayFigure(self):
+    #     return self.displayFigure
+    #
+    # def setOversamplingRatio(self, oversamplingRatio):
+    #     self._oversamplingRatio = oversamplingRatio.toInt()[0]
+    #
+    # def getOversamplingRatio(self):
+    #     return self._oversamplingRatio
+    #
+    # def setInterpolationCutoffDistance(self, interpolationCutoffDistance):
+    #     self._interpolationCutoffDistance = interpolationCutoffDistance.toFloat()[0]
+    #
+    # def getInterpolationCutoffDistance(self):
+    #     return self._interpolationCutoffDistance
 
 class GenfireLogger:
     def __init__(self, textEdit, output=None, textColor=None):

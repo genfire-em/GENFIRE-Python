@@ -25,7 +25,7 @@ def GENFIRE_main_InteractivelySetParameters():
     filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
     filename_angles = './data/angles.mat'  #angles can be either a 1xN_projections array containing a single tilt series, or 3xN_projections array containing 3 Euler angles for each projections in the form [phi;theta;psi]
     filename_support = './data/support60.mat'  #NxNxN binary array specifying a region of 1's in which the reconstruction can exist
-    # filename_initialObject = ''  #initial object to use in reconstruction; comment this line out if you have no initial guess and want to start with all zeros
+    filename_initialObject = None  #initial object to use in reconstruction; set to None to provide no initial guess
     filename_results = 'GENFIRE_rec.mrc'  #filename to save results
     resolutionExtensionSuppressionState = 2 # 1) Turn on resolution extension/suppression, 2) No resolution extension/suppression, 3) Just resolution extension
 
@@ -36,67 +36,26 @@ def GENFIRE_main_InteractivelySetParameters():
     displayFigure = GENFIRE.DisplayFigure()
     displayFigure.DisplayFigureON = doYouWantToDisplayFigure
     calculateRFree = True
-    reconstruction_parameters = ReconstructionParameters()
-    reconstruction_parameters._projectionFilename = filename_projections
-    reconstruction_parameters._angleFilename      = filename_angles
-    reconstruction_parameters
-    reconstruction_parameters._interpolationCutoffDistance = interpolationCutoffDistance
-    reconstruction_parameters._
-    GENFIRE_main(ReconstructionParameters)
 
 
-    filename_projections = ReconstructionParameters._projectionFilename
-    filename_angles = reconstruction_parameters._angleFilename
-    filename_support = reconstruction_parameters._supportFilename
-    filename_results = reconstruction_parameters._resultsFilename
-    numIterations = reconstruction_parameters._numIterations
-    oversamplingRatio = reconstruction_parameters._oversamplingRatio
-    interpolationCutoffDistance = reconstruction_parameters._interpolationCutoffDistance
-    displayFigure = reconstruction_parameters.displayFigure
-    resolutionExtensionSuppressionState = reconstruction_parameters._resolutionExtensionSuppressionState
-    calculateRFree = reconstruction_parameters.calculateRfree
-    if reconstruction_parameters._isInitialObjectDefined:
+    reconstruction_parameters                                      = ReconstructionParameters()
+    reconstruction_parameters._projectionFilename                  = filename_projections
+    reconstruction_parameters._angleFilename                       = filename_angles
+    reconstruction_parameters._supportFilename                     = filename_support
+    reconstruction_parameters._interpolationCutoffDistance         = interpolationCutoffDistance
+    reconstruction_parameters._numIterations                       = numIterations
+    reconstruction_parameters._oversamplingRatio                   = oversamplingRatio
+    reconstruction_parameters.displayFigure                        = displayFigure
+    reconstruction_parameters.calculateRfree                       = calculateRFree
+    reconstruction_parameters._resolutionExtensionSuppressionState = resolutionExtensionSuppressionState
+    if os.path.isfile(filename_results): # If a valid initial object was provided, use it
+        reconstruction_parameters._initialObjectFilename           = filename_results
 
+    GENFIRE_main(reconstruction_parameters)
 
-        try: #launch reconstruction with or without an initial object, as appropriate
-            GENFIRE_main(filename_projections,
-                         filename_angles,
-                         filename_support,
-                         filename_results,
-                         numIterations,
-                         oversamplingRatio,
-                         interpolationCutoffDistance,
-                         resolutionExtensionSuppressionState,
-                         displayFigure,
-                         calculateRFree,
-                         filename_initialObject,)
-        except NameError:
-            GENFIRE_main(filename_projections,
-                         filename_angles,
-                         filename_support,
-                         filename_results,
-                         numIterations,
-                         oversamplingRatio,
-                         interpolationCutoffDistance,
-                         resolutionExtensionSuppressionState,
-                         displayFigure,
-                         calculateRFree)
-    ######################################################################################################################
-
-# def GENFIRE_main(filename_projections,
-#                  filename_angles,
-#                  filename_support,
-#                  filename_results,
-#                  numIterations,
-#                  oversamplingRatio,
-#                  interpolationCutoffDistance,
-#                  resolutionExtensionSuppressionState,
-#                  displayFigure,
-#                  calculateRFree,
-#                  filename_initialObject=None):
 def GENFIRE_main(reconstruction_parameters):
 
-    filename_projections = ReconstructionParameters._projectionFilename
+    filename_projections = reconstruction_parameters._projectionFilename
     filename_angles = reconstruction_parameters._angleFilename
     filename_support = reconstruction_parameters._supportFilename
     filename_results = reconstruction_parameters._resultsFilename
@@ -238,7 +197,6 @@ def GENFIRE_main(reconstruction_parameters):
 if __name__ == "__main__" and len(sys.argv) == 1:
     print ("starting with user parameters")
     GENFIRE_main_InteractivelySetParameters()
-    # GENFIRE_main()
 elif __name__ == "__main__":
     if len(sys.argv) > 1: # Parse inputs provided either from the GUI or from the command line
         inputArgumentOptions = {"-p" :  "filename_projections",

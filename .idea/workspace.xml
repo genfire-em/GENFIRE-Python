@@ -30,21 +30,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GENFIRE_main.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GENFIRE_main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GENFIRE_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.31626505">
-              <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+            <state vertical-scroll-proportion="-5.3703704">
+              <caret line="111" column="27" selection-start-line="111" selection-start-column="22" selection-end-line="111" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GENFIRE.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GENFIRE.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GENFIRE.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="733" column="0" selection-start-line="733" selection-start-column="0" selection-end-line="733" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.40137616">
+              <caret line="736" column="19" selection-start-line="736" selection-start-column="19" selection-end-line="736" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -53,8 +53,8 @@
       <file leaf-file-name="GENFIRE_GUI_Launch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GENFIRE_GUI_Launch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="20" column="22" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="22" />
+            <state vertical-scroll-proportion="-162.59259">
+              <caret line="335" column="11" selection-start-line="335" selection-start-column="6" selection-end-line="335" selection-end-column="11" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -85,16 +85,16 @@
         <option value="$PROJECT_DIR$/PhaseRetrieval/PhaseRetrieval.py" />
         <option value="$PROJECT_DIR$/GENFIRE_io.py" />
         <option value="$PROJECT_DIR$/PhaseRetrieval/PhaseRetrieval_GUI.py" />
-        <option value="$PROJECT_DIR$/GENFIRE.py" />
         <option value="$PROJECT_DIR$/GENFIRE_GUI_Launch.py" />
         <option value="$PROJECT_DIR$/GENFIRE_main.py" />
+        <option value="$PROJECT_DIR$/GENFIRE.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="193" />
+    <option name="x" value="77" />
     <option name="y" value="41" />
-    <option name="width" value="1134" />
+    <option name="width" value="1250" />
     <option name="height" value="812" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -159,7 +159,7 @@
       </console-settings>
     </option>
   </component>
-  <component name="RunManager" selected="Python.GENFIRE_GUI_Launch">
+  <component name="RunManager" selected="Python.GENFIRE_main">
     <configuration default="false" name="GENFIRE_GUI_Launch" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -173,23 +173,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="GENFIRE" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GENFIRE_GUI_Launch.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
-    <configuration default="false" name="reconstruction_script_demo_combine_images_scale" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PhaseRetrieval" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="GENFIRE" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PhaseRetrieval/reconstruction_script_demo_combine_images_scale.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -224,6 +207,40 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="GENFIRE" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PhaseRetrieval/PhaseRetrieval_GUI.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="GENFIRE" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="GENFIRE" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GENFIRE.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="GENFIRE_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="GENFIRE" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GENFIRE_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -350,18 +367,20 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.GENFIRE_GUI_Launch" />
-      <item index="1" class="java.lang.String" itemvalue="Python.reconstruction_script_demo_combine_images_scale" />
-      <item index="2" class="java.lang.String" itemvalue="Python.reconstruction_script" />
-      <item index="3" class="java.lang.String" itemvalue="Python.PhaseRetrieval_GUI" />
+      <item index="1" class="java.lang.String" itemvalue="Python.reconstruction_script" />
+      <item index="2" class="java.lang.String" itemvalue="Python.PhaseRetrieval_GUI" />
+      <item index="3" class="java.lang.String" itemvalue="Python.GENFIRE" />
+      <item index="4" class="java.lang.String" itemvalue="Python.GENFIRE_main" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python.GENFIRE_GUI_Launch" />
-        <item index="1" class="java.lang.String" itemvalue="Python.PhaseRetrieval_GUI" />
-        <item index="2" class="java.lang.String" itemvalue="Python.reconstruction_script" />
-        <item index="3" class="java.lang.String" itemvalue="Python.reconstruction_script_demo_combine_images_scale" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.GENFIRE_main" />
+        <item index="1" class="java.lang.String" itemvalue="Python.GENFIRE" />
+        <item index="2" class="java.lang.String" itemvalue="Python.GENFIRE_GUI_Launch" />
+        <item index="3" class="java.lang.String" itemvalue="Python.PhaseRetrieval_GUI" />
+        <item index="4" class="java.lang.String" itemvalue="Python.reconstruction_script" />
       </list>
     </recent_temporary>
   </component>
@@ -379,19 +398,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="193" y="41" width="1134" height="812" extended-state="0" />
+    <frame x="77" y="41" width="1250" height="812" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22751322" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2064" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5154778" sideWeight="0.49647266" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33916554" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5154778" sideWeight="0.50352734" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33916554" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39973083" sideWeight="0.69886947" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39973083" sideWeight="0.6944" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -420,8 +439,13 @@
           <line>77</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/GENFIRE_main.py</url>
+          <line>196</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="11" />
+      <option name="time" value="13" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -771,29 +795,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/GENFIRE_GUI_Launch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-162.59259">
+          <caret line="335" column="11" selection-start-line="335" selection-start-column="6" selection-end-line="335" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/GENFIRE_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31626505">
-          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+        <state vertical-scroll-proportion="-5.3703704">
+          <caret line="111" column="27" selection-start-line="111" selection-start-column="22" selection-end-line="111" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GENFIRE.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="733" column="0" selection-start-line="733" selection-start-column="0" selection-end-line="733" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.40137616">
+          <caret line="736" column="19" selection-start-line="736" selection-start-column="19" selection-end-line="736" selection-end-column="19" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GENFIRE_GUI_Launch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="22" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
