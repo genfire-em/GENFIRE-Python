@@ -732,3 +732,19 @@ if __name__ != "__main__":
             raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
 
 
+class ReconstructionParameters():
+    def __init__(self):
+        self._projectionFilename = ""
+        self._angleFilename = ""
+        self._supportFilename = ""
+        self._resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
+        self._numIterations = 50
+        self.displayFigure = GENFIRE.DisplayFigure()
+        self._supportedFiletypes = ['.tif', '.mrc', '.mat']
+        self._supportedAngleFiletypes = ['.txt', '.mat']
+        self._oversamplingRatio = 3
+        self._interpolationCutoffDistance = 0.7
+        self._isInitialObjectDefined = False
+        self._resultsFilename = os.path.join(os.getcwd(),'results.mrc')
+        self._useDefaultSupport = True
+        self.calculateRfree = False
