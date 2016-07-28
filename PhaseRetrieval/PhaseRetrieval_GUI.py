@@ -137,13 +137,13 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
 
     def setBGscale(self, value):
         self.parameters._bgScale = value
-        self.subtractBG()
-        # self.applyBGandThreshold()
+        # self.subtractBG()
+        self.applyBGandThreshold()
 
     def setSatThresh(self, value):
         self.parameters._satThresh = value
-        self.thresholdSaturated()
-        # self.applyBGandThreshold()
+        # self.thresholdSaturated()
+        self.applyBGandThreshold()
 
     def selectDiffPatFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Diffraction Pattern",filter="MATLAB files (*.mat);;TIFF images (*.tif* *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -191,16 +191,16 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
             #     self.parameters._BGImage * self.parameters._bgScale / 100 #subtract background (divide by 100 because it is a percentage)
             # self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data < 0 ] = 0
             self.updateDisplay()
-    #
-    # def applyBGandThreshold(self):
-    #     if self.parameters._DiffractionPattern is not None and self.parameters._BGImage is not None:
-    #         self.parameters._DiffractionPattern.data = np.copy(self.parameters._originalDiffractionPattern)
-    #         self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data > \
-    #             self.parameters._satThresh] = -1
-    #         self.parameters._DiffractionPattern.data = self.parameters._DiffractionPattern.data - \
-    #                                                    (self.parameters._BGImage * self.parameters._bgScale / 100) #subtract background (divide by 100 because it is a percentage)
-    #         self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data < 0 ] = 0
-    #         self.updateDisplay()
+
+    def applyBGandThreshold(self):
+        if self.parameters._DiffractionPattern is not None and self.parameters._BGImage is not None:
+            self.parameters._DiffractionPattern.data = np.copy(self.parameters._originalDiffractionPattern)
+            self.parameters._DiffractionPattern.data = self.parameters._DiffractionPattern.data - \
+                                                       (self.parameters._BGImage * self.parameters._bgScale / 100) #subtract background (divide by 100 because it is a percentage)
+            self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data < 0 ] = -1
+            self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data > \
+                self.parameters._satThresh] = -1
+            self.updateDisplay()
 
 def loadImage(filename):
         """
