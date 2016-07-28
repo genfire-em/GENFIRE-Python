@@ -10,6 +10,8 @@ import GENFIRE as GENFIRE
 # import misc
 import sys
 import os
+from GENFIRE import ReconstructionParameters
+
 
 def GENFIRE_main_InteractivelySetParameters():
     #######################################################################################################################
@@ -23,7 +25,7 @@ def GENFIRE_main_InteractivelySetParameters():
     filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
     filename_angles = './data/angles.mat'  #angles can be either a 1xN_projections array containing a single tilt series, or 3xN_projections array containing 3 Euler angles for each projections in the form [phi;theta;psi]
     filename_support = './data/support60.mat'  #NxNxN binary array specifying a region of 1's in which the reconstruction can exist
-    # filename_initialObject = ''  #initial object to use in reconstruction; comment this line out if you have no initial guess and want to start with all zeros
+    filename_initialObject = None  #initial object to use in reconstruction; set to None to provide no initial guess
     filename_results = 'GENFIRE_rec.mrc'  #filename to save results
     resolutionExtensionSuppressionState = 2 # 1) Turn on resolution extension/suppression, 2) No resolution extension/suppression, 3) Just resolution extension
 
@@ -35,54 +37,50 @@ def GENFIRE_main_InteractivelySetParameters():
     displayFigure.DisplayFigureON = doYouWantToDisplayFigure
     calculateRFree = True
 
-    try: #launch reconstruction with or without an initial object, as appropriate
-        GENFIRE_main(filename_projections,
-                     filename_angles,
-                     filename_support,
-                     filename_results,
-                     numIterations,
-                     oversamplingRatio,
-                     interpolationCutoffDistance,
-                     resolutionExtensionSuppressionState,
-                     displayFigure,
-                     calculateRFree,
-                     filename_initialObject,)
-    except NameError:
-        GENFIRE_main(filename_projections,
-                     filename_angles,
-                     filename_support,
-                     filename_results,
-                     numIterations,
-                     oversamplingRatio,
-                     interpolationCutoffDistance,
-                     resolutionExtensionSuppressionState,
-                     displayFigure,
-                     calculateRFree)
-    #######################################################################################################################
 
-def GENFIRE_main(filename_projections,
-                 filename_angles,
-                 filename_support,
-                 filename_results,
-                 numIterations,
-                 oversamplingRatio,
-                 interpolationCutoffDistance,
-                 resolutionExtensionSuppressionState,
-                 displayFigure,
-                 calculateRFree,
-                 filename_initialObject=None):
+    reconstruction_parameters                                      = ReconstructionParameters()
+    reconstruction_parameters.projectionFilename                  = filename_projections
+    reconstruction_parameters.angleFilename                       = filename_angles
+    reconstruction_parameters.supportFilename                     = filename_support
+    reconstruction_parameters.interpolationCutoffDistance         = interpolationCutoffDistance
+    reconstruction_parameters.numIterations                       = numIterations
+    reconstruction_parameters.oversamplingRatio                   = oversamplingRatio
+    reconstruction_parameters.displayFigure                        = displayFigure
+    reconstruction_parameters.calculateRfree                       = calculateRFree
+    reconstruction_parameters.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState
+    if os.path.isfile(filename_results): # If a valid initial object was provided, use it
+        reconstruction_parameters._initialObjectFilename           = filename_results
 
-    print "filename_projections = ", (filename_projections)
-    print "filename_angles = ", (filename_angles)
-    print "filename_support = ", (filename_support)
-    print "filename_results = ", (filename_results)
-    print "numIterations = ", (numIterations)
-    print "oversamplingRatio = ", (oversamplingRatio)
-    print "numIterations = ", (numIterations)
-    print "interpolationCutoffDistance = ", (interpolationCutoffDistance)
-    print "displayFigure = ", (displayFigure)
-    print "filename_initialObject = ", (filename_initialObject)
-    print "resolutionExtensionSuppressionState:", resolutionExtensionSuppressionState
+    GENFIRE_main(reconstruction_parameters)
+
+def GENFIRE_main(reconstruction_parameters):
+
+    filename_projections = reconstruction_parameters.projectionFilename
+    filename_angles = reconstruction_parameters.angleFilename
+    filename_support = reconstruction_parameters.supportFilename
+    filename_results = reconstruction_parameters.resultsFilename
+    numIterations = reconstruction_parameters.numIterations
+    oversamplingRatio = reconstruction_parameters.oversamplingRatio
+    interpolationCutoffDistance = reconstruction_parameters.interpolationCutoffDistance
+    displayFigure = reconstruction_parameters.displayFigure
+    resolutionExtensionSuppressionState = reconstruction_parameters.resolutionExtensionSuppressionState
+    calculateRFree = reconstruction_parameters.calculateRfree
+    if reconstruction_parameters.isInitialObjectDefined:
+            filename_initialObject = reconstruction_parameters.initialObjectFilename
+    else:
+        filename_initialObject = None
+
+    # print "filename_projections = ", (filename_projections)
+    # print "filename_angles = ", (filename_angles)
+    # print "filename_support = ", (filename_support)
+    # print "filename_results = ", (filename_results)
+    # print "numIterations = ", (numIterations)
+    # print "oversamplingRatio = ", (oversamplingRatio)
+    # print "numIterations = ", (numIterations)
+    # print "interpolationCutoffDistance = ", (interpolationCutoffDistance)
+    # print "displayFigure = ", (displayFigure)
+    # print "filename_initialObject = ", (filename_initialObject)
+    # print "resolutionExtensionSuppressionState:", resolutionExtensionSuppressionState
 
     ### begin reconstruction ###
     projections = GENFIRE.loadProjections(filename_projections) # load projections into a 3D numpy array
@@ -199,7 +197,6 @@ def GENFIRE_main(filename_projections,
 if __name__ == "__main__" and len(sys.argv) == 1:
     print ("starting with user parameters")
     GENFIRE_main_InteractivelySetParameters()
-    # GENFIRE_main()
 elif __name__ == "__main__":
     if len(sys.argv) > 1: # Parse inputs provided either from the GUI or from the command line
         inputArgumentOptions = {"-p" :  "filename_projections",

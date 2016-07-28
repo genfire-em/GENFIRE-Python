@@ -18,19 +18,22 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.setupUi(self)
         self.resize(1200,600)
 
-        self.CurrentReconstructionParameters = ReconstructionParameters()
+        self.parameters = ReconstructionParameters()
 
-        self.ui.lineEdit_diffpatFile.textEdited.connect(self.CurrentReconstructionParameters.setDiffPatFile)
-        self.ui.lineEdit_BGfilename.textEdited.connect(self.CurrentReconstructionParameters.setBGFile)
+        self.ui.lineEdit_diffpatFile.textEdited.connect(self.parameters.setDiffPatFile)
+        self.ui.lineEdit_BGfilename.textEdited.connect(self.parameters.setBGFile)
         self.ui.lineEdit_diffpatFile.textChanged.connect(self.loadDiffractionPattern)
         self.ui.lineEdit_contrastHigh.textChanged.connect(self.setHighContrast_Qstring)
         self.ui.lineEdit_contrastLow.textChanged.connect(self.setLowContrast_Qstring)
+        self.ui.lineEdit_BGscale.textChanged.connect(self.setBGscale_Qstring)
+        self.ui.lineEdit_satThresh.textChanged.connect(self.setSatThresh_Qstring)
 
         # self.ui.slder_contrastHigh.valueChanged.connect(self.setHighContrast_slider)
         # self.ui.slder_contrastLow.valueChanged.connect(self.setLowContrast_slider)
         self.ui.slder_contrastHigh.valueChanged.connect(self.setLineEditText_contrastHigh_fromSlider)
         self.ui.slder_contrastLow.valueChanged.connect(self.setLineEditText_contrastLow_fromSlider)
-
+        self.ui.slder_BGscale.valueChanged.connect(self.setLineEditText_BGscale_fromSlider)
+        self.ui.slder_satThresh.valueChanged.connect(self.setLineEditText_satThresh_fromSlider)
 
         self.setupSliders()
 
@@ -53,70 +56,76 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self._saturated_threshold = 1e30 #default to large
 
     def setLineEditText_contrastHigh_fromSlider(self, value):
-        print ("setting line edit value to " ,str(value / SLIDER_SCALE) )
         self.ui.lineEdit_contrastHigh.setText(str(value / SLIDER_SCALE))
 
     def setLineEditText_contrastLow_fromSlider(self, value):
         self.ui.lineEdit_contrastLow.setText(str(value / SLIDER_SCALE))
 
+    def setLineEditText_satThresh_fromSlider(self, value):
+        self.ui.lineEdit_satThresh.setText(str(value))
+
+    def setLineEditText_BGscale_fromSlider(self, value):
+        self.ui.lineEdit_BGscale.setText(str(value))
+
+
     def setupSliders(self):
+        if self.parameters._DiffractionPattern is None:
+            minVal = minVal_log = 0
+            maxVal = maxVal_log = 1
 
-        print "setting up sliders"
-        if self.CurrentReconstructionParameters._DiffractionPattern is None:
-            minVal = 0
-            maxVal = 1
         else:
-            # minVal = np.amin(self.CurrentReconstructionParameters._DiffractionPattern.data)
-            # maxVal = np.amax(self.CurrentReconstructionParameters._DiffractionPattern.data)
-            minVal = np.max((0,np.amin(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))))
-            maxVal = np.min((self._saturated_threshold,np.amax(np.log(np.abs(self.CurrentReconstructionParameters._DiffractionPattern.data)))))
-        print ("minval = ", minVal)
-        print ("maxVal = ", maxVal)
-        self.ui.slder_contrastHigh.setValue(minVal * SLIDER_SCALE)
-        self.ui.slder_contrastHigh.setMinimum(minVal * SLIDER_SCALE)
-        self.ui.slder_contrastHigh.setMaximum(maxVal * SLIDER_SCALE)
+            # minVal = np.max((0,np.amin(np.log(np.abs(self.parameters._DiffractionPattern.data)))))
+            # maxVal = np.min((self._saturated_threshold,np.amax(np.log(np.abs(self.parameters._DiffractionPattern.data)))))
+            minVal = np.max((0,np.amin(np.abs(self.parameters._DiffractionPattern.data))))
+            maxVal = np.min((self._saturated_threshold,np.amax(np.abs(self.parameters._DiffractionPattern.data))))
+            minVal_log = np.log(minVal)
+            maxVal_log = np.log(maxVal)
+        self.ui.slder_contrastHigh.setValue(maxVal_log * SLIDER_SCALE)
+        self.ui.slder_contrastHigh.setMinimum(minVal_log * SLIDER_SCALE)
+        self.ui.slder_contrastHigh.setMaximum(maxVal_log * SLIDER_SCALE)
 
-        self.ui.slder_contrastLow.setValue(minVal * SLIDER_SCALE)
-        self.ui.slder_contrastLow.setMinimum(minVal * SLIDER_SCALE)
-        self.ui.slder_contrastLow.setMaximum(maxVal * SLIDER_SCALE)
+        self.ui.slder_contrastLow.setValue(minVal_log * SLIDER_SCALE)
+        self.ui.slder_contrastLow.setMinimum(minVal_log * SLIDER_SCALE)
+        self.ui.slder_contrastLow.setMaximum(maxVal_log * SLIDER_SCALE)
+
+        self.ui.slder_satThresh.setValue(minVal)
+        self.ui.slder_satThresh.setMinimum(minVal)
+        self.ui.slder_satThresh.setMaximum(maxVal)
+
+        self.ui.slder_BGscale.setValue(100)
+        self.ui.slder_BGscale.setMinimum(0)
+        self.ui.slder_BGscale.setMaximum(1000)
 
     def updateDisplay(self,image=None): ##need to fix
-
-        display_copy = np.copy(self.CurrentReconstructionParameters._DiffractionPattern.data)
-        display_copy[display_copy < 0]=0
-        print ("contrast = " , (self._lowContrastSetting, self._highContrastSetting))
-        self.handle.imshow(np.log(display_copy),clim=[self._lowContrastSetting, self._highContrastSetting])
-        # handle.imshow(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
-        # myFig.imshow(np.log(np.abs(np.load('diffraction_pattern.npy'))))
+        self.handle.imshow(np.log(self.parameters._DiffractionPattern.data),clim=[self._lowContrastSetting, self._highContrastSetting])
         self.canvas.draw()
 
     def setHighContrast(self, value):
-        print "adjusting high contrast"
         try:
-            print "trying either {0} or {1}".format(value,self._lowContrastSetting)
             self._highContrastSetting = max(value, self._lowContrastSetting)
-            print("self._highContrastSetting = " , self._highContrastSetting)
             self.updateDisplay()
         except AttributeError:
-            print "caught"
             pass
 
     def setLowContrast(self, value):
-        print "adjusting low contrast"
         try:
             self._lowContrastSetting = min(value, self._highContrastSetting)
-            print("self._lowContrastSetting = ",self._lowContrastSetting)
             self.updateDisplay()
         except AttributeError:
             pass
 
     def setHighContrast_Qstring(self, value):
-        print ("setting high contrast to " , value)
         self.setHighContrast(value.toFloat()[0])
 
     def setLowContrast_Qstring(self, value):
         print
         self.setLowContrast(value.toFloat()[0])
+
+    def setBGscale_Qstring(self, value):
+        self.setBGscale(value.toFloat()[0])
+
+    def setSatThresh_Qstring(self, value):
+        self.setSatThresh(value.toFloat()[0])
 
     def setHighContrast_slider(self, value):
         self.setHighContrast(value / SLIDER_SCALE)
@@ -126,34 +135,72 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.setLowContrast(value / SLIDER_SCALE)
         print ("setLowContrast_slider value = " , value / SLIDER_SCALE)
 
+    def setBGscale(self, value):
+        self.parameters._bgScale = value
+        # self.subtractBG()
+        self.applyBGandThreshold()
+
+    def setSatThresh(self, value):
+        self.parameters._satThresh = value
+        # self.thresholdSaturated()
+        self.applyBGandThreshold()
 
     def selectDiffPatFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Diffraction Pattern",filter="MATLAB files (*.mat);;TIFF images (*.tif* *.tiff);;MRC (*.mrc);;All Files (*)")
         if filename:
-            self.CurrentReconstructionParameters.setDiffPatFile(filename)
-            print ("Diffraction Pattern Filename:", self.CurrentReconstructionParameters._diffpatFile)
+            self.parameters.setDiffPatFile(filename)
+            print ("Diffraction Pattern Filename:", self.parameters._diffpatFile)
             self.ui.lineEdit_diffpatFile.setText(QtCore.QString(filename))
-            self.loadDiffractionPattern(self.CurrentReconstructionParameters._diffpatFile)
+            self.loadDiffractionPattern(self.parameters._diffpatFile)
 
     def selectBGFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Background Pattern",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
         if filename:
-            self.CurrentReconstructionParameters.setBGFile(filename)
-            print ("BG Filename:", self.CurrentReconstructionParameters._bgFile)
+            self.parameters.setBGFile(filename)
+            print ("BG Filename:", self.parameters._bgFile)
             self.ui.lineEdit_BGfilename.setText(QtCore.QString(filename))
 
     def loadDiffractionPattern(self, str=None):
-        self.CurrentReconstructionParameters._DiffractionPattern = DiffractionPattern(np.abs(loadImage(self.CurrentReconstructionParameters._diffpatFile)))
-        self._lowContrastSetting = np.min(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
-        self._highContrastSetting = np.max(np.log(self.CurrentReconstructionParameters._DiffractionPattern.data))
-        self.updateDisplay(self.CurrentReconstructionParameters._DiffractionPattern)
-        self._originalDiffractionPattern = np.copy(self.CurrentReconstructionParameters._DiffractionPattern.data)
-        if self.CurrentReconstructionParameters._BGImage is None: #use array of ones if no BG has been provided
-            self.CurrentReconstructionParameters._BGImage = np.ones_like(self.CurrentReconstructionParameters._DiffractionPattern.data)
+        self.parameters._DiffractionPattern = DiffractionPattern(np.abs(loadImage(self.parameters._diffpatFile)))
+        self._lowContrastSetting = np.min(np.log(self.parameters._DiffractionPattern.data))
+        self._highContrastSetting = np.max(np.log(self.parameters._DiffractionPattern.data))
+        self.updateDisplay(self.parameters._DiffractionPattern)
+        self.parameters._originalDiffractionPattern = np.copy(self.parameters._DiffractionPattern.data)
+        if self.parameters._BGImage is None: #use array of ones if no BG has been provided
+            self.parameters._BGImage = np.ones_like(self.parameters._DiffractionPattern.data) * np.mean(self.parameters._DiffractionPattern.data)
         self.setupSliders()
 
     def loadBGImage(self):
-        self.CurrentReconstructionParameters._BGImage = loadImage(self.CurrentReconstructionParameters._bgFile)
+        self.parameters._BGImage = loadImage(self.parameters._bgFile)
+    
+    def subtractBG(self):
+        print ("BG level {}".format(self.parameters._bgScale))
+        if self.parameters._BGImage is not None:
+            print "TEST"
+            self.parameters._DiffractionPattern.data = self.parameters._originalDiffractionPattern - \
+                self.parameters._BGImage * self.parameters._bgScale / 100 #subtract background (divide by 100 because it is a percentage)
+            self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data < 0 ] = 0
+            self.updateDisplay()
+
+    def thresholdSaturated(self):
+        if self.parameters._DiffractionPattern is not None:
+            self.parameters._DiffractionPattern.data = np.copy(self.parameters._originalDiffractionPattern)
+            self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data > \
+                self.parameters._satThresh] = -1
+            # self.parameters._DiffractionPattern.data  -= \
+            #     self.parameters._BGImage * self.parameters._bgScale / 100 #subtract background (divide by 100 because it is a percentage)
+            # self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data < 0 ] = 0
+            self.updateDisplay()
+
+    def applyBGandThreshold(self):
+        if self.parameters._DiffractionPattern is not None and self.parameters._BGImage is not None:
+            self.parameters._DiffractionPattern.data = np.copy(self.parameters._originalDiffractionPattern)
+            self.parameters._DiffractionPattern.data = self.parameters._DiffractionPattern.data - \
+                                                       (self.parameters._BGImage * self.parameters._bgScale / 100) #subtract background (divide by 100 because it is a percentage)
+            self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data < 0 ] = -1
+            self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data > \
+                self.parameters._satThresh] = -1
+            self.updateDisplay()
 
 def loadImage(filename):
         """
@@ -191,7 +238,8 @@ class ReconstructionParameters(object):
 
         self._bgFile = ""
         self._BGImage = None
-        self._bgScale = ""
+        self._bgScale = 0
+        self._satThresh = 1e30
 
     def setDiffPatFile(self, filename):
         if filename:

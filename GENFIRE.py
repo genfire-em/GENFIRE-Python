@@ -732,3 +732,124 @@ if __name__ != "__main__":
             raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
 
 
+class ReconstructionParameters():
+    _supportedFiletypes = ['.tif', '.mrc', '.mat']
+    _supportedAngleFiletypes = ['.txt', '.mat']
+    def __init__(self):
+        self.projectionFilename = ""
+        self.angleFilename = ""
+        self.supportFilename = ""
+        self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
+        self.numIterations = 50
+        self.displayFigure = DisplayFigure()
+        self.oversamplingRatio = 3
+        self.interpolationCutoffDistance = 0.7
+        self.isInitialObjectDefined = False
+        self.resultsFilename = os.path.join(os.getcwd(), 'results.mrc')
+        self.useDefaultSupport = True
+        self.calculateRfree = False
+
+    def checkParameters(self): #verify file extensions are supported
+        parametersAreGood = 1
+
+        projection_extension = os.path.splitext(self.projectionFilename)
+        if projection_extension[1] not in ReconstructionParameters._supportedFiletypes:
+            parametersAreGood = 0
+
+        angle_extension = os.path.splitext(self.angleFilename)
+        if angle_extension[1] not in ReconstructionParameters._supportedAngleFiletypes:
+            parametersAreGood = 0
+
+        if self.supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
+            support_extension = os.path.splitext(self.supportFilename)
+            if support_extension[1] not in ReconstructionParameters._supportedFiletypes:
+                parametersAreGood = 0
+
+        if not self.getResultsFilename():
+            parametersAreGood = 0
+        return parametersAreGood
+
+    # Define setters/getters
+    def setProjectionFilename(self, projectionFilename):
+        if projectionFilename:
+            self.projectionFilename = os.path.join(os.getcwd(), unicode(projectionFilename.toUtf8(), encoding='UTF-8'))
+
+    def getProjectionFilename(self):
+        return self.projectionFilename
+
+    def setAngleFilename(self, angleFilename):
+        if angleFilename:
+            self.angleFilename = os.path.join(os.getcwd(), unicode(angleFilename.toUtf8(), encoding='UTF-8'))
+
+    def getAngleFilename(self):
+        return self.angleFilename
+
+    def setSupportFilename(self, supportFilename):
+        if supportFilename:
+            self.supportFilename = os.path.join(os.getcwd(), unicode(supportFilename.toUtf8(), encoding='UTF-8'))
+
+    def getSupportFilename(self):
+        return self.supportFilename
+
+    def setResultsFilename(self, resultsFilename):
+        if resultsFilename:
+            self.resultsFilename = os.path.join(os.getcwd(), unicode(resultsFilename.toUtf8(), encoding='UTF-8'))
+
+    def getResultsFilename(self):
+        return self.resultsFilename
+
+
+    def setInitialObjectFilename(self, initialObjectFilename):
+        self._initialObjectFilename = os.path.join(os.getcwd(),unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
+        self.isInitialObjectDefined = True
+
+    def getInitialObjectFilename(self):
+        if self.CheckIfInitialObjectIsDefined():
+            return self._initialObjectFilename
+        else:
+            pass
+
+    def CheckIfInitialObjectIsDefined(self):
+        return self.isInitialObjectDefined
+
+    def setResolutionExtensionSuppressionState(self, state):
+        self.resolutionExtensionSuppressionState = state
+
+    def getResolutionExtensionSuppressionState(self):
+        return self.resolutionExtensionSuppressionState
+
+    def setNumberOfIterations(self,numIterations):
+        numIterations = numIterations.toInt()
+        if numIterations[1]:
+            numIterations = numIterations[0]
+            if numIterations > 0:
+                self.numIterations = numIterations
+
+    def getNumberOfIterations(self):
+        return self.numIterations
+
+    def toggleDisplayFigure(self): # whether or not to display figure during reconstruction
+        if self.displayFigure.DisplayFigureON:
+            self.displayFigure.DisplayFigureON = False
+        else:
+            self.displayFigure.DisplayFigureON = True
+
+        if self.displayFigure.DisplayErrorFigureON:
+            self.displayFigure.DisplayErrorFigureON = False
+        else:
+            self.displayFigure.DisplayErrorFigureON = True
+
+    def getDisplayFigure(self):
+        return self.displayFigure
+
+    def setOversamplingRatio(self, oversamplingRatio):
+        self.oversamplingRatio = oversamplingRatio.toInt()[0]
+
+    def getOversamplingRatio(self):
+        return self.oversamplingRatio
+
+    def setInterpolationCutoffDistance(self, interpolationCutoffDistance):
+        self.interpolationCutoffDistance = interpolationCutoffDistance.toFloat()[0]
+
+    def getInterpolationCutoffDistance(self):
+        return self.interpolationCutoffDistance

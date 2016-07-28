@@ -293,7 +293,8 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         if os.path.isfile(unicode(filename.toUtf8(),encoding='UTF-8')):
             # print "it is a file"
             self.setModelFilename(filename)
-            self.GENFIRE_load(filename)
+            # self.GENFIRE_load(filename)
+            self.GENFIRE_load(unicode(filename.toUtf8(),encoding='UTF-8'))
             # self.modelLoadedFlag = False
             # self.model = self.loadModel(filename)
             # self.calculationParameters.modelFilename = filename

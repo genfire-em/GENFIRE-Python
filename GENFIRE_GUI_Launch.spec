@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['GENFIRE_GUI_Launch.py'],
-             pathex=['/Users/ajpryor/Documents/GENFIRE/temp/GENFIRE'],
+             pathex=['/Users/ajpryor/Documents/GENFIRE/GENFIRE'],
              binaries=None,
              datas=None,
              hiddenimports=[],

@@ -1,3 +1,4 @@
 ./data
 *.tif
 *.tiff
+*.xml
