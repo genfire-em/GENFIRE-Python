@@ -6,6 +6,9 @@ import GENFIRE_main
 import os
 import sys
 from GENFIRE import ReconstructionParameters
+import matplotlib
+matplotlib.use("Qt4Agg")
+
 class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     def __init__(self):
 

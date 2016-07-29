@@ -21,4 +21,5 @@ HEADERS  += mainwindow.h \
 FORMS    += \
     mainwindow.ui \
     phaseretrieval.ui \
-    projectioncalculator.ui
+    projectioncalculator.ui \
+    correctcenter.ui

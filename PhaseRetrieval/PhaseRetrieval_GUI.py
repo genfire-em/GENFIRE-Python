@@ -1,5 +1,7 @@
 from __future__ import division
 from PyQt4 import QtCore, QtGui
+import matplotlib
+matplotlib.use("Qt4Agg")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
@@ -9,12 +11,14 @@ import numpy as np
 import os
 import sys
 import GENFIRE_io
+import correctCenter_GUI_ui
+from functools import partial
 
 SLIDER_SCALE = 100
 class PhaseRetrieval_GUI(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(QtGui.QMainWindow,self).__init__()
-        self.ui = PhaseRetrieval_GUI_ui.Ui_ProjectionCalculator()
+        self.ui = PhaseRetrieval_GUI_ui.Ui_PhaseRetrieval()
         self.ui.setupUi(self)
         self.resize(1200,600)
 
@@ -35,13 +39,17 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
         self.ui.slder_BGscale.valueChanged.connect(self.setLineEditText_BGscale_fromSlider)
         self.ui.slder_satThresh.valueChanged.connect(self.setLineEditText_satThresh_fromSlider)
 
+
+        self.ui.btn_refineCenter.clicked.connect(self.correctCenter)
+        self.ui.btn_refineCenter.setEnabled(False)
+
         self.setupSliders()
 
         self.ui.btn_selectDiffpat.clicked.connect(self.selectDiffPatFile)
         self.ui.btn_BGfilename.clicked.connect(self.selectBGFile)
 
 
-        self.figure = plt.figure(1)
+        self.figure = plt.figure()
         plt.imshow(np.random.rand(50,50))
         self.handle = self.figure.add_subplot(111)
         self.handle.hold(False)
@@ -152,6 +160,7 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
             print ("Diffraction Pattern Filename:", self.parameters._diffpatFile)
             self.ui.lineEdit_diffpatFile.setText(QtCore.QString(filename))
             self.loadDiffractionPattern(self.parameters._diffpatFile)
+            self.ui.btn_refineCenter.setEnabled(True)
 
     def selectBGFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Background Pattern",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -201,6 +210,34 @@ class PhaseRetrieval_GUI(QtGui.QMainWindow):
             self.parameters._DiffractionPattern.data[self.parameters._DiffractionPattern.data > \
                 self.parameters._satThresh] = -1
             self.updateDisplay()
+
+    def correctCenter(self):
+        popup = correctCenter_popup(self)
+        # self.parameters._DiffractionPattern.correctCenter()
+
+class correctCenter_popup(QtGui.QDialog):
+    def __init__(self, parent=None):
+        super(QtGui.QDialog, self).__init__()
+        self.ui = correctCenter_GUI_ui.Ui_CorrectCenter()
+        self.ui.setupUi(self)
+        self.ui.lineEdit_searchBoxSize.setText(QtCore.QString('5'))
+        self.parent = parent
+        self.ui.btn_cancel.clicked.connect(partial(self.done,0))
+        self.ui.btn_go.clicked.connect(partial(self.done,1))
+        self.show()
+        if self.exec_():
+            search_box_half_size = self.ui.lineEdit_searchBoxSize.text().toInt()[0]
+            # plt.figure()
+            # plt.imshow(self.parent.parameters._DiffractionPattern.data)
+            # plt.draw()
+            # plt.pause(.01)
+            center_guess_x = (np.shape(self.parent.parameters._DiffractionPattern.data))[0]//2
+            center_guess_y = (np.shape(self.parent.parameters._DiffractionPattern.data))[1]//2
+            print("x,y = {},{}".format(center_guess_x,center_guess_y))
+            center_guess_x, center_guess_y = int(center_guess_x), int(center_guess_y)
+            self.parent.parameters._DiffractionPattern.correctCenter(search_box_half_size, center_guess_x, center_guess_y)
+
+
 
 def loadImage(filename):
         """

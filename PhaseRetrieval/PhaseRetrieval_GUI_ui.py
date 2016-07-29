@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../phaseretrieval.ui'
+# Form implementation generated from reading ui file 'phaseretrieval.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -22,11 +22,11 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_ProjectionCalculator(object):
-    def setupUi(self, ProjectionCalculator):
-        ProjectionCalculator.setObjectName(_fromUtf8("ProjectionCalculator"))
-        ProjectionCalculator.resize(808, 515)
-        self.centralwidget = QtGui.QWidget(ProjectionCalculator)
+class Ui_PhaseRetrieval(object):
+    def setupUi(self, PhaseRetrieval):
+        PhaseRetrieval.setObjectName(_fromUtf8("PhaseRetrieval"))
+        PhaseRetrieval.resize(808, 515)
+        self.centralwidget = QtGui.QWidget(PhaseRetrieval)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.horizontalLayout_17 = QtGui.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_17.setObjectName(_fromUtf8("horizontalLayout_17"))
@@ -223,33 +223,31 @@ class Ui_ProjectionCalculator(object):
         self.verticalLayout_7.addLayout(self.verticalLayout_8)
         self.verticalLayout_11.addLayout(self.verticalLayout_7)
         self.horizontalLayout_17.addLayout(self.verticalLayout_11)
-        self.slder_contrastHigh.raise_()
-        self.lbl_BGfilename.raise_()
-        ProjectionCalculator.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(ProjectionCalculator)
+        PhaseRetrieval.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(PhaseRetrieval)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 808, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
-        ProjectionCalculator.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(ProjectionCalculator)
+        PhaseRetrieval.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(PhaseRetrieval)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        ProjectionCalculator.setStatusBar(self.statusbar)
+        PhaseRetrieval.setStatusBar(self.statusbar)
 
-        self.retranslateUi(ProjectionCalculator)
-        QtCore.QMetaObject.connectSlotsByName(ProjectionCalculator)
+        self.retranslateUi(PhaseRetrieval)
+        QtCore.QMetaObject.connectSlotsByName(PhaseRetrieval)
 
-    def retranslateUi(self, ProjectionCalculator):
-        ProjectionCalculator.setWindowTitle(_translate("ProjectionCalculator", "MainWindow", None))
-        self.lbl_BGlevel.setText(_translate("ProjectionCalculator", "BG Scale (%)", None))
-        self.lbl_satThresh.setText(_translate("ProjectionCalculator", "Saturation Threshold", None))
-        self.label.setText(_translate("ProjectionCalculator", "TextLabel", None))
-        self.label_2.setText(_translate("ProjectionCalculator", "TextLabel", None))
-        self.lbl_diffpat.setText(_translate("ProjectionCalculator", "Diffraction Pattern Filename", None))
-        self.btn_selectDiffpat.setText(_translate("ProjectionCalculator", "Browse", None))
-        self.lbl_BGfilename.setText(_translate("ProjectionCalculator", "BG Filename", None))
-        self.btn_BGfilename.setText(_translate("ProjectionCalculator", "Browse", None))
-        self.btn_refineCenter.setText(_translate("ProjectionCalculator", "Optimize Center", None))
-        self.checkBox_takeSqrt.setText(_translate("ProjectionCalculator", "Take Square Root", None))
-        self.label_3.setText(_translate("ProjectionCalculator", "TextLabel", None))
-        self.btn_savePattern.setText(_translate("ProjectionCalculator", "Save Pattern", None))
-        self.btn_go.setText(_translate("ProjectionCalculator", "Launch Reconstruction", None))
+    def retranslateUi(self, PhaseRetrieval):
+        PhaseRetrieval.setWindowTitle(_translate("PhaseRetrieval", "MainWindow", None))
+        self.lbl_BGlevel.setText(_translate("PhaseRetrieval", "BG Scale (%)", None))
+        self.lbl_satThresh.setText(_translate("PhaseRetrieval", "Saturation Threshold", None))
+        self.label.setText(_translate("PhaseRetrieval", "TextLabel", None))
+        self.label_2.setText(_translate("PhaseRetrieval", "TextLabel", None))
+        self.lbl_diffpat.setText(_translate("PhaseRetrieval", "Diffraction Pattern Filename", None))
+        self.btn_selectDiffpat.setText(_translate("PhaseRetrieval", "Browse", None))
+        self.lbl_BGfilename.setText(_translate("PhaseRetrieval", "BG Filename", None))
+        self.btn_BGfilename.setText(_translate("PhaseRetrieval", "Browse", None))
+        self.btn_refineCenter.setText(_translate("PhaseRetrieval", "Optimize Center", None))
+        self.checkBox_takeSqrt.setText(_translate("PhaseRetrieval", "Take Square Root", None))
+        self.label_3.setText(_translate("PhaseRetrieval", "TextLabel", None))
+        self.btn_savePattern.setText(_translate("PhaseRetrieval", "Save Pattern", None))
+        self.btn_go.setText(_translate("PhaseRetrieval", "Launch Reconstruction", None))
 

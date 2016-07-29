@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+matplotlib.use("Qt4Agg")
 class DiffractionPattern(object):
     "Base class for containing a diffraction pattern"
 
@@ -64,22 +66,27 @@ class DiffractionPattern(object):
             self.data[numberOfValues != 0] = self.data[numberOfValues != 0] / numberOfValues[numberOfValues != 0]
         self.data[self.data == 0] = -1 # reflag
 
-    def correctCenter(self,search_box_half_size = 10):
+    def correctCenter(self,search_box_half_size = 10, center_guess_x=None, center_guess_y=None):
         "This method optimizes the location of the diffraction pattern's center and shifts it accordingly \
          It does so by searching a range of centers determined by search_box_half_size. For each center, the \
          error between centrosymmetric partners is checked. The optimized center is the position which    \
          minimizes this error"
-        import matplotlib.pyplot as plt
 
-        h = plt.figure()
-        plt.imshow(self.data)
-        plt.title('Double-click the center')
-        # plot.show()
+        # plt.title('Double-click the center')
+
+        # plt.show()
+        # plt.draw()
+
         # plt.get_current_fig_manager().window.setGeometry(25,25,750, 750)
-        center_guess_y, center_guess_x = (plt.ginput(1)[0])
-        center_guess_x = int(center_guess_x)
-        center_guess_y = int(center_guess_y)
-        plt.close(h)
+
+        if center_guess_x is None or center_guess_y is None:
+            import matplotlib.pyplot as plt
+            h = plt.figure(999)
+            plt.imshow(self.data)
+            center_guess_y, center_guess_x = (plt.ginput(1)[0])
+            center_guess_x = int(center_guess_x)
+            center_guess_y = int(center_guess_y)
+            plt.close(h)
 
 
         dimX, dimY = np.shape(self.data)
@@ -160,6 +167,7 @@ class DiffractionPattern(object):
         self.data = np.roll(self.data, bestShiftX, axis=0)
         self.data = np.roll(self.data, bestShiftY, axis=1)
         self.data = self.data[ search_box_half_size : -search_box_half_size, search_box_half_size:-search_box_half_size ]
+        print ("center optimized")
 
     def makeArraySquare(self):
         """ Pad image to square array size that is the nearest even number greater than or equal to the current dimensions"""

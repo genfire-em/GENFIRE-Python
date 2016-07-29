@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProjectionCalculator</class>
- <widget class="QMainWindow" name="ProjectionCalculator">
+ <class>PhaseRetrieval</class>
+ <widget class="QMainWindow" name="PhaseRetrieval">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -337,17 +337,7 @@
      </layout>
     </item>
    </layout>
-   <zorder>verticalLayoutWidget</zorder>
    <zorder></zorder>
-   <zorder>slder_contrastHigh</zorder>
-   <zorder>horizontalLayoutWidget_6</zorder>
-   <zorder>verticalLayoutWidget_5</zorder>
-   <zorder>horizontalLayoutWidget_10</zorder>
-   <zorder>lbl_BGfilename</zorder>
-   <zorder>horizontalLayoutWidget_13</zorder>
-   <zorder>horizontalLayoutWidget_7</zorder>
-   <zorder>horizontalLayoutWidget_11</zorder>
-   <zorder>verticalLayoutWidget_10</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
