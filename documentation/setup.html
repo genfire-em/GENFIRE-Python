@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>../setup</title>
+  <meta name="description" content="GENFIRE Documentation">
+  <meta name="author" content="Alan (AJ) Pryor, Jr.">  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+<code><font color="green">from</font> setuptools <font color="green">import</font> find_packages,setup<br><font color="green">from</font> subprocess <font color="green">import</font> call<br>#call(["$pip install scipy"])<br><br>setup(<br>&nbsp&nbsp&nbsp&nbspname = "GENFIRE",<br>&nbsp&nbsp&nbsp&nbsppackages = find_packages(),<br>&nbsp&nbsp&nbsp&nbspversion = "0.0",<br>&nbsp&nbsp&nbsp&nbspdescription = "GENeralized Fourier Iterative REconstruction",<br>&nbsp&nbsp&nbsp&nbspauthor = "Alan Pryor, Jr. (AJ)",<br>    author_email = "apryor6@gmail.com",<br>    setup_requires=['numpy'],<br>    install_requires=['Pillow','numpy','matplotlib','scipy']<br>)<br>#call(["pip install scipy"])<br><br></code></body>
+    </html>

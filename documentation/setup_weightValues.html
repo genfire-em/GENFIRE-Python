@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>../setup_weightValues</title>
+  <meta name="description" content="GENFIRE Documentation">
+  <meta name="author" content="Alan (AJ) Pryor, Jr.">  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+<code><font color="green">from</font> distutils.core <font color="green">import</font> setup<br><font color="green">from</font> distutils.extension <font color="green">import</font> Extension<br><font color="green">from</font> Cython.Build <font color="green">import</font> cythonize<br><font color="green">import</font> numpy<br><br>extensions = [<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspExtension('weightValues',['weightValues.pyx'], include_dirs=[numpy.get_include()])]<br><br>setup(<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspext_modules=cythonize(extensions)<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp)<br><br></code></body>
+    </html>
