@@ -733,6 +733,10 @@ if __name__ != "__main__":
 
 
 class ReconstructionParameters():
+
+    """
+    Helper class for containing reconstruction parameters
+    """
     _supportedFiletypes = ['.tif', '.mrc', '.mat']
     _supportedAngleFiletypes = ['.txt', '.mat']
     def __init__(self):

@@ -1,5 +1,10 @@
 PhaseRetrieval/
+dist/
+build/
 *.tif
 *.tiff
 *.xml
 *.pyc
+*rec*.mrc
+*rec*.txt
+results*

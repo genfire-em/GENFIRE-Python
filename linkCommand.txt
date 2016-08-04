@@ -1,2 +1,0 @@
-ln -s /usr/local/Cellar/sip/{SIPVERSION}/lib/python3.X/site-packages/*.* ~/{VIRTUALENVHOME}/{VIRTUALENVNAME}/lib/python3.X/site-packages/
-    $ ln -s /usr/local/Cellar/pyqt/{PYQTVERSION}/lib/python3.X/site-packages/PyQt4/*.* ~/{VIRTUALENVHOME}/{VIRTUALENVNAME}/lib/python3.X/site-packages/PyQt4

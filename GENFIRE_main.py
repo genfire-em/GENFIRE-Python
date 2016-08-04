@@ -70,18 +70,6 @@ def GENFIRE_main(reconstruction_parameters):
     else:
         filename_initialObject = None
 
-    # print "filename_projections = ", (filename_projections)
-    # print "filename_angles = ", (filename_angles)
-    # print "filename_support = ", (filename_support)
-    # print "filename_results = ", (filename_results)
-    # print "numIterations = ", (numIterations)
-    # print "oversamplingRatio = ", (oversamplingRatio)
-    # print "numIterations = ", (numIterations)
-    # print "interpolationCutoffDistance = ", (interpolationCutoffDistance)
-    # print "displayFigure = ", (displayFigure)
-    # print "filename_initialObject = ", (filename_initialObject)
-    # print "resolutionExtensionSuppressionState:", resolutionExtensionSuppressionState
-
     ### begin reconstruction ###
     projections = GENFIRE.loadProjections(filename_projections) # load projections into a 3D numpy array
 
@@ -192,7 +180,6 @@ def GENFIRE_main(reconstruction_parameters):
 
     print ('GENFIRE: Reconstruction finished.')
     GENFIRE.saveResults(reconstructionOutputs, filename_results)
-    # io.savemat(filename_results,reconstructionOutputs)
 
 if __name__ == "__main__" and len(sys.argv) == 1:
     print ("starting with user parameters")
