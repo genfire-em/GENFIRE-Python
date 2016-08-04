@@ -1,5 +1,4 @@
-./data
-./PhaseRetrieval
+PhaseRetrieval/
 *.tif
 *.tiff
 *.xml
