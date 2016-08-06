@@ -12,14 +12,11 @@ TARGET = GENFIRE
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += mainwindow.cpp \
     phaseretrieval.cpp
 
 HEADERS  += mainwindow.h \
     phaseretrieval.h
 FORMS    += \
     mainwindow.ui \
-    phaseretrieval.ui \
-    projectioncalculator.ui \
-    correctcenter.ui
+    projectioncalculator.ui

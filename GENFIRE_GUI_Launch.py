@@ -51,7 +51,7 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
 
         self.ui.btn_reconstruct.clicked.connect(self.startReconstruction)
         self.ui.btn_reconstruct.clicked.connect(self.checkParameters)
-        self.ui.btn_reconstruct.setStyleSheet("background-color: red")
+        self.ui.btn_reconstruct.setStyleSheet("background-color: rgb(221,0,0)")
 
         ## Line Edits -- connect each to their main function and check if the reconstruction parameters are good each
         ## time a parameter is changed
