@@ -3,11 +3,8 @@ import numpy as np
 import scipy.io as io
 import matplotlib
 matplotlib.use("Qt4Agg")
-# import matplotlib.pyplot as plt
-# import time
 import GENFIRE as GENFIRE
 
-# import misc
 import sys
 import os
 from GENFIRE import ReconstructionParameters

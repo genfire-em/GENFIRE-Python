@@ -1,13 +1,13 @@
 from PyQt4 import QtCore, QtGui
+import matplotlib
+matplotlib.use("Qt4Agg")
 import GENFIRE_GUI
-import GENFIRE
 import ProjectionCalculator
 import GENFIRE_main
 import os
 import sys
 from GENFIRE import ReconstructionParameters
-import matplotlib
-matplotlib.use("Qt4Agg")
+
 
 class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     def __init__(self):
@@ -115,6 +115,18 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
 
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
+        # self.logger = GenfireLogger(notepad=self.ui.log) # create a threaded logger to redirect stdout to the GUI
+
+        # self.logger_thread = QtCore.QThread()
+        # self.logger.moveToThread(self.logger_thread)
+        # self.logger_thread.start()
+
+
+
+        # self.logger_thread = QtCore.QThread()
+        # self.logger.moveToThread(self.logger_thread)
+        # self.logger_thread.start()
+
     def calculateRfree(self):
         if self.ui.checkBox_rfree.isEnabled() == True:
             self.GENFIRE_ReconstructionParameters.calculateRfree = True
@@ -127,8 +139,9 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
         self.GENFIRE_ProjectionCalculator.show()
 
     def enableLog(self):
-        sys.stdout = GenfireLogger(self.ui.log, sys.stdout )
-        sys.stderr = GenfireLogger(self.ui.log, sys.stderr, QtGui.QColor(255,0,0))
+        pass
+        # sys.stdout = GenfireLogger(self.ui.log, sys.stdout )
+        # sys.stderr = GenfireLogger(self.ui.log, sys.stderr, QtGui.QColor(255,0,0))
 
     def toggleSelectIO(self):
         if self.ui.lineEdit_io.isEnabled():
@@ -209,23 +222,72 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     def startReconstruction(self):
         print('GENFIRE: Launching GENFIRE Reconstruction')
         GENFIRE_main.GENFIRE_main(self.GENFIRE_ReconstructionParameters)
+#
+    @QtCore.pyqtSlot(str)
+    def receive_msg(self, msg):
+        self.ui.log.append(msg)
+# class GenfireLogger:
+#     def __init__(self, textEdit, output=None, textColor=None):
+#         from Queue import Queue
+#         self.textEdit = textEdit
+#         self.output = None
+#         self.textColor = textColor
+#
+#     def write(self, message):
+#         if self.textColor:
+#             whichColor = self.textEdit.texttextColor()
+#             self.textEdit.setTexttextColor(self.textColor)
+#         self.textEdit.moveCursor(QtGui.QTextCursor.End)
+#         self.textEdit.insertPlainText(message)
+#         if self.textColor:
+#             self.textEdit.setTexttextColor(whichColor)
+#         if self.output:
+#             self.output.write(message)
 
-class GenfireLogger:
-    def __init__(self, textEdit, output=None, textColor=None):
-        self.textEdit = textEdit
-        self.output = None
-        self.textColor = textColor
+
+class GenfireListener(QtCore.QObject):
+    message_pending = QtCore.pyqtSignal(str)
+    def __init__(self, msg_queue):
+        super(GenfireListener, self).__init__()
+        self.msg_queue = msg_queue
+
+    def run(self):
+        while True:
+            # print("waiting for message")
+            msg = self.msg_queue.get() #get next message, blocks if nothing to get
+            self.message_pending.emit(msg)
+
+class GenfireWriter(object):
+    def __init__(self, msg_queue):
+        self.msg_queue = msg_queue
 
     def write(self, message):
-        if self.textColor:
-            whichColor = self.textEdit.texttextColor()
-            self.textEdit.setTexttextColor(self.textColor)
-        self.textEdit.moveCursor(QtGui.QTextCursor.End)
-        self.textEdit.insertPlainText(message)
-        if self.textColor:
-            self.textEdit.setTexttextColor(whichColor)
-        if self.output:
-            self.output.write(message)
+        self.msg_queue.put(message)
+
+class GenfireLogger(QtCore.QObject):
+    def __init__(self):
+        from Queue import Queue
+        import sys
+        from threading import Thread
+        super(GenfireLogger, self).__init__()
+        self.msg_queue = Queue()
+        self.listener  = GenfireListener(msg_queue=self.msg_queue)
+        self.writer    = GenfireWriter(msg_queue=self.msg_queue)
+        sys.stdout     = self.writer
+
+
+        self.listener_thread = QtCore.QThread()
+        self.listener.moveToThread(self.listener_thread)
+        self.listener_thread.started.connect(self.listener.run)
+        self.listener_thread.start()
+
+    def __del__(self):
+        sys.stdout = sys.__stdout__
+
+
+
+
+
 
 
 
@@ -245,9 +307,12 @@ if __name__ == "__main__":
 
     # Create the GUI
     GF_window = GenfireMainWindow()
+    GF_logger = GenfireLogger()
 
     # Render GUI
     GF_window.show()
+
+    GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
 
     # Safely close and exit
     sys.exit(app.exec_())
