@@ -218,9 +218,12 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def startReconstruction(self):
+        self.ui.log.insertPlainText("Launching reconstruction")
         print('GENFIRE: Launching GENFIRE Reconstruction')
-        GENFIRE_main.GENFIRE_main(self.GENFIRE_ReconstructionParameters)
-
+        from threading import Thread
+        # GENFIRE_main.GENFIRE_main(self.GENFIRE_ReconstructionParameters)
+        from functools import partial
+        Thread(target=partial(GENFIRE_main.GENFIRE_main,self.GENFIRE_ReconstructionParameters)).start()
 #
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
