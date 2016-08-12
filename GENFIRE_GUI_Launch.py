@@ -9,7 +9,7 @@ import sys
 from GENFIRE import ReconstructionParameters
 
 
-class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
+class GenfireMainWindow(QtGui.QMainWindow):
     def __init__(self):
 
         ## Superclass constructor
@@ -105,7 +105,6 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
         self.ui.checkBox_displayFigure.toggled.connect(self.GENFIRE_ReconstructionParameters.toggleDisplayFigure)
         self.ui.checkBox_displayFigure.toggled.connect(self.enableDisplayFrequencyChange)
 
-        self.ui.checkBox_log.toggled.connect(self.enableLog)
 
         self.ui.checkBox_rfree.toggled.connect(self.calculateRfree)
 
@@ -137,11 +136,6 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
         print "launching"
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
         self.GENFIRE_ProjectionCalculator.show()
-
-    def enableLog(self):
-        pass
-        # sys.stdout = GenfireLogger(self.ui.log, sys.stdout )
-        # sys.stderr = GenfireLogger(self.ui.log, sys.stderr, QtGui.QColor(255,0,0))
 
     def toggleSelectIO(self):
         if self.ui.lineEdit_io.isEnabled():
@@ -216,16 +210,23 @@ class GenfireMainWindow(QtGui.QMainWindow): #Subclasses QMainWindow
     def checkParameters(self):
         parametersAreGood = self.GENFIRE_ReconstructionParameters.checkParameters()
         if parametersAreGood: #update "go" button if we are ready
-            GF_window.ui.btn_reconstruct.setStyleSheet("background-color: GREEN")
+            GF_window.ui.btn_reconstruct.setStyleSheet("background-color: GREEN; color:#ffffff;font-size:30px")
+            # GF_window.ui.btn_reconstruct.setStyleSheet("color: WHITE")
             GF_window.ui.btn_reconstruct.setText("Launch Reconstruction!")
+
     #Function to run GENFIRE reconstruction once all parameters are accounted for
+
+    @QtCore.pyqtSlot()
     def startReconstruction(self):
         print('GENFIRE: Launching GENFIRE Reconstruction')
         GENFIRE_main.GENFIRE_main(self.GENFIRE_ReconstructionParameters)
+
 #
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
-        self.ui.log.append(msg)
+        self.ui.log.moveCursor(QtGui.QTextCursor.End)
+        self.ui.log.insertPlainText(msg)
+
 # class GenfireLogger:
 #     def __init__(self, textEdit, output=None, textColor=None):
 #         from Queue import Queue
@@ -251,9 +252,9 @@ class GenfireListener(QtCore.QObject):
         super(GenfireListener, self).__init__()
         self.msg_queue = msg_queue
 
+    @QtCore.pyqtSlot()
     def run(self):
         while True:
-            # print("waiting for message")
             msg = self.msg_queue.get() #get next message, blocks if nothing to get
             self.message_pending.emit(msg)
 
@@ -265,15 +266,15 @@ class GenfireWriter(object):
         self.msg_queue.put(message)
 
 class GenfireLogger(QtCore.QObject):
-    def __init__(self):
+    def __init__(self, msg_queue):
         from Queue import Queue
         import sys
         from threading import Thread
         super(GenfireLogger, self).__init__()
-        self.msg_queue = Queue()
+        self.msg_queue = msg_queue
         self.listener  = GenfireListener(msg_queue=self.msg_queue)
-        self.writer    = GenfireWriter(msg_queue=self.msg_queue)
-        sys.stdout     = self.writer
+        # self.writer    = GenfireWriter(msg_queue=self.msg_queue)
+        # sys.stdout     = self.writer
 
 
         self.listener_thread = QtCore.QThread()
@@ -306,13 +307,19 @@ if __name__ == "__main__":
 
 
     # Create the GUI
-    GF_window = GenfireMainWindow()
-    GF_logger = GenfireLogger()
+    GF_window  = GenfireMainWindow()
+
+    # Redirect standard output to the GUI di
+    from Queue import Queue
+    msg_queue  = Queue()
+    GF_logger  = GenfireLogger(msg_queue)
+    sys.stdout = GenfireWriter(msg_queue)
+    GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
 
     # Render GUI
     GF_window.show()
 
-    GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
+
 
     # Safely close and exit
     sys.exit(app.exec_())

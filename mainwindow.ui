@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>845</width>
-    <height>634</height>
+    <height>737</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -317,13 +317,6 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QCheckBox" name="checkBox_log">
-        <property name="text">
-         <string>Activate Log</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QTextEdit" name="log"/>
       </item>

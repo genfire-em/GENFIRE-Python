@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(845, 634)
+        MainWindow.resize(845, 737)
         self.centralWidget = QtGui.QWidget(MainWindow)
         self.centralWidget.setObjectName(_fromUtf8("centralWidget"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralWidget)
@@ -196,9 +196,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setMargin(11)
         self.verticalLayout_2.setSpacing(6)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.checkBox_log = QtGui.QCheckBox(self.centralWidget)
-        self.checkBox_log.setObjectName(_fromUtf8("checkBox_log"))
-        self.verticalLayout_2.addWidget(self.checkBox_log)
         self.log = QtGui.QTextEdit(self.centralWidget)
         self.log.setObjectName(_fromUtf8("log"))
         self.verticalLayout_2.addWidget(self.log)
@@ -260,7 +257,6 @@ class Ui_MainWindow(object):
         self.checkBox_displayFigure.setText(_translate("MainWindow", "Display Figure", None))
         self.checkBox_rfree.setText(_translate("MainWindow", "Calculate Rfree", None))
         self.btn_reconstruct.setText(_translate("MainWindow", "Launch Reconstruction", None))
-        self.checkBox_log.setText(_translate("MainWindow", "Activate Log", None))
         self.menuGENFIRE.setTitle(_translate("MainWindow", "GENFIRE", None))
         self.menuTools.setTitle(_translate("MainWindow", "Projection Calculator", None))
         self.action_Create_Support.setText(_translate("MainWindow", "Launch Projection Calculator", None))
