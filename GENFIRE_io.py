@@ -10,6 +10,10 @@ def readMAT_volume(filename):
     import scipy.io as io
     return np.array(io.loadmat(filename)['reconstructon'])
 
+def readNPY(filename, dtype=float, order="C"):
+    import numpy as np
+    return np.load(filename)
+
 def readMRC(filename, dtype=float, order="C"):
     """
     * readMRC *

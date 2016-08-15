@@ -434,6 +434,9 @@ if __name__ != "__main__":
         elif file_extension == ".mrc":
             print ("GENFIRE: reading projections from .mrc file.\n")
             return GENFIRE_io.readMRC(filename + file_extension)
+        elif file_extension == ".npy":
+            print ("GENFIRE: reading projections from .npy file.\n")
+            return GENFIRE_io.readNPY(filename + file_extension)
         else:
             raise Exception('GENFIRE: File format %s not supported.', file_extension)
 
@@ -736,8 +739,8 @@ class ReconstructionParameters():
     """
     Helper class for containing reconstruction parameters
     """
-    _supportedFiletypes = ['.tif', '.mrc', '.mat']
-    _supportedAngleFiletypes = ['.txt', '.mat']
+    _supportedFiletypes = ['.tif', '.mrc', '.mat', '.npy']
+    _supportedAngleFiletypes = ['.txt', '.mat', '.npy']
     def __init__(self):
         self.projectionFilename = ""
         self.angleFilename = ""

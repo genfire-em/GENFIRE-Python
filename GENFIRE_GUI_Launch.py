@@ -313,19 +313,27 @@ class GenfireMainWindow(QtGui.QMainWindow):
 #
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
-        self.ui.log.moveCursor(QtGui.QTextCursor.End)
-        # self.ui.log.setStyleSheet("color: black")
-        formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#000000;\" >" + msg + "</span/>"
-        # self.ui.log.insertPlainText(msg)
-        self.ui.log.append(formatted_msg)
+        global process_finished
+        if not process_finished:
+            self.ui.log.moveCursor(QtGui.QTextCursor.End)
+            # self.ui.log.setStyleSheet("color: black")
+            formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#000000;\" >" + msg + "</span/>"
+            # self.ui.log.insertPlainText(msg)
+
+            self.ui.log.append(formatted_msg)
+
 
     @QtCore.pyqtSlot(str)
     def receive_error_msg(self, msg):
-        self.ui.log.moveCursor(QtGui.QTextCursor.End)
-        formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#ff0000;\" >" + msg + "</span/>"
-        # self.ui.log.setStyleSheet("color: red")
-        self.ui.log.append(formatted_msg)
-        # self.ui.log.insertPlainText(msg)
+        global process_finished
+        if not process_finished:
+            self.ui.log.moveCursor(QtGui.QTextCursor.End)
+            formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#ff0000;\" >" + msg + "</span/>"
+            # self.ui.log.setStyleSheet("color: red")
+
+            self.ui.log.append(formatted_msg)
+
+            # self.ui.log.insertPlainText(msg)
 
 class Launcher(QtCore.QObject):
     def __init__(self, pars):
@@ -341,16 +349,17 @@ class GenfireListener(QtCore.QObject):
     def __init__(self, msg_queue):
         super(GenfireListener, self).__init__()
         self.msg_queue = msg_queue
+        self.process_finished = False
 
     @QtCore.pyqtSlot()
     def run(self):
-        global process_finished
-        while True:
+        while not self.process_finished:
             msg = self.msg_queue.get() #get next message, blocks if nothing to get
             if process_finished:
-                # msg="Done!"
                 # self.message_pending.emit(msg)
                 return
+            # else:
+            #     print ("failure")
             self.message_pending.emit(msg)
 
 class GenfireWriter(object):
@@ -374,18 +383,22 @@ class GenfireLogger(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def cleanup_thread(self):
-        global process_finished
-        process_finished = True
         import sys
-        sys.stdout.write("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
-        sys.stderr.write("Safely Exit.")
-        self.listener_thread.quit()
-        self.listener_thread.join()
+        # sys.stdout = sys.__stdout__
+        # sys.sterr = sys.__stderr__
 
-    def __del__(self):
-        import sys
-        sys.stdout = sys.__stdout__
-        sys.sterr = sys.__stderr__
+        self.listener.process_finished = True
+        process_finished = True
+        self.msg_queue.put("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
+
+        if self.listener_thread.isRunning():
+            self.listener_thread.quit()
+            self.listener_thread.wait()
+
+    # def __del__(self):
+    #     import sys
+        # sys.stdout = sys.__stdout__
+        # sys.sterr = sys.__stderr__
 
 if __name__ == "__main__":
 
@@ -420,5 +433,6 @@ if __name__ == "__main__":
     # app.aboutToQuit.connect(GF_logger.cleanup_threads)
 
     # Safely close and exit
+
     sys.exit(app.exec_())
 
