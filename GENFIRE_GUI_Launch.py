@@ -356,7 +356,7 @@ class GenfireListener(QtCore.QObject):
         while not self.process_finished:
             msg = self.msg_queue.get() #get next message, blocks if nothing to get
             if process_finished:
-                # self.message_pending.emit(msg)
+                self.message_pending.emit(msg)
                 return
             # else:
             #     print ("failure")
@@ -390,7 +390,7 @@ class GenfireLogger(QtCore.QObject):
         self.listener.process_finished = True
         process_finished = True
         self.msg_queue.put("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
-
+        # self.listener_thread.wait()
         if self.listener_thread.isRunning():
             self.listener_thread.quit()
             self.listener_thread.wait()
