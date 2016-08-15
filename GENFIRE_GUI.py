@@ -204,6 +204,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSpacing(6)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.log = QtGui.QTextEdit(self.centralWidget)
+        self.log.setMinimumSize(QtCore.QSize(100, 0))
         self.log.setObjectName(_fromUtf8("log"))
         self.verticalLayout_2.addWidget(self.log)
         self.verticalLayout_4.addLayout(self.verticalLayout_2)

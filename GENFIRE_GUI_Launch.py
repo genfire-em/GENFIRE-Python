@@ -314,14 +314,18 @@ class GenfireMainWindow(QtGui.QMainWindow):
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
         self.ui.log.moveCursor(QtGui.QTextCursor.End)
-        self.ui.log.setStyleSheet("color: black")
-        self.ui.log.insertPlainText(msg)
+        # self.ui.log.setStyleSheet("color: black")
+        formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#000000;\" >" + msg + "</span/>"
+        # self.ui.log.insertPlainText(msg)
+        self.ui.log.append(formatted_msg)
 
     @QtCore.pyqtSlot(str)
     def receive_error_msg(self, msg):
         self.ui.log.moveCursor(QtGui.QTextCursor.End)
-        self.ui.log.setStyleSheet("color: red")
-        self.ui.log.insertPlainText(msg)
+        formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#ff0000;\" >" + msg + "</span/>"
+        # self.ui.log.setStyleSheet("color: red")
+        self.ui.log.append(formatted_msg)
+        # self.ui.log.insertPlainText(msg)
 
 class Launcher(QtCore.QObject):
     def __init__(self, pars):
@@ -344,8 +348,8 @@ class GenfireListener(QtCore.QObject):
         while True:
             msg = self.msg_queue.get() #get next message, blocks if nothing to get
             if process_finished:
-                msg="Done!"
-                self.message_pending.emit(msg)
+                # msg="Done!"
+                # self.message_pending.emit(msg)
                 return
             self.message_pending.emit(msg)
 
@@ -365,7 +369,7 @@ class GenfireLogger(QtCore.QObject):
         self.listener_thread = QtCore.QThread()
         self.listener.moveToThread(self.listener_thread)
         self.listener_thread.started.connect(self.listener.run)
-        QtCore.QCoreApplication.instance().aboutToQuit.connect(self.cleanup_thread)
+        # QtCore.QCoreApplication.instance().aboutToQuit.connect(self.cleanup_thread)
         self.listener_thread.start()
 
     @QtCore.pyqtSlot()
@@ -405,12 +409,13 @@ if __name__ == "__main__":
     GF_logger  = GenfireLogger(msg_queue)
     sys.stdout = GenfireWriter(msg_queue)
     GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
+    app.aboutToQuit.connect(GF_logger.cleanup_thread)
 
     err_msg_queue = Queue()
     GF_error_logger  = GenfireLogger(err_msg_queue)
     sys.stderr = GenfireWriter(err_msg_queue)
     GF_error_logger.listener.message_pending[str].connect(GF_window.receive_error_msg)
-
+    app.aboutToQuit.connect(GF_error_logger.cleanup_thread)
 
     # app.aboutToQuit.connect(GF_logger.cleanup_threads)
 
