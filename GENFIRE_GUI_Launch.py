@@ -23,6 +23,9 @@ class GenfireMainWindow(QtGui.QMainWindow):
         ## Initialize Reconstruction Parameters
         self.GENFIRE_ReconstructionParameters = ReconstructionParameters()
 
+
+
+
         ## Initialize file paths in text boxes
         self.ui.lineEdit_results.setText(QtCore.QString(os.path.join(os.getcwd(),'results.mrc')))
 
@@ -215,9 +218,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
         from functools import partial
         t = Thread(target=partial(GENFIRE_main.GENFIRE_main,self.GENFIRE_ReconstructionParameters))
         t.start()
-        t.join()
-        self.displayResults()
-
 
     def displayResults(self):
         outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="MRC, MATLAB files (*.mrc *.mat)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -314,6 +314,13 @@ class GenfireMainWindow(QtGui.QMainWindow):
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
         self.ui.log.moveCursor(QtGui.QTextCursor.End)
+        self.ui.log.setStyleSheet("color: black")
+        self.ui.log.insertPlainText(msg)
+
+    @QtCore.pyqtSlot(str)
+    def receive_error_msg(self, msg):
+        self.ui.log.moveCursor(QtGui.QTextCursor.End)
+        self.ui.log.setStyleSheet("color: red")
         self.ui.log.insertPlainText(msg)
 
 class Launcher(QtCore.QObject):
@@ -333,8 +340,13 @@ class GenfireListener(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def run(self):
+        global process_finished
         while True:
             msg = self.msg_queue.get() #get next message, blocks if nothing to get
+            if process_finished:
+                msg="Done!"
+                self.message_pending.emit(msg)
+                return
             self.message_pending.emit(msg)
 
 class GenfireWriter(object):
@@ -346,59 +358,61 @@ class GenfireWriter(object):
 
 class GenfireLogger(QtCore.QObject):
     def __init__(self, msg_queue):
-        from Queue import Queue
-        import sys
-        from threading import Thread
         super(GenfireLogger, self).__init__()
         self.msg_queue = msg_queue
         self.listener  = GenfireListener(msg_queue=self.msg_queue)
-        # self.writer    = GenfireWriter(msg_queue=self.msg_queue)
-        # sys.stdout     = self.writer
-
 
         self.listener_thread = QtCore.QThread()
         self.listener.moveToThread(self.listener_thread)
         self.listener_thread.started.connect(self.listener.run)
+        QtCore.QCoreApplication.instance().aboutToQuit.connect(self.cleanup_thread)
         self.listener_thread.start()
 
+    @QtCore.pyqtSlot()
+    def cleanup_thread(self):
+        global process_finished
+        process_finished = True
+        import sys
+        sys.stdout.write("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
+        sys.stderr.write("Safely Exit.")
+        self.listener_thread.quit()
+        self.listener_thread.join()
+
     def __del__(self):
+        import sys
         sys.stdout = sys.__stdout__
-
-
-
-
-
-
-
-
+        sys.sterr = sys.__stderr__
 
 if __name__ == "__main__":
 
     # Startup the application
     app = QtGui.QApplication(sys.argv)
-
     # app.setStyle('plastique')
     app.setStyle('mac')
-    # app.setStyle('windows')
-    # app.setStyle('cleanlooks')
-    # app.setStyle('motif')
-    # app.setStyle('GTK')
-
 
     # Create the GUI
     GF_window  = GenfireMainWindow()
 
+    # Render GUI
+    GF_window.show()
+
     # Redirect standard output to the GUI
     from Queue import Queue
+    global process_finished
+    process_finished = False # flag to control save exit of the i/o threads for logging
+
     msg_queue  = Queue()
     GF_logger  = GenfireLogger(msg_queue)
     sys.stdout = GenfireWriter(msg_queue)
     GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
 
-    # Render GUI
-    GF_window.show()
+    err_msg_queue = Queue()
+    GF_error_logger  = GenfireLogger(err_msg_queue)
+    sys.stderr = GenfireWriter(err_msg_queue)
+    GF_error_logger.listener.message_pending[str].connect(GF_window.receive_error_msg)
 
 
+    # app.aboutToQuit.connect(GF_logger.cleanup_threads)
 
     # Safely close and exit
     sys.exit(app.exec_())
