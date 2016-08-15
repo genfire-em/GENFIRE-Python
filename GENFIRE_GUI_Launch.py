@@ -218,36 +218,75 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def startReconstruction(self):
-        self.ui.log.insertPlainText("Launching reconstruction")
         print('GENFIRE: Launching GENFIRE Reconstruction')
+        # Launch the reconstruction in a separate thread to prevent the GUI blocking while reconstructing
         from threading import Thread
-        # GENFIRE_main.GENFIRE_main(self.GENFIRE_ReconstructionParameters)
         from functools import partial
-        Thread(target=partial(GENFIRE_main.GENFIRE_main,self.GENFIRE_ReconstructionParameters)).start()
+        t = Thread(target=partial(GENFIRE_main.GENFIRE_main,self.GENFIRE_ReconstructionParameters))
+        t.start()
+        t.join()
+        from GENFIRE import readMRC
+        import numpy as np
+        initialObject = readMRC("results.mrc")
+        dims = np.shape(initialObject)
+        n_half_x = int(dims[0]/2) #this assumes even-sized arrays
+        n_half_y = int(dims[1]/2)
+        n_half_z = int(dims[2]/2)
+        reconstructionDisplayWindowSize=30
+        half_window_x = reconstructionDisplayWindowSize//2
+        half_window_y = reconstructionDisplayWindowSize//2
+        half_window_z = reconstructionDisplayWindowSize//2
+        import matplotlib.pyplot as plt
+        import numpy as np
+        plt.figure(1000)
+        plt.subplot(233)
+        plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+        plt.title("central YZ slice")
+
+        plt.subplot(232)
+        plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+        plt.title("central XZ slice")
+
+        plt.subplot(231)
+        plt.title("central XY slice")
+        plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
+
+        plt.subplot(236)
+        plt.title("YZ projection")
+        plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
+
+        plt.subplot(235)
+        plt.title("XZ projection")
+        plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
+
+        plt.subplot(234)
+        plt.title("XY projection")
+        plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
+        plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
+        plt.show()
+
+
+
+        # tt = QtCore.QThread()
+        # l = Launcher(self.GENFIRE_ReconstructionParameters)
+        # l.moveToThread(tt)
+        # tt.started.connect(l.run)
+        # tt.start()
+        # tt.wait()
 #
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
         self.ui.log.moveCursor(QtGui.QTextCursor.End)
         self.ui.log.insertPlainText(msg)
 
-# class GenfireLogger:
-#     def __init__(self, textEdit, output=None, textColor=None):
-#         from Queue import Queue
-#         self.textEdit = textEdit
-#         self.output = None
-#         self.textColor = textColor
-#
-#     def write(self, message):
-#         if self.textColor:
-#             whichColor = self.textEdit.texttextColor()
-#             self.textEdit.setTexttextColor(self.textColor)
-#         self.textEdit.moveCursor(QtGui.QTextCursor.End)
-#         self.textEdit.insertPlainText(message)
-#         if self.textColor:
-#             self.textEdit.setTexttextColor(whichColor)
-#         if self.output:
-#             self.output.write(message)
+class Launcher(QtCore.QObject):
+    def __init__(self, pars):
+        super(Launcher,self).__init__()
+        self.pars = pars
 
+    @QtCore.pyqtSlot()
+    def run(self):
+        GENFIRE_main.GENFIRE_main(self.pars)
 
 class GenfireListener(QtCore.QObject):
     message_pending = QtCore.pyqtSignal(str)
@@ -312,7 +351,7 @@ if __name__ == "__main__":
     # Create the GUI
     GF_window  = GenfireMainWindow()
 
-    # Redirect standard output to the GUI di
+    # Redirect standard output to the GUI
     from Queue import Queue
     msg_queue  = Queue()
     GF_logger  = GenfireLogger(msg_queue)

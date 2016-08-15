@@ -128,7 +128,7 @@ if __name__ != "__main__":
             if displayFigure.DisplayFigureON:
                 if iterationNum % displayFigure.displayFrequency == 0:
 
-                    plt.figure(1)
+                    plt.figure(1000)
                     plt.subplot(233)
                     plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
                     plt.title("central YZ slice")
