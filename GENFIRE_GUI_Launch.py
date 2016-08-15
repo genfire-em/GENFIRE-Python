@@ -1,7 +1,6 @@
 from PyQt4 import QtCore, QtGui
 import matplotlib
-matplotlib.use("wx")
-# matplotlib.use("Qt4Agg")
+matplotlib.use("Qt4Agg")
 import GENFIRE_GUI
 import ProjectionCalculator
 import GENFIRE_main
@@ -134,6 +133,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.GENFIRE_ReconstructionParameters.calculateRfree = False
 
     def launchProjectionCalculator(self):
+        print "launching"
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
         self.GENFIRE_ProjectionCalculator.show()
 
@@ -161,8 +161,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     def ShoutDisplayFrequency(self, frequency):
         self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency = frequency.toInt()[0]
-        print (type(self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency))
-        print ("updating displayFrequency", self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency)
+        print type(self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency)
+        print "updating displayFrequency", self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency
 
     def messageWritten(self, message):
         print message
