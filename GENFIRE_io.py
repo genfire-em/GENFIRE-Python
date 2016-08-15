@@ -148,7 +148,6 @@ def readMRC(filename, dtype=float,order="C"):
         int_header = struct.unpack('=' + 'i'*headerIntNumber, fid.read(headerIntNumber * sizeof_int))
         char_header = struct.unpack('=' + 'c'*headerCharNumber, fid.read(headerCharNumber * sizeof_char))
         dimx, dimy, dimz, data_flag= int_header[:4]
-        print "reading, ", dimx,dimy,dimz
         if (data_flag == 0):
             datatype='u1'
         elif (data_flag ==1):
@@ -163,8 +162,7 @@ def readMRC(filename, dtype=float,order="C"):
             datatype='u2'
         else:
             raise ValueError("No supported datatype found!\n")
-        print dimx,dimy,dimz
-        print datatype
+
         return np.fromfile(file=fid, dtype=datatype,count=dimx*dimy*dimz).reshape((dimx,dimy,dimz),order=order).astype(dtype)
 
 def writeMRC(filename, arr, datatype='f4'):

@@ -2,7 +2,7 @@ from __future__ import division
 import numpy as np
 import scipy.io as io
 import matplotlib
-matplotlib.use("Qt4Agg")
+# matplotlib.use("Qt4Agg")
 import GENFIRE as GENFIRE
 
 import sys
