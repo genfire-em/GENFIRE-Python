@@ -2,8 +2,7 @@
 from __future__ import division
 import numpy as np
 import matplotlib
-matplotlib.use("wx")
-# matplotlib.use("Qt4Agg")
+matplotlib.use("Qt4Agg")
 
 import matplotlib.pyplot as plt
 import scipy.fftpack as sfft
@@ -11,7 +10,6 @@ import os
 import scipy.io
 import pyfftw
 import time
-#import GENFIRE_from_GUI_Input
 import misc
 import itertools
 import weightValues
@@ -153,11 +151,11 @@ if __name__ != "__main__":
                     plt.subplot(234)
                     plt.title("XY projection")
                     plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
-                    plt.get_current_fig_manager().window.SetPosition((25,25))
+                    plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
                     plt.draw()
 
                     plt.figure(2)
-                    plt.get_current_fig_manager().window.SetPosition((25,450))
+                    plt.get_current_fig_manager().window.setGeometry(25,450,400, 400)
                     plt.hold(False)
                     plt.plot(range(0,numIterations),errK)
                     plt.title("K-space Error vs Iteration Number")
@@ -168,7 +166,7 @@ if __name__ != "__main__":
                     if R_freeInd_complex:
                         plt.figure(3)
                         mngr = plt.get_current_fig_manager()
-                        mngr.window.SetPosition((450,25))
+                        mngr.window.setGeometry(450,25,400, 400)
                         plt.plot(range(0,numIterations),np.mean(Rfree_complex,axis=0))
                         plt.title("Mean R-free Value vs Iteration Number")
                         plt.xlabel("Iteration Num")
@@ -177,7 +175,7 @@ if __name__ != "__main__":
 
                         plt.figure(4)
                         mngr = plt.get_current_fig_manager()
-                        mngr.window.SetPosition((450,450))
+                        mngr.window.setGeometry(450,450,400, 400)
                         plt.hold(False)
                         X = np.linspace(0,1,np.shape(Rfree_complex)[0])
                         plt.plot(X, Rfree_complex[:,iterationNum-1])
@@ -401,6 +399,7 @@ if __name__ != "__main__":
         measuredK[uniqueVals[multiInd[0][:]]] = vals
         measuredK = np.reshape(measuredK,[dim1,dim1,dim1],order='F')
 
+        # print ("time3 " , time.time()-tic3)
         measuredK[np.isnan(measuredK)] = 0
         measuredK = misc.hermitianSymmetrize(measuredK)
 
@@ -575,6 +574,7 @@ if __name__ != "__main__":
             int_header = struct.unpack('=' + 'i'*headerIntNumber, fid.read(headerIntNumber * sizeof_int))
             char_header = struct.unpack('=' + 'c'*headerCharNumber, fid.read(headerCharNumber * sizeof_char))
             dimx, dimy, dimz, data_flag= int_header[:4]
+            print "reading, ", dimx,dimy,dimz
             if (data_flag == 0):
                 datatype='u1'
             elif (data_flag ==1):
@@ -589,6 +589,8 @@ if __name__ != "__main__":
                 datatype='u2'
             else:
                 raise ValueError("No supported datatype found!\n")
+            print dimx,dimy,dimz
+            print datatype
             return np.fromfile(file=fid, dtype=datatype,count=dimx*dimy*dimz).reshape((dimx,dimy,dimz),order=order).astype(dtype)
 
     def writeMRC(filename, arr, datatype='f4'):
