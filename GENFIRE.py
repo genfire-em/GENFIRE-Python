@@ -10,7 +10,6 @@ import os
 import scipy.io
 import pyfftw
 import time
-import GENFIRE_from_GUI_Input
 import misc
 import itertools
 import weightValues
