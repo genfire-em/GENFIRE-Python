@@ -427,10 +427,10 @@ if __name__ != "__main__":
         filename, file_extension = os.path.splitext(filename)
         if file_extension == ".mat":
             print ("GENFIRE: reading projections from MATLAB file.\n")
-            return GENFIRE_io.readMAT(filename + file_extension)
+            return GENFIRE_io.readMAT_projections(filename + file_extension)
         elif file_extension == ".tif":
             print ("GENFIRE: reading projections from .tif file.\n")
-            return GENFIRE_io.readTIFF(filename + file_extension)
+            return GENFIRE_io.readTIFF_projections(filename + file_extension)
         elif file_extension == ".mrc":
             print ("GENFIRE: reading projections from .mrc file.\n")
             return GENFIRE_io.readMRC(filename + file_extension)

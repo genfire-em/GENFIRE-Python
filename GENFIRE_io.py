@@ -1,130 +1,16 @@
-def readMAT(filename):
-    import scipy.io
-    import numpy as np
+def loadVolume(filename):
     import os
-    """
-    * readMAT *
-
-    Read projections from a .mat file
-
-    Author: Alan (AJ) Pryor, Jr.
-    Jianwei (John) Miao Coherent Imaging Group
-    University of California, Los Angeles
-    Copyright 2015-2016. All rights reserved.
-
-    :param filename: MATLAB file (.mat) containing projections
-    :return: NumPy array containing projections
-    """
-
-    try: #try to open the projections as a stack
-        projections = scipy.io.loadmat(filename)
-        key = None
-        for k in projections.keys():
-            if k[0] != "_":
-                key = k
-                break
-
-        projections = np.array(projections[key])
-    except: ## -- figure out where error is thrown
-         #check if the projections are in individual files
-        flag = True
-        filename_base, file_extension = os.path.splitext(filename)
-        projectionCount = 1
-        while flag: #first count the number of projections so the array can be initialized
-            projectionCount = projectionCount
-            nextFile = filename_base + str(projectionCount) + file_extension
-            if os.path.isfile(nextFile):
-                projectionCount += 1
-            else:
-                flag = False
-
-
-        ## open first projection to get dimensions
-        pj = scipy.io.loadmat(filename_base + str(1) + file_extension)
-        pj = pj[projections.keys()[0]]
-        dims = np.shape(pj)
-        #initialize projection array
-        projections = np.zeros((dims[0], dims[1], projectionCount),dtype=int)
-
-        #now actually load in the tiff images
-        for projNum in range(projectionCount):
-            nextFile = filename_base + str(projNum) + file_extension
-            pj = scipy.io.loadmat(filename_base + str(projNum) + file_extension)
-            pj = pj[pj.keys()[0]]
-            projections[:, :, projNum] = np.array(pj)
-
-    return projections
-
-
-def readTIFF(filename):
-    """
-    * readTIFF *
-
-    Read (possibly multiple) TIFF images into a NumPy array
-
-    Author: Alan (AJ) Pryor, Jr.
-    Jianwei (John) Miao Coherent Imaging Group
-    University of California, Los Angeles
-    Copyright 2015-2016. All rights reserved.
-
-    :param filename: Name of TIFF file or TIFF file basename to read. If the filename is a base then
-    #       the images must begin with the string contained in filename followed by consecutive integers with
-    #       no zero padding, i.e. foo1.tiff, foo2.tiff,..., foo275.tiff
-    :return: NumPy array containing projections
-    """
-    import functools
-    from PIL import Image
-    import os
+    base, ext = os.path.splitext(filename)
+    if (ext == ".mrc"):
+        return readMRC(filename)
+    elif (ext == ".mat"):
+        return readMAT_volume(filename)
+def readMAT_volume(filename):
     import numpy as np
-    from multiprocessing import Pool
-    try:
-        projections = np.array(Image.open(filename))
-    except:
-        flag = True
-        filename_base, file_extension = os.path.splitext(filename)
-        projectionCount = 1
-        while flag: #first count the number of projections so the array can be initialized
-            projectionCount = projectionCount
-            nextFile = filename_base + str(projectionCount) + file_extension
-            if os.path.isfile(nextFile):
-                projectionCount += 1
-            else:
-                flag = False
+    import scipy.io as io
+    return np.array(io.loadmat(filename)['reconstructon'])
 
-        ## open first projection to get dimensions
-        dims = np.shape(Image.open(filename_base + str(1) + file_extension))
-
-        #initialize projection array
-        projections = np.zeros((dims[0], dims[1], projectionCount),dtype=int)
-
-        pool = Pool(4)
-        func = functools.partial(readInTiffProjection, filename_base)
-        pj = pool.map(func, range(projectionCount))
-        for j  in range(projectionCount):
-            projections[:, :, j] = pj[j]
-    return projections
-
-def readInTiffProjection(filename_base, fileNumber):
-    """
-    * readInTiffProjection *
-
-    Reads and returns a single TIFF image as a NumPy array
-
-    Author: Alan (AJ) Pryor, Jr.
-    Jianwei (John) Miao Coherent Imaging Group
-    University of California, Los Angeles
-    Copyright 2015-2016. All rights reserved.
-
-    :param filename_base: Base filename of TIFF
-    :param fileNumber: Image number
-    :return: Image in a 2D NumPy array
-    """
-    from PIL import Image
-    import numpy as np
-    nextFile = filename_base + str(fileNumber) + '.tif'
-    return np.array(Image.open(nextFile))
-
-def readMRC(filename, dtype=float,order="C"):
+def readMRC(filename, dtype=float, order="C"):
     """
     * readMRC *
 
@@ -207,3 +93,131 @@ def writeMRC(filename, arr, datatype='f4'):
         fid.write(int_header.tobytes())
         fid.write(char_header)
         fid.write(arr.tobytes())
+
+
+def readMAT_projections(filename):
+    import scipy.io
+    import numpy as np
+    import os
+    """
+    * readMAT *
+
+    Read projections from a .mat file
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+    :param filename: MATLAB file (.mat) containing projections
+    :return: NumPy array containing projections
+    """
+
+    try: #try to open the projections as a stack
+        projections = scipy.io.loadmat(filename)
+        key = None
+        for k in projections.keys():
+            if k[0] != "_":
+                key = k
+                break
+
+        projections = np.array(projections[key])
+    except: ## -- figure out where error is thrown
+         #check if the projections are in individual files
+        flag = True
+        filename_base, file_extension = os.path.splitext(filename)
+        projectionCount = 1
+        while flag: #first count the number of projections so the array can be initialized
+            projectionCount = projectionCount
+            nextFile = filename_base + str(projectionCount) + file_extension
+            if os.path.isfile(nextFile):
+                projectionCount += 1
+            else:
+                flag = False
+
+
+        ## open first projection to get dimensions
+        pj = scipy.io.loadmat(filename_base + str(1) + file_extension)
+        pj = pj[projections.keys()[0]]
+        dims = np.shape(pj)
+        #initialize projection array
+        projections = np.zeros((dims[0], dims[1], projectionCount),dtype=int)
+
+        #now actually load in the tiff images
+        for projNum in range(projectionCount):
+            nextFile = filename_base + str(projNum) + file_extension
+            pj = scipy.io.loadmat(filename_base + str(projNum) + file_extension)
+            pj = pj[pj.keys()[0]]
+            projections[:, :, projNum] = np.array(pj)
+
+    return projections
+
+
+def readTIFF_projections(filename):
+    """
+    * readTIFF *
+
+    Read (possibly multiple) TIFF images into a NumPy array
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+    :param filename: Name of TIFF file or TIFF file basename to read. If the filename is a base then
+    #       the images must begin with the string contained in filename followed by consecutive integers with
+    #       no zero padding, i.e. foo1.tiff, foo2.tiff,..., foo275.tiff
+    :return: NumPy array containing projections
+    """
+    import functools
+    from PIL import Image
+    import os
+    import numpy as np
+    from multiprocessing import Pool
+    try:
+        projections = np.array(Image.open(filename))
+    except:
+        flag = True
+        filename_base, file_extension = os.path.splitext(filename)
+        projectionCount = 1
+        while flag: #first count the number of projections so the array can be initialized
+            projectionCount = projectionCount
+            nextFile = filename_base + str(projectionCount) + file_extension
+            if os.path.isfile(nextFile):
+                projectionCount += 1
+            else:
+                flag = False
+
+        ## open first projection to get dimensions
+        dims = np.shape(Image.open(filename_base + str(1) + file_extension))
+
+        #initialize projection array
+        projections = np.zeros((dims[0], dims[1], projectionCount),dtype=int)
+
+        pool = Pool(4)
+        func = functools.partial(readInTiffProjection, filename_base)
+        pj = pool.map(func, range(projectionCount))
+        for j  in range(projectionCount):
+            projections[:, :, j] = pj[j]
+    return projections
+
+def readInTiffProjection(filename_base, fileNumber):
+    """
+    * readInTiffProjection *
+
+    Reads and returns a single TIFF image as a NumPy array
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+    :param filename_base: Base filename of TIFF
+    :param fileNumber: Image number
+    :return: Image in a 2D NumPy array
+    """
+    from PIL import Image
+    import numpy as np
+    nextFile = filename_base + str(fileNumber) + '.tif'
+    return np.array(Image.open(nextFile))
+

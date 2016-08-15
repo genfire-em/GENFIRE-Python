@@ -53,6 +53,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.btn_reconstruct.clicked.connect(self.checkParameters)
         self.ui.btn_reconstruct.setStyleSheet("background-color: rgb(221,0,0)")
 
+        self.ui.btn_displayResults.clicked.connect(self.displayResults)
+
         ## Line Edits -- connect each to their main function and check if the reconstruction parameters are good each
         ## time a parameter is changed
         self.ui.lineEdit_pj.textChanged.connect(self.GENFIRE_ReconstructionParameters.setProjectionFilename)
@@ -83,9 +85,9 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.checkParameters)
 
 
-        self.ui.lineEdit_displayFrequency.setDisabled(True)
-        self.ui.lineEdit_displayFrequency.setStyleSheet("background-color: gray")
-        self.ui.lineEdit_displayFrequency.textChanged.connect(self.ShoutDisplayFrequency)
+        # self.ui.lineEdit_displayFrequency.setDisabled(True)
+        # self.ui.lineEdit_displayFrequency.setStyleSheet("background-color: gray")
+        # self.ui.lineEdit_displayFrequency.textChanged.connect(self.ShoutDisplayFrequency)
 
         self.ui.lineEdit_io.setDisabled(True)
         self.ui.lineEdit_io.setStyleSheet("background-color: gray")
@@ -102,8 +104,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         ## Check Boxes
 
-        self.ui.checkBox_displayFigure.toggled.connect(self.GENFIRE_ReconstructionParameters.toggleDisplayFigure)
-        self.ui.checkBox_displayFigure.toggled.connect(self.enableDisplayFrequencyChange)
+        # self.ui.checkBox_displayFigure.toggled.connect(self.GENFIRE_ReconstructionParameters.toggleDisplayFigure)
+        # self.ui.checkBox_displayFigure.toggled.connect(self.enableDisplayFrequencyChange)
 
 
         self.ui.checkBox_rfree.toggled.connect(self.calculateRfree)
@@ -114,17 +116,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
-        # self.logger = GenfireLogger(notepad=self.ui.log) # create a threaded logger to redirect stdout to the GUI
-
-        # self.logger_thread = QtCore.QThread()
-        # self.logger.moveToThread(self.logger_thread)
-        # self.logger_thread.start()
-
-
-
-        # self.logger_thread = QtCore.QThread()
-        # self.logger.moveToThread(self.logger_thread)
-        # self.logger_thread.start()
 
     def calculateRfree(self):
         if self.ui.checkBox_rfree.isEnabled() == True:
@@ -225,54 +216,100 @@ class GenfireMainWindow(QtGui.QMainWindow):
         t = Thread(target=partial(GENFIRE_main.GENFIRE_main,self.GENFIRE_ReconstructionParameters))
         t.start()
         t.join()
-        from GENFIRE import readMRC
-        import numpy as np
-        initialObject = readMRC("results.mrc")
-        dims = np.shape(initialObject)
-        n_half_x = int(dims[0]/2) #this assumes even-sized arrays
-        n_half_y = int(dims[1]/2)
-        n_half_z = int(dims[2]/2)
-        reconstructionDisplayWindowSize=30
-        half_window_x = reconstructionDisplayWindowSize//2
-        half_window_y = reconstructionDisplayWindowSize//2
-        half_window_z = reconstructionDisplayWindowSize//2
-        import matplotlib.pyplot as plt
-        import numpy as np
-        plt.figure(1000)
-        plt.subplot(233)
-        plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
-        plt.title("central YZ slice")
-
-        plt.subplot(232)
-        plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
-        plt.title("central XZ slice")
-
-        plt.subplot(231)
-        plt.title("central XY slice")
-        plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
-
-        plt.subplot(236)
-        plt.title("YZ projection")
-        plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
-
-        plt.subplot(235)
-        plt.title("XZ projection")
-        plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
-
-        plt.subplot(234)
-        plt.title("XY projection")
-        plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
-        plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
-        plt.show()
+        self.displayResults()
 
 
+    def displayResults(self):
+        outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="MRC, MATLAB files (*.mrc *.mat)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
+        outputfilename = unicode(outputfilename.toUtf8(), encoding='UTF-8')
 
-        # tt = QtCore.QThread()
-        # l = Launcher(self.GENFIRE_ReconstructionParameters)
-        # l.moveToThread(tt)
-        # tt.started.connect(l.run)
-        # tt.start()
-        # tt.wait()
+        if outputfilename:
+            import numpy as np
+            import os
+            import GENFIRE_io
+
+            initialObject = GENFIRE_io.loadVolume(outputfilename)
+            # initialObject = readMRC("outputfilename")
+            dims = np.shape(initialObject)
+            n_half_x = int(dims[0]/2) #this assumes even-sized arrays
+            n_half_y = int(dims[1]/2)
+            n_half_z = int(dims[2]/2)
+            reconstructionDisplayWindowSize=dims[0] # array should be cubic
+            half_window_x = reconstructionDisplayWindowSize//2
+            half_window_y = reconstructionDisplayWindowSize//2
+            half_window_z = reconstructionDisplayWindowSize//2
+            import matplotlib.pyplot as plt
+            import numpy as np
+            plt.figure()
+            plt.subplot(233)
+            plt.imshow(np.squeeze(initialObject[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+            plt.title("central YZ slice")
+
+            plt.subplot(232)
+            plt.imshow(np.squeeze(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+            plt.title("central XZ slice")
+
+            plt.subplot(231)
+            plt.title("central XY slice")
+            plt.imshow(np.squeeze(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
+
+            plt.subplot(236)
+            plt.title("YZ projection")
+            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
+
+            plt.subplot(235)
+            plt.title("XZ projection")
+            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
+
+            plt.subplot(234)
+            plt.title("XY projection")
+            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
+            plt.get_current_fig_manager().window.setGeometry(25,25,600, 1200)
+
+            # now load error curves if they exist
+            output_base, output_ext = os.path.splitext(outputfilename)
+            errK_filename = output_base + '_errK.txt'
+            if os.path.isfile(errK_filename):
+                errK = np.loadtxt(errK_filename)
+                numIterations = np.shape(errK)[0]
+                plt.figure()
+                plt.plot(range(0,numIterations),errK)
+
+                mngr = plt.get_current_fig_manager()
+                mngr.window.setGeometry(700,25,550, 250)
+                plt.title("Reciprocal Error vs Iteration Number")
+                plt.xlabel("Iteration Num")
+                plt.ylabel("Reciprocal Error")
+                # plt.setp(plt.gcf(),)
+            Rfree_filename = output_base + '_Rfree.txt'
+
+            if os.path.isfile(Rfree_filename):
+                Rfree = np.loadtxt(Rfree_filename)
+                numIterations = np.shape(Rfree)[1]
+                plt.figure()
+                plt.title("R-free vs Iteration Number")
+                mngr = plt.get_current_fig_manager()
+                mngr.window.setGeometry(700,350,550, 250)
+                plt.plot(range(0,numIterations),np.mean(Rfree,axis=0))
+                plt.title("Mean R-free Value vs Iteration Number")
+                plt.xlabel("Iteration Num")
+                plt.ylabel('Mean R-free')
+
+
+                plt.figure(4)
+                mngr = plt.get_current_fig_manager()
+                mngr.window.setGeometry(700,650,550, 250)
+                plt.hold(False)
+                X = np.linspace(0,1,np.shape(Rfree)[0])
+                plt.plot(X, Rfree[:,-1])
+                plt.hold(False)
+                plt.title("Final Rfree Value vs Spatial Frequency")
+                plt.xlabel("Spatial Frequency (% of Nyquist)")
+                plt.ylabel('Rfree')
+
+            plt.draw()
+            plt.pause(1e-30)
+
 #
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
