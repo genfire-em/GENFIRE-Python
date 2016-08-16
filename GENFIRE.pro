@@ -19,4 +19,5 @@ HEADERS  += mainwindow.h \
     phaseretrieval.h
 FORMS    += \
     mainwindow.ui \
-    projectioncalculator.ui
+    projectioncalculator.ui \
+    volume_slicer.ui
