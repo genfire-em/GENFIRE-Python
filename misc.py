@@ -201,34 +201,35 @@ def calculateProjection_interp(modelK, phi, theta, psi):
 
     return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
 
-def calculateProjection_interp_pyfftw(modelK, phi, theta, psi):
 
-    # projection = None
+def getProjectionInterpolator(modelK):
     dims = np.shape(modelK)
     Xcenter = round(dims[0]//2)
     Ycenter = round(dims[1]//2)
     Zcenter = round(dims[2]//2)
-
-    # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
-    phi *= PI/180
-    theta *= PI/180
-    psi *= PI/180
-
-    R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) , np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
-    [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
-    [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
-
-    R = R.T
-
-    # build coordinates of 3D FFT
-    # kx, ky, kz = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), np.arange(1,dims[2]-Zcenter))
 
     kx = np.arange(0, dims[0])-Xcenter
     ky = np.arange(0, dims[1])-Ycenter
     kz = np.arange(0, dims[2])-Zcenter
 
     # construct interpolator function that does the actual computation
-    interpolator = RegularGridInterpolator((kx, ky, kz), modelK, bounds_error=False, fill_value=0)
+    return RegularGridInterpolator((kx, ky, kz), modelK, bounds_error=False, fill_value=0)
+
+def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, dims):
+    # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
+    phi *= PI/180
+    theta *= PI/180
+    psi *= PI/180
+
+    Xcenter = round(dims[0]//2)
+    Ycenter = round(dims[1]//2)
+    Zcenter = round(dims[2]//2)
+
+    R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) , np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
+    [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
+    [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
+
+    R = R.T
 
     # build coordinates of the slice we want to calculate
     kx_slice, ky_slice, kz_slice = np.meshgrid((np.arange(0, dims[0])-Xcenter), (np.arange(0, dims[1])-Ycenter), 0)
@@ -244,5 +245,50 @@ def calculateProjection_interp_pyfftw(modelK, phi, theta, psi):
     projection = np.reshape(projection, [dims[0], dims[1]], order='F')
 
 
-    return np.real( pyfftw.interfaces.numpy_fft.fftshift( pyfftw.interfaces.numpy_fft.ifftn( pyfftw.interfaces.numpy_fft.ifftshift(projection))))
+    return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
+
+# def calculateProjection_interp_pyfftw(modelK, phi, theta, psi):
+#
+#     # projection = None
+#     dims = np.shape(modelK)
+#     Xcenter = round(dims[0]//2)
+#     Ycenter = round(dims[1]//2)
+#     Zcenter = round(dims[2]//2)
+#
+#     # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
+#     phi *= PI/180
+#     theta *= PI/180
+#     psi *= PI/180
+#
+#     R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) , np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
+#     [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
+#     [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
+#
+#     R = R.T
+#
+#     # build coordinates of 3D FFT
+#     # kx, ky, kz = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), np.arange(1,dims[2]-Zcenter))
+#
+#     kx = np.arange(0, dims[0])-Xcenter
+#     ky = np.arange(0, dims[1])-Ycenter
+#     kz = np.arange(0, dims[2])-Zcenter
+#
+#     # construct interpolator function that does the actual computation
+#     interpolator = RegularGridInterpolator((kx, ky, kz), modelK, bounds_error=False, fill_value=0)
+#
+#     # build coordinates of the slice we want to calculate
+#     kx_slice, ky_slice, kz_slice = np.meshgrid((np.arange(0, dims[0])-Xcenter), (np.arange(0, dims[1])-Ycenter), 0)
+#
+#     # rotate coordinates
+#     rotKCoords = np.zeros([3, np.size(kx_slice)])
+#     rotKCoords[0, :] = np.reshape(kx_slice, [1, np.size(kx_slice)])
+#     rotKCoords[1, :] = np.reshape(ky_slice, [1, np.size(ky_slice)])
+#     rotKCoords[2, :] = np.reshape(kz_slice, [1, np.size(kz_slice)])
+#     rotKCoords = np.dot(R, rotKCoords)
+#
+#     projection = interpolator(rotKCoords.T)
+#     projection = np.reshape(projection, [dims[0], dims[1]], order='F')
+#
+#
+#     return np.real( pyfftw.interfaces.numpy_fft.fftshift( pyfftw.interfaces.numpy_fft.ifftn( pyfftw.interfaces.numpy_fft.ifftshift(projection))))
 

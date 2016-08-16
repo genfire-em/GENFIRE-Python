@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_ProjectionCalculator(object):
     def setupUi(self, ProjectionCalculator):
         ProjectionCalculator.setObjectName(_fromUtf8("ProjectionCalculator"))
-        ProjectionCalculator.resize(845, 635)
+        ProjectionCalculator.resize(819, 1024)
         self.centralwidget = QtGui.QWidget(ProjectionCalculator)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_3 = QtGui.QGridLayout(self.centralwidget)
@@ -196,7 +196,7 @@ class Ui_ProjectionCalculator(object):
         self.gridLayout_3.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         ProjectionCalculator.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(ProjectionCalculator)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 845, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 819, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         ProjectionCalculator.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(ProjectionCalculator)

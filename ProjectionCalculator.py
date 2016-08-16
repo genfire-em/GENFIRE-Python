@@ -15,7 +15,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         self.ui = ProjectionCalculator_ui.Ui_ProjectionCalculator()
         self.ui.setupUi(self)
         self.calculationParameters = ProjectionCalculationParameters()
-
+        self.interpolator = None
         self.ui.lineEdit_outputFilename.setText(QtCore.QString(os.getcwd()))
         self.ui.lineEdit_modelFile.setText(QtCore.QString(os.getcwd()))
         self.ui.lineEdit_angleFile.setText(QtCore.QString(os.getcwd()))
@@ -72,6 +72,10 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         self.navigationToolbar = NavigationToolbar(self.canvas, self)
         self.ui.verticalLayout_figure.addWidget(self.navigationToolbar)
         self.ui.verticalLayout_figure.addWidget(self.canvas)
+        self.ax = self.figure.add_subplot(111)
+        self.ax.axes.get_xaxis().set_visible(False)
+        self.ax.axes.get_yaxis().set_visible(False)
+        self.ax.hold(False)
 
 
     def calculateProjections(self):
@@ -86,42 +90,36 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             padding = int((paddedDim-self.dims[0])/2)
             self.model = np.pad(self.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
             self.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.model))))
+            self.interpolator = misc.getProjectionInterpolator(self.model)
         self.ncOut = np.shape(self.model)[0]//2
 
 
         if self.calculationParameters.angleFileProvided:
-            print type(self.calculationParameters.angleFilename)
             self.calculationParameters.angleFilename = unicode(self.calculationParameters.angleFilename.toUtf8(), encoding='UTF-8')
             self.calculationParameters.outputBaseFilename = unicode(self.calculationParameters.outputBaseFilename.toUtf8(), encoding='UTF-8')
             angles = np.loadtxt(self.calculationParameters.angleFilename)
-            print np.shape(angles)
             phi = angles[:, 0]
             theta = angles[:, 1]
             psi = angles[:, 2]
             filename = self.calculationParameters.outputBaseFilename +'.npy'
             projections = np.zeros((self.dims[0],self.dims[1],np.size(phi)),dtype=float)
+            if self.interpolator is None:
+                self.interpolator = misc.getProjectionInterpolator(self.model)
             for projNum in range(0,np.size(phi)):
                 # pj = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
-                projections[:, :, projNum] = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+                # projections[:, :, projNum] = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+                pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+                # projections[:, :, projNum] = pj
+                projections[:, :, projNum] = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
 
-                # pj = misc.calculateProjection_interp(model, phi[projNum], theta[projNum], psi[projNum])
-                    ##display projection
-                # if self.calculationParameters.outputFilesFlag:
-                print "pre 1", type(self.calculationParameters.outputBaseFilename)
-
-            # filename = self.calculationParameters.outputBaseFilename + str(projNum) +'.mat'
-
-                # print filename
-                # print "type", type(filename)
-                # outDict = {'pj': pj}
-                # io.savemat(filename,outDict)
             np.save(filename,projections)
         else:
-            pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
-            print "pre", type(self.calculationParameters.outputBaseFilename)
+            # pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+            if self.interpolator is None:
+                self.interpolator = misc.getProjectionInterpolator(self.model)
+            pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+            pj = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
             filename = self.calculationParameters.outputBaseFilename +'TEMPprojectionName.mat'
-            print filename
-            print type(filename)
             outDict = {'pj': pj}
             io.savemat(filename,outDict)
             self.showProjection(pj)
@@ -132,7 +130,6 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         self.ui.checkBox_displayFigure.click()
 
     def toggleDisplayFigure(self):
-        print ("%%%$$$$#### self.calculationParameters.displayProjectionsFlag =  ", self.calculationParameters.displayProjectionsFlag)
         if not self.calculationParameters.displayProjectionsFlag:
            self.calculationParameters.displayProjectionsFlag = True
            if self.calculationParameters.modelFilenameProvided:
@@ -148,7 +145,11 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                 self.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.model))))
                 # global ncOut
                 self.ncOut = np.shape(self.model)[0]//2
-                pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+                if self.interpolator is None:
+                    self.interpolator = misc.getProjectionInterpolator(self.model)
+                # pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+                pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+                pj = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
                 self.showProjection(pj)
                 self.calculationParameters.modelLoadedFlag = True
         else:
@@ -157,29 +158,20 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
 
     def updateFigure(self):
-        pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
-        ## these lines are the same as showProjection, but I copied them to make it inline so it runs faster
-        myFig = self.figure.add_subplot(111)
-        myFig.imshow(pj)
-        myFig.axes.get_xaxis().set_visible(False)
-        myFig.axes.get_yaxis().set_visible(False)
-        # self.figure.imshow(pj)
+        # pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+        if self.interpolator is None:
+            self.interpolator = misc.getProjectionInterpolator(self.model)
+        pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+        pj = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
+        self.ax.imshow(pj)
         self.canvas.draw()
-        # self.showProjection(pj)
 
 
     def showProjection(self, pj):
-        myFig = self.figure.add_subplot(111)
-        myFig.imshow(pj)
-        myFig.axes.get_xaxis().set_visible(False)
-        myFig.axes.get_yaxis().set_visible(False)
-        myFig.hold(False)
+        self.ax.imshow(pj)
         self.canvas.draw()
 
     def clearFigure(self):
-        # myFig = self.figure.add_subplot(111)
-        # myFig.axes.get_xaxis().set_visible(False)
-        # myFig.axes.get_yaxis().set_visible(False)
         self.figure.clf()
         self.canvas.draw()
 
