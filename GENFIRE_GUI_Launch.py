@@ -175,7 +175,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         sys.stdout = sys.__stdout__ # Restore output stream to default upon exiting the GUI
     #Functions for selecting input files using QFileDialog
     def selectProjectionFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Projections",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Projections",filter="Projection Stacks (*.mrc *.mat *.tif *.npy);; MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
 
         if filename:
             self.GENFIRE_ReconstructionParameters.setProjectionFilename(filename)
@@ -183,21 +183,21 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.ui.lineEdit_pj.setText(QtCore.QString(filename))
 
     def selectAngleFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support",filter="MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support",filter="Euler Angles (*.txt *.mat);; MATLAB files (*.mat);;text files (*.txt);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setAngleFilename(filename)
             print ("Angle Filename:", self.GENFIRE_ReconstructionParameters.getAngleFilename())
             self.ui.lineEdit_angle.setText(QtCore.QString(filename))
 
     def selectSupportFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setSupportFilename(filename)
             print ("Support Filename:", self.GENFIRE_ReconstructionParameters.getSupportFilename())
             self.ui.lineEdit_support.setText(QtCore.QString(filename))
 
     def selectInitialObjectFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Initial Object",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Initial Object", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setInitialObjectFilename(filename)
             print ("Initial Object Filename:", self.GENFIRE_ReconstructionParameters.getProjectionFilename())
@@ -231,7 +231,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         t.start()
 
     def displayResults(self):
-        outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="MRC, MATLAB files (*.mrc *.mat)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
+        outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="Volume files (*.mrc *.mat *.npy)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
         outputfilename = unicode(outputfilename.toUtf8(), encoding='UTF-8')
 
         if outputfilename:
