@@ -44,17 +44,17 @@ class VolumeSlicer(QtGui.QMainWindow):
         dimx, dimy, dimz = np.shape(volume)
         ncx,  ncy,  ncz  = dimx//2., dimy//2, dimz//2
 
-        self.ui.sldr_fig1.setValue(ncx)
-        self.ui.sldr_fig1.setMinimum(0)
-        self.ui.sldr_fig1.setMaximum(dimx)
+        self.ui.scrlbr_fig1.setValue(ncx)
+        self.ui.scrlbr_fig1.setMinimum(0)
+        self.ui.scrlbr_fig1.setMaximum(dimx)
 
-        self.ui.sldr_fig1.setValue(ncy)
-        self.ui.sldr_fig1.setMinimum(0)
-        self.ui.sldr_fig1.setMaximum(dimy)
+        self.ui.scrlbr_fig2.setValue(ncy)
+        self.ui.scrlbr_fig2.setMinimum(0)
+        self.ui.scrlbr_fig3.setMaximum(dimy)
 
-        self.ui.sldr_fig1.setValue(ncz)
-        self.ui.sldr_fig1.setMinimum(0)
-        self.ui.sldr_fig1.setMaximum(dimz)
+        self.ui.scrlbr_fig3.setValue(ncz)
+        self.ui.scrlbr_fig3.setMinimum(0)
+        self.ui.scrlbr_fig3.setMaximum(dimz)
 
         self.updateSliceX(ncx)
         self.updateSliceY(ncy)
