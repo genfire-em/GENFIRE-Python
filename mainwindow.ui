@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>GENFIRE_MainWindow</class>
+ <widget class="QMainWindow" name="GENFIRE_MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>845</width>
-    <height>737</height>
+    <width>819</width>
+    <height>1024</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -337,7 +337,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>845</width>
+     <width>819</width>
      <height>22</height>
     </rect>
    </property>

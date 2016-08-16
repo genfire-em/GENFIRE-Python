@@ -17,7 +17,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         super(GenfireMainWindow,self).__init__()
 
         ## Initialize UI
-        self.ui = GENFIRE_GUI.Ui_MainWindow()
+        self.ui = GENFIRE_GUI.Ui_GENFIRE_MainWindow()
         self.ui.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('test.png'))
 
