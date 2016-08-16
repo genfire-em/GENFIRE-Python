@@ -173,7 +173,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         myFig.imshow(pj)
         myFig.axes.get_xaxis().set_visible(False)
         myFig.axes.get_yaxis().set_visible(False)
-        # self.figure.imshow(pj)
+        myFig.hold(False)
         self.canvas.draw()
 
     def clearFigure(self):

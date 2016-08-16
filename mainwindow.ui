@@ -352,8 +352,15 @@
     </property>
     <addaction name="action_Create_Support"/>
    </widget>
+   <widget class="QMenu" name="menuView_Volume">
+    <property name="title">
+     <string>View Volume</string>
+    </property>
+    <addaction name="action_Volume_Slicer"/>
+   </widget>
    <addaction name="menuGENFIRE"/>
    <addaction name="menuTools"/>
+   <addaction name="menuView_Volume"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -366,7 +373,12 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Create_Support">
    <property name="text">
-    <string>Launch Projection Calculator</string>
+    <string>Projection Calculator</string>
+   </property>
+  </action>
+  <action name="action_Volume_Slicer">
+   <property name="text">
+    <string>Volume Slicer</string>
    </property>
   </action>
  </widget>

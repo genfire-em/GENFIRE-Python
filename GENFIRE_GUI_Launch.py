@@ -3,6 +3,7 @@ import matplotlib
 matplotlib.use("Qt4Agg")
 import GENFIRE_GUI
 import ProjectionCalculator
+import volume_slicer
 import GENFIRE_main
 import os
 import sys
@@ -119,6 +120,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
+        self.ui.action_Volume_Slicer.triggered.connect(self.launchVolumeSlicer)
 
     def calculateRfree(self):
         if self.ui.checkBox_rfree.isEnabled() == True:
@@ -130,6 +132,15 @@ class GenfireMainWindow(QtGui.QMainWindow):
         print "launching"
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
         self.GENFIRE_ProjectionCalculator.show()
+
+    def launchVolumeSlicer(self):
+        import os
+        import GENFIRE_io
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc);;All Files (*)")
+        filename = unicode(filename.toUtf8(), encoding='UTF-8')
+        volume = GENFIRE_io.loadVolume(filename)
+        self.VolumeSlicer = volume_slicer.VolumeSlicer(volume)
+        self.VolumeSlicer.show()
 
     def toggleSelectIO(self):
         if self.ui.lineEdit_io.isEnabled():

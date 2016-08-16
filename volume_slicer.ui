@@ -18,13 +18,13 @@
     <item>
      <layout class="QHBoxLayout" name="hz_lyt_figures">
       <item>
-       <layout class="QHBoxLayout" name="hz_lyt_fig1"/>
+       <layout class="QVBoxLayout" name="vt_lyt_fig1"/>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="hz_lyt_fig2"/>
+       <layout class="QVBoxLayout" name="vt_lyt_fig2"/>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="hz_lyt_fig3"/>
+       <layout class="QVBoxLayout" name="vt_lyt_fig3"/>
       </item>
      </layout>
     </item>
@@ -35,13 +35,37 @@
         <item>
          <layout class="QHBoxLayout" name="hz_lyt_sliders">
           <item>
-           <layout class="QVBoxLayout" name="sldr_fig1"/>
+           <layout class="QVBoxLayout" name="sldr_fig1">
+            <item>
+             <widget class="QScrollBar" name="scrlbr_fig1">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="sldr_fig2"/>
+           <layout class="QVBoxLayout" name="sldr_fig2">
+            <item>
+             <widget class="QScrollBar" name="scrlbr_fig2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="sldr_fig3"/>
+           <layout class="QVBoxLayout" name="sldr_fig3">
+            <item>
+             <widget class="QScrollBar" name="scrlbr_fig3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
