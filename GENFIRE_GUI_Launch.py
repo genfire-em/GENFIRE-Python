@@ -223,7 +223,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def startReconstruction(self):
-        print('GENFIRE: Launching GENFIRE Reconstruction')
+        print('Launching GENFIRE Reconstruction')
         # Launch the reconstruction in a separate thread to prevent the GUI blocking while reconstructing
         from threading import Thread
         from functools import partial
@@ -343,7 +343,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
             # self.ui.log.setStyleSheet("color: red")
 
             self.ui.log.append(formatted_msg)
-
             # self.ui.log.insertPlainText(msg)
 
 class Launcher(QtCore.QObject):
@@ -378,7 +377,9 @@ class GenfireWriter(object):
         self.msg_queue = msg_queue
 
     def write(self, message):
-        self.msg_queue.put(message)
+        # self.msg_queue.put("GENFIRE: " + message)
+        if message != "\n":
+            self.msg_queue.put("GENFIRE: " + message)
 
 class GenfireLogger(QtCore.QObject):
     def __init__(self, msg_queue):
@@ -395,9 +396,6 @@ class GenfireLogger(QtCore.QObject):
     @QtCore.pyqtSlot()
     def cleanup_thread(self):
         import sys
-        # sys.stdout = sys.__stdout__
-        # sys.sterr = sys.__stderr__
-
         self.listener.process_finished = True
         process_finished = True
         self.msg_queue.put("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
@@ -406,10 +404,6 @@ class GenfireLogger(QtCore.QObject):
             self.listener_thread.quit()
             self.listener_thread.wait()
 
-    # def __del__(self):
-    #     import sys
-        # sys.stdout = sys.__stdout__
-        # sys.sterr = sys.__stderr__
 
 if __name__ == "__main__":
 

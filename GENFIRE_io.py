@@ -8,7 +8,12 @@ def loadVolume(filename):
 def readMAT_volume(filename):
     import numpy as np
     import scipy.io as io
-    return np.array(io.loadmat(filename)['reconstructon'])
+    data = io.loadmat(filename)
+    var_name = [key for key in data if not key.startswith("__")]
+    if len(var_name) > 1:
+        raise IOError("Only 1 variable allowed per .MAT file")
+    else:
+        return np.array(data[var_name])
 
 def readNPY(filename, dtype=float, order="C"):
     import numpy as np

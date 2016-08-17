@@ -33,39 +33,45 @@ def GENFIRE_main_InteractivelySetParameters():
     displayFigure = GENFIRE.DisplayFigure()
     displayFigure.DisplayFigureON = doYouWantToDisplayFigure
     calculateRFree = True
-
+    if filename_support is None:
+        useDefaultSupport = True
+    else:
+        useDefaultSupport = False
 
     reconstruction_parameters                                      = ReconstructionParameters()
-    reconstruction_parameters.projectionFilename                  = filename_projections
-    reconstruction_parameters.angleFilename                       = filename_angles
-    reconstruction_parameters.supportFilename                     = filename_support
-    reconstruction_parameters.interpolationCutoffDistance         = interpolationCutoffDistance
-    reconstruction_parameters.numIterations                       = numIterations
-    reconstruction_parameters.oversamplingRatio                   = oversamplingRatio
+    reconstruction_parameters.projectionFilename                   = filename_projections
+    reconstruction_parameters.angleFilename                        = filename_angles
+    reconstruction_parameters.supportFilename                      = filename_support
+    reconstruction_parameters.interpolationCutoffDistance          = interpolationCutoffDistance
+    reconstruction_parameters.numIterations                        = numIterations
+    reconstruction_parameters.oversamplingRatio                    = oversamplingRatio
     reconstruction_parameters.displayFigure                        = displayFigure
     reconstruction_parameters.calculateRfree                       = calculateRFree
-    reconstruction_parameters.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState
+    reconstruction_parameters.resolutionExtensionSuppressionState  = resolutionExtensionSuppressionState
+    reconstruction_parameters.useDefaultSupport                    = useDefaultSupport
     if os.path.isfile(filename_results): # If a valid initial object was provided, use it
         reconstruction_parameters._initialObjectFilename           = filename_results
 
     GENFIRE_main(reconstruction_parameters)
 
 def GENFIRE_main(reconstruction_parameters):
+    import GENFIRE_io
 
-    filename_projections = reconstruction_parameters.projectionFilename
-    filename_angles = reconstruction_parameters.angleFilename
-    filename_support = reconstruction_parameters.supportFilename
-    filename_results = reconstruction_parameters.resultsFilename
-    numIterations = reconstruction_parameters.numIterations
-    oversamplingRatio = reconstruction_parameters.oversamplingRatio
-    interpolationCutoffDistance = reconstruction_parameters.interpolationCutoffDistance
-    displayFigure = reconstruction_parameters.displayFigure
-    resolutionExtensionSuppressionState = reconstruction_parameters.resolutionExtensionSuppressionState
-    calculateRFree = reconstruction_parameters.calculateRfree
+    filename_projections                    = reconstruction_parameters.projectionFilename
+    filename_angles                         = reconstruction_parameters.angleFilename
+    filename_support                        = reconstruction_parameters.supportFilename
+    filename_results                        = reconstruction_parameters.resultsFilename
+    numIterations                           = reconstruction_parameters.numIterations
+    oversamplingRatio                       = reconstruction_parameters.oversamplingRatio
+    interpolationCutoffDistance             = reconstruction_parameters.interpolationCutoffDistance
+    displayFigure                           = reconstruction_parameters.displayFigure
+    resolutionExtensionSuppressionState     = reconstruction_parameters.resolutionExtensionSuppressionState
+    calculateRFree                          = reconstruction_parameters.calculateRfree
+    useDefaultSupport                       = reconstruction_parameters.useDefaultSupport
     if reconstruction_parameters.isInitialObjectDefined:
-            filename_initialObject = reconstruction_parameters.initialObjectFilename
+            filename_initialObject          = reconstruction_parameters.initialObjectFilename
     else:
-        filename_initialObject = None
+        filename_initialObject               = None
 
     ### begin reconstruction ###
     projections = GENFIRE.loadProjections(filename_projections) # load projections into a 3D numpy array
@@ -76,10 +82,10 @@ def GENFIRE_main(reconstruction_parameters):
     padding = int((paddedDim-dims[0])/2)
 
     # load the support, or generate one if none was provided
-    if filename_support == "":
+    if useDefaultSupport or filename_support == "":
         support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
     else:
-        support = io.loadmat(filename_support); support = support[support.keys()[0]]
+        support = GENFIRE_io.loadVolume(filename_support);
 
     displayFigure.reconstructionDisplayWindowSize = np.shape(support) # this is used to show the central region of reconstruction
 
@@ -97,10 +103,10 @@ def GENFIRE_main(reconstruction_parameters):
     # load angles and check that the dimensions match the number of provided projections and that they
     # are either 1 x num_projections or 3 x num_projections
     angles = GENFIRE.loadAngles(filename_angles)
-    if np.shape(angles)[0] > 3:
-        raise ValueError("GENFIRE: Error! Dimension of angles incorrect.")
-    if np.shape(angles)[0] == 1:
-        tmp = np.zeros([3, np.shape(angles)[1]])
+    if np.shape(angles)[1] > 3:
+        raise ValueError("Error! Dimension of angles incorrect.")
+    if np.shape(angles)[1] == 1:
+        tmp = np.zeros([np.shape(angles)[1], 3])
         tmp[1, :] = angles
         angles = tmp
         del tmp
@@ -165,17 +171,17 @@ def GENFIRE_main(reconstruction_parameters):
     elif resolutionExtensionSuppressionState==3:# resolution extension only
         constraintEnforcementDelayIndicators = np.concatenate((np.arange(0.95, -.15, -0.15),[-0.15, -0.15, -0.15]))
     else:
-        print("GENFIRE: Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
+        print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
         constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
 
-    reconstructionOutputs = GENFIRE.GENFIRE_iterate(numIterations,np.fft.fftshift(initialObject),np.fft.fftshift(support),(measuredK)[:, :, 0:(np.shape(measuredK)[-1]//2+1)],(resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1]//2+1)],constraintEnforcementDelayIndicators,R_freeInd_complex,R_freeVals_complex,displayFigure)
+    reconstructionOutputs = GENFIRE.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure)
 
     # reclaim original array size. ncBig is center of oversampled array, and n2 is the half-width of original array
     ncBig = paddedDim//2
     n2 = dims[0]//2
     reconstructionOutputs['reconstruction'] = reconstructionOutputs['reconstruction'][ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2]
 
-    print ('GENFIRE: Reconstruction finished.')
+    print ('Reconstruction finished.')
     GENFIRE.saveResults(reconstructionOutputs, filename_results)
 
 if __name__ == "__main__" and len(sys.argv) == 1:
@@ -197,7 +203,7 @@ elif __name__ == "__main__":
                                 }
         print (sys.argv[:])
         if len(sys.argv)%2==0:
-            raise Exception("GENFIRE: Number of input options and input arguments does not match!")
+            raise Exception("Number of input options and input arguments does not match!")
         for argumentNum in range(1,len(sys.argv),2):
             print (inputArgumentOptions[sys.argv[argumentNum]])
             print  (sys.argv[argumentNum+1])

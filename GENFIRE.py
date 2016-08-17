@@ -20,9 +20,9 @@ PI = 3.14159265359
 
 
 if __name__ != "__main__":
-    def GENFIRE_iterate(numIterations,initialObject,support,measuredK,constraintIndicators,constraintEnforcementDelayIndicators,R_freeInd_complex,R_freeVals_complex,displayFigure):
+    def reconstruct(numIterations, initialObject, support, measuredK, constraintIndicators, constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure):
         """
-         * GENFIRE_iterate *
+         * reconstruct *
 
          Primary GENFIRE reconstruction function
 
@@ -295,9 +295,9 @@ if __name__ != "__main__":
         ky = np.reshape(ky, [1, dim1*dim2], 'F')
         kz = np.zeros([1, dim1*dim1])
         for projNum in range(0, numProjections):
-            phi = angles[0, projNum] * PI/180
-            theta = angles[1, projNum] * PI/180
-            psi = angles[2, projNum] * PI/180
+            phi = angles[projNum, 0] * PI/180
+            theta = angles[projNum, 1] * PI/180
+            psi = angles[projNum, 2] * PI/180
             R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) ,np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
             [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
             [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
@@ -403,7 +403,7 @@ if __name__ != "__main__":
         measuredK[np.isnan(measuredK)] = 0
         measuredK = misc.hermitianSymmetrize(measuredK)
 
-        print ("GENFIRE: Fourier grid assembled in %d seconds" % (time.time()-tic))
+        print ("Fourier grid assembled in %d seconds" % (time.time()-tic))
         return measuredK
 
 
@@ -426,19 +426,19 @@ if __name__ != "__main__":
         import GENFIRE_io
         filename, file_extension = os.path.splitext(filename)
         if file_extension == ".mat":
-            print ("GENFIRE: reading projections from MATLAB file.\n")
+            print ("Reading projections from MATLAB file.\n")
             return GENFIRE_io.readMAT_projections(filename + file_extension)
         elif file_extension == ".tif":
-            print ("GENFIRE: reading projections from .tif file.\n")
+            print ("Reading projections from .tif file.\n")
             return GENFIRE_io.readTIFF_projections(filename + file_extension)
         elif file_extension == ".mrc":
-            print ("GENFIRE: reading projections from .mrc file.\n")
+            print ("Reading projections from .mrc file.\n")
             return GENFIRE_io.readMRC(filename + file_extension)
         elif file_extension == ".npy":
-            print ("GENFIRE: reading projections from .npy file.\n")
+            print ("Reading projections from .npy file.\n")
             return GENFIRE_io.readNPY(filename + file_extension)
         else:
-            raise Exception('GENFIRE: File format %s not supported.', file_extension)
+            raise Exception('File format %s not supported.', file_extension)
 
     def readMAT(filename):
         """
