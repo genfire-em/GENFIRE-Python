@@ -108,7 +108,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             for projNum in range(0,np.size(phi)):
                 # pj = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
                 # projections[:, :, projNum] = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
-                pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+                pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.model))
                 # projections[:, :, projNum] = pj
                 projections[:, :, projNum] = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
 

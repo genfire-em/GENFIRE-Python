@@ -345,6 +345,11 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.ui.log.append(formatted_msg)
             # self.ui.log.insertPlainText(msg)
 
+    @QtCore.pyqtSlot()
+    def stopRunning(self):
+        global process_finished
+        process_finished = True
+
 class Launcher(QtCore.QObject):
     def __init__(self, pars):
         super(Launcher,self).__init__()
@@ -363,14 +368,19 @@ class GenfireListener(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def run(self):
+        msg = ''
         while not self.process_finished:
             msg = self.msg_queue.get() #get next message, blocks if nothing to get
-            if process_finished:
+            if self.process_finished:
                 self.message_pending.emit(msg)
                 return
             # else:
             #     print ("failure")
             self.message_pending.emit(msg)
+
+    @QtCore.pyqtSlot()
+    def stopRunning(self):
+        self.process_finished = True
 
 class GenfireWriter(object):
     def __init__(self, msg_queue):
@@ -390,14 +400,16 @@ class GenfireLogger(QtCore.QObject):
         self.listener_thread = QtCore.QThread()
         self.listener.moveToThread(self.listener_thread)
         self.listener_thread.started.connect(self.listener.run)
+        # QtCore.QCoreApplication.instance().aboutToQuit.connect(self.listener.stopRunning)
         # QtCore.QCoreApplication.instance().aboutToQuit.connect(self.cleanup_thread)
         self.listener_thread.start()
 
     @QtCore.pyqtSlot()
     def cleanup_thread(self):
         import sys
+        global process_finished
         self.listener.process_finished = True
-        process_finished = True
+        # process_finished = True
         self.msg_queue.put("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
         # self.listener_thread.wait()
         if self.listener_thread.isRunning():
@@ -434,6 +446,10 @@ if __name__ == "__main__":
     sys.stderr = GenfireWriter(err_msg_queue)
     GF_error_logger.listener.message_pending[str].connect(GF_window.receive_error_msg)
     app.aboutToQuit.connect(GF_error_logger.cleanup_thread)
+
+    app.aboutToQuit.connect(GF_window.stopRunning)
+    # app.aboutToQuit.connect(GF_error_logger.listener.stopRunning)
+    # app.aboutToQuit.connect(GF_logger.listener.stopRunning)
 
     # app.aboutToQuit.connect(GF_logger.cleanup_threads)
 
