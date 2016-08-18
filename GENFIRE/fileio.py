@@ -1,3 +1,5 @@
+import numpy as np
+
 def loadVolume(filename):
     import os
     base, ext = os.path.splitext(filename)
@@ -7,13 +9,13 @@ def loadVolume(filename):
         return readMAT_volume(filename)
 def readMAT_volume(filename):
     import numpy as np
-    import scipy.io as io
-    data = io.loadmat(filename)
+    import scipy.io
+    data = scipy.io.loadmat(filename)
     var_name = [key for key in data if not key.startswith("__")]
     if len(var_name) > 1:
         raise IOError("Only 1 variable allowed per .MAT file")
     else:
-        return np.array(data[var_name])
+        return np.array(data[var_name[0]])
 
 def readNPY(filename, dtype=float, order="C"):
     import numpy as np
@@ -103,6 +105,37 @@ def writeMRC(filename, arr, datatype='f4'):
         fid.write(char_header)
         fid.write(arr.tobytes())
 
+
+def loadProjections(filename):
+    """
+    * loadProjections *
+
+    Wrapper function for loading in projections of arbitrary (supported) extension
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+    :param filename: Filename of images to load
+    :return: NumPy array containing projections
+    """
+    import os
+    filename, file_extension = os.path.splitext(filename)
+    if file_extension == ".mat":
+        print ("Reading projections from MATLAB file.\n")
+        return readMAT_projections(filename + file_extension)
+    elif file_extension == ".tif":
+        print ("Reading projections from .tif file.\n")
+        return readTIFF_projections(filename + file_extension)
+    elif file_extension == ".mrc":
+        print ("Reading projections from .mrc file.\n")
+        return readMRC(filename + file_extension)
+    elif file_extension == ".npy":
+        print ("Reading projections from .npy file.\n")
+        return readNPY(filename + file_extension)
+    else:
+        raise Exception('File format %s not supported.', file_extension)
 
 def readMAT_projections(filename):
     import scipy.io
@@ -230,3 +263,79 @@ def readInTiffProjection(filename_base, fileNumber):
     nextFile = filename_base + str(fileNumber) + '.tif'
     return np.array(Image.open(nextFile))
 
+def loadAngles(filename):
+    """
+    * loadAngles *
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+    :param filename:
+    :return:
+    """
+    import os
+    base,ext = os.path.splitext(filename)
+    ext = ext.lower()
+    if ext == ".txt":
+        return np.loadtxt(filename,dtype=float)
+    elif ext== ".npy":
+        return np.load(filename)
+    elif ext==".mat":
+        import scipy.io
+        data = scipy.io.loadmat(filename)
+        if "angles" not in data.keys():
+            raise LookupError("No variable called 'angles' found in \"{}\"!".format(filename))
+        return np.array(data['angles'],dtype=float)
+    else:
+        raise IOError("Unsupported file extension \"{}\" for Euler angles".format(ext))
+
+def loadInitialObject(filename):
+    """
+    * loadInitialObject *
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+    :param filename:
+    :return:
+    """
+    import os
+    base,ext = os.path.splitext(filename)
+    ext = ext.lower()
+    if ext == ".npy":
+        return np.load(filename)
+    elif ext==".mat":
+        import scipy.io
+        data = scipy.io.loadmat(filename)
+        if "initial_object" not in data.keys():
+            raise LookupError("No variable called 'initial_object' found in \"{}\"!".format(filename))
+        return np.array(data['initial_object'],dtype=float)
+    elif ext==".mrc":
+        raise NotImplementedError("mrc file format not yet supported")
+    else:
+        raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
+
+def saveResults(reconstruction_outputs, filename):
+    """
+    * saveResults *
+
+    Helper function to save results of GENFIRE reconstruction
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved
+
+    :param reconstruction_outputs: dictionary containing reconstruction, reciprocal error (errK), and possible R_free
+    :param filename: Output filename
+    """
+    import os
+    fn, ext = os.path.splitext(filename)
+    writeMRC(filename, reconstruction_outputs['reconstruction'])
+    np.savetxt(fn+'_errK.txt',reconstruction_outputs['errK'])
+    if 'R_free' in reconstruction_outputs.keys():
+        np.savetxt(fn+'_Rfree.txt',reconstruction_outputs['R_free'])

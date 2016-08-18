@@ -1,18 +1,17 @@
 from PyQt4 import QtCore, QtGui
 import os
-import misc
+import GENFIRE.misc
 import pyfftw
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-import ProjectionCalculator_ui
-import scipy.io as io
+import ProjectionCalculator_MainWindow
 
 class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
     def __init__(self, parent=None):
         super(ProjectionCalculator, self).__init__()
-        self.ui = ProjectionCalculator_ui.Ui_ProjectionCalculator()
+        self.ui = ProjectionCalculator_MainWindow.Ui_ProjectionCalculator()
         self.ui.setupUi(self)
         self.calculationParameters = ProjectionCalculationParameters()
         self.interpolator = None
@@ -90,7 +89,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             padding = int((paddedDim-self.dims[0])/2)
             self.model = np.pad(self.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
             self.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.model))))
-            self.interpolator = misc.getProjectionInterpolator(self.model)
+            self.interpolator = GENFIRE.misc.getProjectionInterpolator(self.model)
         self.ncOut = np.shape(self.model)[0]//2
 
 
@@ -104,11 +103,11 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             filename = self.calculationParameters.outputBaseFilename +'.npy'
             projections = np.zeros((self.dims[0],self.dims[1],np.size(phi)),dtype=float)
             if self.interpolator is None:
-                self.interpolator = misc.getProjectionInterpolator(self.model)
+                self.interpolator = GENFIRE.misc.getProjectionInterpolator(self.model)
             for projNum in range(0,np.size(phi)):
                 # pj = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
                 # projections[:, :, projNum] = misc.calculateProjection_interp(self.model, phi[projNum], theta[projNum], psi[projNum])[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
-                pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.model))
+                pj = GENFIRE.misc.calculateProjection_interp_fromInterpolator(self.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.model))
                 # projections[:, :, projNum] = pj
                 projections[:, :, projNum] = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
 
@@ -116,8 +115,8 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         else:
             # pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
             if self.interpolator is None:
-                self.interpolator = misc.getProjectionInterpolator(self.model)
-            pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+                self.interpolator = GENFIRE.misc.getProjectionInterpolator(self.model)
+            pj = GENFIRE.misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
             pj = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
             filename = self.calculationParameters.outputBaseFilename +'TEMPprojectionName.mat'
             outDict = {'pj': pj}
@@ -137,7 +136,6 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                 modelFilename = unicode(self.calculationParameters.modelFilename.toUtf8(), encoding='UTF-8')
                 self.GENFIRE_load(modelFilename)
                 self.oversamplingRatio = 3
-                print np.shape(self.model)
                 self.dims = np.shape(self.model)
                 self.paddedDim = self.dims[0] * self.oversamplingRatio
                 padding = int((self.paddedDim-self.dims[0])/2)
@@ -146,9 +144,9 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                 # global ncOut
                 self.ncOut = np.shape(self.model)[0]//2
                 if self.interpolator is None:
-                    self.interpolator = misc.getProjectionInterpolator(self.model)
+                    self.interpolator = GENFIRE.misc.getProjectionInterpolator(self.model)
                 # pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
-                pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+                pj = GENFIRE.misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
                 pj = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
                 self.showProjection(pj)
                 self.calculationParameters.modelLoadedFlag = True
@@ -160,8 +158,8 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
     def updateFigure(self):
         # pj = misc.calculateProjection_interp(self.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
         if self.interpolator is None:
-            self.interpolator = misc.getProjectionInterpolator(self.model)
-        pj = misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
+            self.interpolator = GENFIRE.misc.getProjectionInterpolator(self.model)
+        pj = GENFIRE.misc.calculateProjection_interp_fromInterpolator(self.interpolator, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi, np.shape(self.model))
         pj = pj[self.ncOut-self.dims[0]/2:self.ncOut+self.dims[0]/2, self.ncOut-self.dims[1]/2:self.ncOut+self.dims[1]/2]
         self.ax.imshow(pj)
         self.canvas.draw()
@@ -244,7 +242,6 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             self.calculationParameters.angleFilename = filename
             self.calculationParameters.angleFileProvided = True
             self.ui.lineEdit_angleFile.setText(QtCore.QString(filename))
-            # print "angle File, ", self.calculationParameters.angleFilename
 
     def setAngleFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_angleFile.text()
@@ -255,20 +252,13 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
     def setModelFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_modelFile.text()
-        # print unicode(filename.toUtf8(),encoding='UTF-8')
-        # print os.path.isfile(unicode(filename.toUtf8(),encoding='UTF-8'))
         if os.path.isfile(unicode(filename.toUtf8(),encoding='UTF-8')):
-            # self.modelLoadedFlag = False
             self.GENFIRE_load(unicode(filename.toUtf8(),encoding='UTF-8'))
-            # print "going"
-            # self.setModelFilename(filename)
             self.calculationParameters.modelFilename = filename
-            # self.ui.lineEdit_modelFile.setText(QtCore.QString(filename))
             self.calculationParameters.modelFilenameProvided = True
             self.ui.checkBox_displayFigure.setEnabled(True)
 
     def setModelFilename(self, filename):
-        print "test"
         self.calculationParameters.modelFilename = filename
         self.ui.lineEdit_modelFile.setText(QtCore.QString(filename))
         self.calculationParameters.modelFilenameProvided = True
@@ -276,25 +266,10 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
     def selectModelFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Model",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
-        print "myfilename",  filename
 
         if os.path.isfile(unicode(filename.toUtf8(),encoding='UTF-8')):
-            # print "it is a file"
             self.setModelFilename(filename)
-            # self.GENFIRE_load(filename)
             self.GENFIRE_load(unicode(filename.toUtf8(),encoding='UTF-8'))
-            # self.modelLoadedFlag = False
-            # self.model = self.loadModel(filename)
-            # self.calculationParameters.modelFilename = filename
-            # self.ui.lineEdit_modelFile.setText(QtCore.QString(filename))
-            # self.calculationParameters.modelFilenameProvided = True
-            # self.ui.checkBox_displayFigure.setEnabled(True)
-
-    #
-    # def setModelFilename(self, filename):
-    #     if filename:
-    #         self.calculationParameters.modelFilename = filename
-    #         self.calculationParameters.modelNameProvided = True
 
     def setAngleFilename(self, filename):
         if filename:
@@ -307,18 +282,18 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             self.calculationParameters.displayProjectionsFlag = True
 
     def toggleSaveProjections(self):
-        print GENFIRE_ProjectionCalculator.calculationParameters.modelFilename
-        print GENFIRE_ProjectionCalculator.calculationParameters.angleFilename
-        print GENFIRE_ProjectionCalculator.calculationParameters.outputBaseFilename
-        print GENFIRE_ProjectionCalculator.calculationParameters.outputFilesFlag
+        print  GENFIRE_ProjectionCalculator.calculationParameters.modelFilename
+        print  GENFIRE_ProjectionCalculator.calculationParameters.angleFilename
+        print  GENFIRE_ProjectionCalculator.calculationParameters.outputBaseFilename
+        print  GENFIRE_ProjectionCalculator.calculationParameters.outputFilesFlag
         print  GENFIRE_ProjectionCalculator.calculationParameters.displayProjectionsFlag
-        print GENFIRE_ProjectionCalculator.calculationParameters.phiStart
-        print GENFIRE_ProjectionCalculator.calculationParameters.thetaStart
+        print  GENFIRE_ProjectionCalculator.calculationParameters.phiStart
+        print  GENFIRE_ProjectionCalculator.calculationParameters.thetaStart
         print  GENFIRE_ProjectionCalculator.calculationParameters.psiStart
-        print GENFIRE_ProjectionCalculator.calculationParameters.phiStep
-        print GENFIRE_ProjectionCalculator.calculationParameters.thetaStep
-        print GENFIRE_ProjectionCalculator.calculationParameters.psiStep
-        print GENFIRE_ProjectionCalculator.calculationParameters.numberOfProjections
+        print  GENFIRE_ProjectionCalculator.calculationParameters.phiStep
+        print  GENFIRE_ProjectionCalculator.calculationParameters.thetaStep
+        print  GENFIRE_ProjectionCalculator.calculationParameters.psiStep
+        print  GENFIRE_ProjectionCalculator.calculationParameters.numberOfProjections
 
 
         if self.calculationParameters.outputFilesFlag:
@@ -332,13 +307,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
 
     def GENFIRE_load(self, filename):
-        print "GENFIRE load file", filename
-        print type(filename)
-        self.model = io.loadmat(filename)
-        self.model = self.model['model']##CHANGE
-        print np.shape(self.model)
-
-
+        self.model =GENFIRE.fileio.loadVolume(filename)
 
 class ProjectionCalculationParameters:
     def __init__(self):

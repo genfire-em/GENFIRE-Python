@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'GENFIRE_MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -40,7 +40,7 @@ class Ui_GENFIRE_MainWindow(object):
         self.horizontalLayout_3.addItem(spacerItem)
         self.widget = QtGui.QWidget(self.centralWidget)
         self.widget.setMinimumSize(QtCore.QSize(512, 93))
-        self.widget.setStyleSheet(_fromUtf8("background-image: url(/Users/ajpryor/Documents/GENFIRE/GENFIRE/logo.png)"))
+        self.widget.setStyleSheet(_fromUtf8("background-image: url(:/GENFIRE.png)"))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.horizontalLayout_3.addWidget(self.widget)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)

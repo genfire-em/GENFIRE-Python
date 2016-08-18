@@ -12,7 +12,7 @@ __all__ = ['bytes', 'asbytes', 'isfileobj', 'getexception', 'strchar',
 import sys
 
 if sys.version_info[0] >= 3:
-    import GENFIRE_io
+    import io
 
     long = int
     integer_types = (int,)
@@ -36,7 +36,7 @@ if sys.version_info[0] >= 3:
         return str(s)
 
     def isfileobj(f):
-        return isinstance(f, (GENFIRE_io.FileIO, GENFIRE_io.BufferedReader, GENFIRE_io.BufferedWriter))
+        return isinstance(f, (io.FileIO, io.BufferedReader, io.BufferedWriter))
 
     def open_latin1(filename, mode='r'):
         return open(filename, mode=mode, encoding='iso-8859-1')

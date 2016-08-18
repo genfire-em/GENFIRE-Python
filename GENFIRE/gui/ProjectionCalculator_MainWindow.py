@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'projectioncalculator.ui'
+# Form implementation generated from reading ui file 'ProjectionCalculator_MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #

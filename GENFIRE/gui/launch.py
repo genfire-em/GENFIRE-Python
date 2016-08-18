@@ -1,14 +1,14 @@
 from PyQt4 import QtCore, QtGui
 import matplotlib
 matplotlib.use("Qt4Agg")
-import GENFIRE_GUI
+import GENFIRE_MainWindow
 import ProjectionCalculator
-import volume_slicer
-import GENFIRE_main
+import VolumeSlicer
+import launch
 import os
 import sys
-from GENFIRE import ReconstructionParameters
-
+from GENFIRE.reconstruct import ReconstructionParameters
+import GENFIRE_qrc
 
 class GenfireMainWindow(QtGui.QMainWindow):
     stop_threads = QtCore.pyqtSignal()
@@ -31,7 +31,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         super(GenfireMainWindow,self).__init__()
 
         ## Initialize UI
-        self.ui = GENFIRE_GUI.Ui_GENFIRE_MainWindow()
+        self.ui = GENFIRE_MainWindow.Ui_GENFIRE_MainWindow()
         self.ui.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('test.png'))
 
@@ -143,17 +143,15 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.GENFIRE_ReconstructionParameters.calculateRfree = False
 
     def launchProjectionCalculator(self):
-        print "launching"
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
         self.GENFIRE_ProjectionCalculator.show()
 
     def launchVolumeSlicer(self):
-        import os
-        import GENFIRE_io
+        import GENFIRE.io
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc);;All Files (*)")
         filename = unicode(filename.toUtf8(), encoding='UTF-8')
-        volume = GENFIRE_io.loadVolume(filename)
-        self.VolumeSlicer = volume_slicer.VolumeSlicer(volume)
+        volume = GENFIRE.io.loadVolume(filename)
+        self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
 
     def toggleSelectIO(self):
@@ -229,9 +227,9 @@ class GenfireMainWindow(QtGui.QMainWindow):
     def checkParameters(self):
         parametersAreGood = self.GENFIRE_ReconstructionParameters.checkParameters()
         if parametersAreGood: #update "go" button if we are ready
-            GF_window.ui.btn_reconstruct.setStyleSheet("background-color: GREEN; color:#ffffff;font-size:30px")
+            self.ui.btn_reconstruct.setStyleSheet("background-color: GREEN; color:#ffffff;font-size:30px")
             # GF_window.ui.btn_reconstruct.setStyleSheet("color: WHITE")
-            GF_window.ui.btn_reconstruct.setText("Launch Reconstruction!")
+            self.ui.btn_reconstruct.setText("Launch Reconstruction!")
 
     #Function to run GENFIRE reconstruction once all parameters are accounted for
 
@@ -241,7 +239,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         # Launch the reconstruction in a separate thread to prevent the GUI blocking while reconstructing
         from threading import Thread
         from functools import partial
-        t = Thread(target=partial(GENFIRE_main.GENFIRE_main,self.GENFIRE_ReconstructionParameters))
+        t = Thread(target=partial(launch.GENFIRE_main, self.GENFIRE_ReconstructionParameters))
         t.start()
 
     def displayResults(self):
@@ -251,9 +249,11 @@ class GenfireMainWindow(QtGui.QMainWindow):
         if outputfilename:
             import numpy as np
             import os
-            import GENFIRE_io
+            import GENFIRE.io
+            import matplotlib.pyplot as plt
 
-            initialObject = GENFIRE_io.loadVolume(outputfilename)
+
+            initialObject = GENFIRE.io.loadVolume(outputfilename)
             # initialObject = readMRC("outputfilename")
             dims = np.shape(initialObject)
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays
@@ -263,8 +263,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
             half_window_x = reconstructionDisplayWindowSize//2
             half_window_y = reconstructionDisplayWindowSize//2
             half_window_z = reconstructionDisplayWindowSize//2
-            import matplotlib.pyplot as plt
-            import numpy as np
             plt.figure()
             plt.subplot(233)
             plt.imshow(np.squeeze(initialObject[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
@@ -371,7 +369,7 @@ class Launcher(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def run(self):
-        GENFIRE_main.GENFIRE_main(self.pars)
+        launch.GENFIRE_main(self.pars)
 
 class GenfireListener(QtCore.QObject):
     message_pending = QtCore.pyqtSignal(str)
@@ -431,9 +429,7 @@ class GenfireLogger(QtCore.QObject):
             self.listener_thread.quit()
             self.listener_thread.wait()
 
-
-
-if __name__ == "__main__":
+def main():
 
     # Startup the application
     app = QtGui.QApplication(sys.argv)
@@ -482,4 +478,8 @@ if __name__ == "__main__":
     # Safely close and exit
 
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    launch()
+
 

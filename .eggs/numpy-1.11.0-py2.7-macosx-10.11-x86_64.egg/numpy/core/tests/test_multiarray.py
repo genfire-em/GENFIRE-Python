@@ -6,7 +6,7 @@ import sys
 import shutil
 import warnings
 import operator
-import GENFIRE_io
+import io
 import itertools
 import ctypes
 import os
@@ -3577,7 +3577,7 @@ class TestIO(object):
     def test_nofile(self):
         # this should probably be supported as a file
         # but for now test for proper errors
-        b = GENFIRE_io.BytesIO()
+        b = io.BytesIO()
         assert_raises(IOError, np.fromfile, b, np.uint8, 80)
         d = np.ones(7);
         assert_raises(IOError, lambda x: x.tofile(b), d)
@@ -3655,9 +3655,9 @@ class TestIO(object):
         self.x.tofile(self.filename)
 
         def fail(*args, **kwargs):
-            raise GENFIRE_io.IOError('Can not tell or seek')
+            raise io.IOError('Can not tell or seek')
 
-        f = GENFIRE_io.open(self.filename, 'rb', buffering=0)
+        f = io.open(self.filename, 'rb', buffering=0)
         f.seek = fail
         f.tell = fail
         y = np.fromfile(self.filename, dtype=self.dtype)
@@ -3677,9 +3677,9 @@ class TestIO(object):
 
     def test_file_position_after_fromfile(self):
         # gh-4118
-        sizes = [GENFIRE_io.DEFAULT_BUFFER_SIZE // 8,
-                 GENFIRE_io.DEFAULT_BUFFER_SIZE,
-                 GENFIRE_io.DEFAULT_BUFFER_SIZE * 8]
+        sizes = [io.DEFAULT_BUFFER_SIZE // 8,
+                 io.DEFAULT_BUFFER_SIZE,
+                 io.DEFAULT_BUFFER_SIZE * 8]
 
         for size in sizes:
             f = open(self.filename, 'wb')
@@ -3699,9 +3699,9 @@ class TestIO(object):
 
     def test_file_position_after_tofile(self):
         # gh-4118
-        sizes = [GENFIRE_io.DEFAULT_BUFFER_SIZE // 8,
-                 GENFIRE_io.DEFAULT_BUFFER_SIZE,
-                 GENFIRE_io.DEFAULT_BUFFER_SIZE * 8]
+        sizes = [io.DEFAULT_BUFFER_SIZE // 8,
+                 io.DEFAULT_BUFFER_SIZE,
+                 io.DEFAULT_BUFFER_SIZE * 8]
 
         for size in sizes:
             err_msg = "%d" % (size,)
@@ -5851,7 +5851,7 @@ class TestNewBufferProtocol(object):
         assert_(memoryview(c).strides == (800, 80, 8))
 
         # Writing C-contiguous data to a BytesIO buffer should work
-        fd = GENFIRE_io.BytesIO()
+        fd = io.BytesIO()
         fd.write(c.data)
 
         fortran = c.T

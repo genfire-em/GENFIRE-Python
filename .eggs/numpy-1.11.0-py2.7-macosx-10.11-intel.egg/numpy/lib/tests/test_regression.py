@@ -212,7 +212,7 @@ class TestRegression(TestCase):
     def test_loadtxt_fields_subarrays(self):
         # For ticket #1936
         if sys.version_info[0] >= 3:
-            from GENFIRE_io import StringIO
+            from io import StringIO
         else:
             from StringIO import StringIO
 

@@ -9,15 +9,15 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = GENFIRE
+
 TEMPLATE = app
 
 
-SOURCES += mainwindow.cpp \
-    phaseretrieval.cpp
+SOURCES += GENFIRE_MainWindow.cpp
 
-HEADERS  += mainwindow.h \
-    phaseretrieval.h
-FORMS    += \
-    mainwindow.ui \
-    projectioncalculator.ui \
-    volume_slicer.ui
+HEADERS  += GENFIRE_MainWindow.h
+
+FORMS    += GENFIRE_MainWindow.ui \
+            ProjectionCalculator_MainWindow.ui \
+            VolumeSlicer_MainWindow.ui
+RESOURCES   += GENFIRE.qrc

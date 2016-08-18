@@ -1,4 +1,4 @@
-import volume_slicer_ui
+import VolumeSlicer_MainWindow
 from PyQt4 import QtCore, QtGui
 import matplotlib
 matplotlib.use("Qt4Agg")
@@ -12,7 +12,7 @@ class VolumeSlicer(QtGui.QMainWindow):
     def __init__(self, volume):
         super(VolumeSlicer, self).__init__()
         self.volume = volume
-        self.ui = volume_slicer_ui.Ui_VolumeSlicer()
+        self.ui = VolumeSlicer_MainWindow.Ui_VolumeSlicer()
         self.ui.setupUi(self)
         self.ui.checkBox_lockcmap.toggled.connect(self.toggleLockCmap)
         self.lockColormap = False

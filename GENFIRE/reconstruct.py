@@ -1,24 +1,18 @@
-
 from __future__ import division
 import numpy as np
 import matplotlib
 matplotlib.use("Qt4Agg")
-
 import matplotlib.pyplot as plt
-import scipy.fftpack as sfft
 import os
 import scipy.io
 import pyfftw
 import time
-import misc
-import itertools
+import GENFIRE.misc
 import weightValues
 from multiprocessing import Pool
 
 
-PI = 3.14159265359
-
-
+PI = np.pi
 if __name__ != "__main__":
     def reconstruct(numIterations, initialObject, support, measuredK, constraintIndicators, constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure):
         """
@@ -401,7 +395,7 @@ if __name__ != "__main__":
 
         # print ("time3 " , time.time()-tic3)
         measuredK[np.isnan(measuredK)] = 0
-        measuredK = misc.hermitianSymmetrize(measuredK)
+        measuredK = GENFIRE.misc.hermitianSymmetrize(measuredK)
 
         print ("Fourier grid assembled in %d seconds" % (time.time()-tic))
         return measuredK
@@ -409,36 +403,6 @@ if __name__ != "__main__":
 
 
 
-    def loadProjections(filename):
-        """
-        * loadProjections *
-
-        Wrapper function for loading in projections of arbitrary (supported) extension
-
-        Author: Alan (AJ) Pryor, Jr.
-        Jianwei (John) Miao Coherent Imaging Group
-        University of California, Los Angeles
-        Copyright 2015-2016. All rights reserved.
-
-        :param filename: Filename of images to load
-        :return: NumPy array containing projections
-        """
-        import GENFIRE_io
-        filename, file_extension = os.path.splitext(filename)
-        if file_extension == ".mat":
-            print ("Reading projections from MATLAB file.\n")
-            return GENFIRE_io.readMAT_projections(filename + file_extension)
-        elif file_extension == ".tif":
-            print ("Reading projections from .tif file.\n")
-            return GENFIRE_io.readTIFF_projections(filename + file_extension)
-        elif file_extension == ".mrc":
-            print ("Reading projections from .mrc file.\n")
-            return GENFIRE_io.readMRC(filename + file_extension)
-        elif file_extension == ".npy":
-            print ("Reading projections from .npy file.\n")
-            return GENFIRE_io.readNPY(filename + file_extension)
-        else:
-            raise Exception('File format %s not supported.', file_extension)
 
     def readMAT(filename):
         """
@@ -638,26 +602,6 @@ if __name__ != "__main__":
             fid.write(char_header)
             fid.write(arr.tobytes())
 
-    def saveResults(reconstruction_outputs, filename):
-        """
-        * saveResults *
-
-        Helper function to save results of GENFIRE reconstruction
-
-        Author: Alan (AJ) Pryor, Jr.
-        Jianwei (John) Miao Coherent Imaging Group
-        University of California, Los Angeles
-        Copyright 2015-2016. All rights reserved
-
-        :param reconstruction_outputs: dictionary containing reconstruction, reciprocal error (errK), and possible R_free
-        :param filename: Output filename
-        """
-        import os
-        fn, ext = os.path.splitext(filename)
-        writeMRC(filename, reconstruction_outputs['reconstruction'])
-        np.savetxt(fn+'_errK.txt',reconstruction_outputs['errK'])
-        if 'R_free' in reconstruction_outputs.keys():
-            np.savetxt(fn+'_Rfree.txt',reconstruction_outputs['R_free'])
 
 
     class DisplayFigure:
@@ -677,61 +621,6 @@ if __name__ != "__main__":
             self.displayFrequency = 5
             self.reconstructionDisplayWindowSize = 0
 
-    def loadAngles(filename):
-        """
-        * loadAngles *
-
-        Author: Alan (AJ) Pryor, Jr.
-        Jianwei (John) Miao Coherent Imaging Group
-        University of California, Los Angeles
-        Copyright 2015-2016. All rights reserved.
-
-        :param filename:
-        :return:
-        """
-        import os
-        base,ext = os.path.splitext(filename)
-        ext = ext.lower()
-        if ext == ".txt":
-            return np.loadtxt(filename,dtype=float)
-        elif ext== ".npy":
-            return np.load(filename)
-        elif ext==".mat":
-            import scipy.io as io
-            data = io.loadmat(filename)
-            if "angles" not in data.keys():
-                raise LookupError("No variable called 'angles' found in \"{}\"!".format(filename))
-            return np.array(data['angles'],dtype=float)
-        else:
-            raise IOError("Unsupported file extension \"{}\" for Euler angles".format(ext))
-
-    def loadInitialObject(filename):
-        """
-        * loadInitialObject *
-
-        Author: Alan (AJ) Pryor, Jr.
-        Jianwei (John) Miao Coherent Imaging Group
-        University of California, Los Angeles
-        Copyright 2015-2016. All rights reserved.
-
-        :param filename:
-        :return:
-        """
-        import os
-        base,ext = os.path.splitext(filename)
-        ext = ext.lower()
-        if ext == ".npy":
-            return np.load(filename)
-        elif ext==".mat":
-            import scipy.io as io
-            data = io.loadmat(filename)
-            if "initial_object" not in data.keys():
-                raise LookupError("No variable called 'initial_object' found in \"{}\"!".format(filename))
-            return np.array(data['initial_object'],dtype=float)
-        elif ext==".mrc":
-            raise NotImplementedError("mrc file format not yet supported")
-        else:
-            raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
 
 
 class ReconstructionParameters():

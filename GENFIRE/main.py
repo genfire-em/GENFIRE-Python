@@ -1,16 +1,12 @@
 from __future__ import division
 import numpy as np
-import scipy.io as io
-import matplotlib
-# matplotlib.use("Qt4Agg")
-import GENFIRE as GENFIRE
-
+import GENFIRE
 import sys
 import os
-from GENFIRE import ReconstructionParameters
+from GENFIRE.reconstruct import ReconstructionParameters
 
 
-def GENFIRE_main_InteractivelySetParameters():
+def main_InteractivelySetParameters():
     #######################################################################################################################
     ############################################### User Parameters  ######################################################
     #######################################################################################################################
@@ -19,9 +15,9 @@ def GENFIRE_main_InteractivelySetParameters():
     # by either the command line or the GUI will override these momentarily
 
     # filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
-    filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
-    filename_angles = './data/angles.mat'  #angles can be either a 1xN_projections array containing a single tilt series, or 3xN_projections array containing 3 Euler angles for each projections in the form [phi;theta;psi]
-    filename_support = './data/support60.mat'  #NxNxN binary array specifying a region of 1's in which the reconstruction can exist
+    filename_projections = '../data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
+    filename_angles = '../data/angles.mat'  #angles can be either a 1xN_projections array containing a single tilt series, or 3xN_projections array containing 3 Euler angles for each projections in the form [phi;theta;psi]
+    filename_support = '../data/support60.mat'  #NxNxN binary array specifying a region of 1's in which the reconstruction can exist
     filename_initialObject = None  #initial object to use in reconstruction; set to None to provide no initial guess
     filename_results = 'GENFIRE_rec.mrc'  #filename to save results
     resolutionExtensionSuppressionState = 2 # 1) Turn on resolution extension/suppression, 2) No resolution extension/suppression, 3) Just resolution extension
@@ -30,7 +26,7 @@ def GENFIRE_main_InteractivelySetParameters():
     oversamplingRatio = 3  #input projections will be padded internally to match this oversampling ratio. If you prepad your projections, set this to 1
     interpolationCutoffDistance = 0.7  #radius of spherical interpolation kernel (in pixels) within which to include measured datapoints
     doYouWantToDisplayFigure = True
-    displayFigure = GENFIRE.DisplayFigure()
+    displayFigure = GENFIRE.reconstruct.DisplayFigure()
     displayFigure.DisplayFigureON = doYouWantToDisplayFigure
     calculateRFree = True
     if filename_support is None:
@@ -52,10 +48,10 @@ def GENFIRE_main_InteractivelySetParameters():
     if os.path.isfile(filename_results): # If a valid initial object was provided, use it
         reconstruction_parameters._initialObjectFilename           = filename_results
 
-    GENFIRE_main(reconstruction_parameters)
+    main(reconstruction_parameters)
 
-def GENFIRE_main(reconstruction_parameters):
-    import GENFIRE_io
+def main(reconstruction_parameters):
+    import GENFIRE.fileio
 
     filename_projections                    = reconstruction_parameters.projectionFilename
     filename_angles                         = reconstruction_parameters.angleFilename
@@ -74,7 +70,7 @@ def GENFIRE_main(reconstruction_parameters):
         filename_initialObject               = None
 
     ### begin reconstruction ###
-    projections = GENFIRE.loadProjections(filename_projections) # load projections into a 3D numpy array
+    projections = GENFIRE.fileio.loadProjections(filename_projections) # load projections into a 3D numpy array
 
     # get dimensions of array and determine the array size after padding
     dims = np.shape(projections)
@@ -85,7 +81,7 @@ def GENFIRE_main(reconstruction_parameters):
     if useDefaultSupport or filename_support == "":
         support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
     else:
-        support = GENFIRE_io.loadVolume(filename_support);
+        support = GENFIRE.fileio.loadVolume(filename_support);
 
     displayFigure.reconstructionDisplayWindowSize = np.shape(support) # this is used to show the central region of reconstruction
 
@@ -102,7 +98,7 @@ def GENFIRE_main(reconstruction_parameters):
 
     # load angles and check that the dimensions match the number of provided projections and that they
     # are either 1 x num_projections or 3 x num_projections
-    angles = GENFIRE.loadAngles(filename_angles)
+    angles = GENFIRE.fileio.loadAngles(filename_angles)
     if np.shape(angles)[1] > 3:
         raise ValueError("Error! Dimension of angles incorrect.")
     if np.shape(angles)[1] == 1:
@@ -112,13 +108,13 @@ def GENFIRE_main(reconstruction_parameters):
         del tmp
 
     # grid the projections
-    measuredK = GENFIRE.fillInFourierGrid(projections, angles, interpolationCutoffDistance)
+    measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance)
     # the grid is assembled with the origin at the geometric center of the array, but for efficiency in the
     # iterative algorithm the origin is shifted to array position [0,0,0] to avoid unnecessary fftshift calls
     measuredK = np.fft.ifftshift(measuredK)
 
     # create a map of the spatial frequency to be used to control resolution extension/suppression behavior
-    K_indices = GENFIRE.generateKspaceIndices(support)
+    K_indices = GENFIRE.reconstruct.generateKspaceIndices(support)
     K_indices = np.fft.fftshift(K_indices)
     resolutionIndicators = np.zeros_like(K_indices)
     resolutionIndicators[measuredK != 0] = 1-K_indices[measuredK != 0]
@@ -174,7 +170,7 @@ def GENFIRE_main(reconstruction_parameters):
         print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
         constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
 
-    reconstructionOutputs = GENFIRE.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure)
+    reconstructionOutputs = GENFIRE.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure)
 
     # reclaim original array size. ncBig is center of oversampled array, and n2 is the half-width of original array
     ncBig = paddedDim//2
@@ -182,11 +178,11 @@ def GENFIRE_main(reconstruction_parameters):
     reconstructionOutputs['reconstruction'] = reconstructionOutputs['reconstruction'][ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2]
 
     print ('Reconstruction finished.')
-    GENFIRE.saveResults(reconstructionOutputs, filename_results)
+    GENFIRE.fileio.saveResults(reconstructionOutputs, filename_results)
 
 if __name__ == "__main__" and len(sys.argv) == 1:
     print ("starting with user parameters")
-    GENFIRE_main_InteractivelySetParameters()
+    main_InteractivelySetParameters()
 elif __name__ == "__main__":
     if len(sys.argv) > 1: # Parse inputs provided either from the GUI or from the command line
         inputArgumentOptions = {"-p" :  "filename_projections",
@@ -216,32 +212,32 @@ elif __name__ == "__main__":
         numIterations = int(numIterations)
         # displayFigure = bool(displayFigure)
         doYouWantToDisplayFigure = bool(displayFigure)
-        displayFigure = GENFIRE.DisplayFigure()
+        displayFigure = GENFIRE.reconstruct.DisplayFigure()
         displayFigure.DisplayFigureON = doYouWantToDisplayFigure
         oversamplingRatio = float(oversamplingRatio)
         resolutionExtensionSuppressionState = int(resolutionExtensionSuppressionState)
         calculateRFree = bool(calculateRFree)
         try:
-            GENFIRE_main(filename_projections,
-                         filename_angles,
-                         filename_support,
-                         filename_results,
-                         numIterations,
-                         oversamplingRatio,
-                         interpolationCutoffDistance,
-                         resolutionExtensionSuppressionState,
-                         displayFigure,
-                         calculateRFree,
-                         filename_initialObject)
+            main(filename_projections,
+                 filename_angles,
+                 filename_support,
+                 filename_results,
+                 numIterations,
+                 oversamplingRatio,
+                 interpolationCutoffDistance,
+                 resolutionExtensionSuppressionState,
+                 displayFigure,
+                 calculateRFree,
+                 filename_initialObject)
         except (NameError, IOError):
-             GENFIRE_main(filename_projections,
-                          filename_angles,
-                          filename_support,
-                          filename_results,
-                          numIterations,
-                          oversamplingRatio,
-                          interpolationCutoffDistance,
-                          resolutionExtensionSuppressionState,
-                          displayFigure,
-                          calculateRFree)
+             main(filename_projections,
+                  filename_angles,
+                  filename_support,
+                  filename_results,
+                  numIterations,
+                  oversamplingRatio,
+                  interpolationCutoffDistance,
+                  resolutionExtensionSuppressionState,
+                  displayFigure,
+                  calculateRFree)
 

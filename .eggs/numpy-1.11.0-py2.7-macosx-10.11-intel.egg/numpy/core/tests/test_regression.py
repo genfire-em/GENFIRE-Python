@@ -8,7 +8,7 @@ import gc
 import warnings
 import tempfile
 from os import path
-from GENFIRE_io import BytesIO
+from io import BytesIO
 from itertools import chain
 
 import numpy as np

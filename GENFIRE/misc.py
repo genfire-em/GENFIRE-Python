@@ -1,11 +1,8 @@
 from __future__ import division
 import numpy as np
 import pyfftw
-import matplotlib.pyplot as plt
-from scipy import io
 from scipy.interpolate import RegularGridInterpolator
-import time
-PI = 3.14159265359
+PI = np.pi
 
 
 
@@ -54,8 +51,6 @@ def hermitianSymmetrize(input):
         newInput[numberOfValues != 0] /= numberOfValues[numberOfValues != 0] # take average where two values existed
         newInput[np.isnan(newInput)] = 0 # Shouldn't be any nan, but just to be safe
 
-        debug = {'numberOfValues':numberOfValues,'newInput':newInput}
-        io.savemat('debugging',debug)
         return newInput[:startDims[0], :startDims[1], :startDims[2]] # return original dimensions
 
 

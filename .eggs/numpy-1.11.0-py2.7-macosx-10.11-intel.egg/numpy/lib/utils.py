@@ -855,7 +855,7 @@ def _lookfor_generate_cache(module, import_modules, regenerate):
 
     if sys.version_info[0] >= 3:
         # In Python3 stderr, stdout are text files.
-        from GENFIRE_io import StringIO
+        from io import StringIO
     else:
         from StringIO import StringIO
 

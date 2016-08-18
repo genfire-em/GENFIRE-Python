@@ -753,7 +753,7 @@ def loadtxt(fname, dtype=float, comments='#', delimiter=None,
 
     Examples
     --------
-    >>> from GENFIRE_io import StringIO   # StringIO behaves like a file object
+    >>> from io import StringIO   # StringIO behaves like a file object
     >>> c = StringIO("0 1\\n2 3")
     >>> np.loadtxt(c)
     array([[ 0.,  1.],
@@ -1377,7 +1377,7 @@ def genfromtxt(fname, dtype=float, comments='#', delimiter=None,
 
     Examples
     ---------
-    >>> from GENFIRE_io import StringIO
+    >>> from io import StringIO
     >>> import numpy as np
 
     Comma delimited file with mixed dtype

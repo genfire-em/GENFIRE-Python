@@ -39,7 +39,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-image: url(/Users/ajpryor/Documents/GENFIRE/GENFIRE/logo.png)</string>
+         <string notr="true">background-image: url(:/GENFIRE.png)</string>
         </property>
        </widget>
       </item>
