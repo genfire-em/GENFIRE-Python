@@ -11,6 +11,20 @@ from GENFIRE import ReconstructionParameters
 
 
 class GenfireMainWindow(QtGui.QMainWindow):
+    stop_threads = QtCore.pyqtSignal()
+    def closeEvent(self, QCloseEvent):
+        import time
+        # import sys; sys.__stdout__.write("HEY")
+        # if GF_logger.listener_thread.isRunning():
+        #     sys.__stdout__.write("yes")
+        # time.sleep(.1)
+        self.stop_threads.emit()
+        GF_logger.listener_thread.wait()
+        GF_error_logger.listener_thread.wait()
+        # if GF_logger.listener_thread.isRunning():
+        #     sys.__stdout__.write("still running")
+        # time.sleep(1)
+        QCloseEvent.accept()
     def __init__(self):
 
         ## Superclass constructor
@@ -381,6 +395,7 @@ class GenfireListener(QtCore.QObject):
     @QtCore.pyqtSlot()
     def stopRunning(self):
         self.process_finished = True
+        # self.msg_queue.put("exit")
 
 class GenfireWriter(object):
     def __init__(self, msg_queue):
@@ -417,6 +432,7 @@ class GenfireLogger(QtCore.QObject):
             self.listener_thread.wait()
 
 
+
 if __name__ == "__main__":
 
     # Startup the application
@@ -430,28 +446,38 @@ if __name__ == "__main__":
     # Render GUI
     GF_window.show()
 
+
     # Redirect standard output to the GUI
     from Queue import Queue
     global process_finished
+    global GF_logger
+    global GF_error_logger
     process_finished = False # flag to control save exit of the i/o threads for logging
 
     msg_queue  = Queue()
     GF_logger  = GenfireLogger(msg_queue)
     sys.stdout = GenfireWriter(msg_queue)
     GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
-    app.aboutToQuit.connect(GF_logger.cleanup_thread)
+    # app.aboutToQuit.connect(GF_logger.cleanup_thread)
+    # GF_window.destroyed.connect(GF_logger.cleanup_thread)
+
 
     err_msg_queue = Queue()
     GF_error_logger  = GenfireLogger(err_msg_queue)
     sys.stderr = GenfireWriter(err_msg_queue)
     GF_error_logger.listener.message_pending[str].connect(GF_window.receive_error_msg)
-    app.aboutToQuit.connect(GF_error_logger.cleanup_thread)
+    # app.aboutToQuit.connect(GF_error_logger.cleanup_thread)
 
-    app.aboutToQuit.connect(GF_window.stopRunning)
-    # app.aboutToQuit.connect(GF_error_logger.listener.stopRunning)
-    # app.aboutToQuit.connect(GF_logger.listener.stopRunning)
+    GF_window.stop_threads.connect(GF_error_logger.cleanup_thread)
+    GF_window.stop_threads.connect(GF_logger.cleanup_thread)
 
-    # app.aboutToQuit.connect(GF_logger.cleanup_threads)
+    GF_window.stop_threads.connect(GF_error_logger.listener.stopRunning)
+    GF_window.stop_threads.connect(GF_logger.listener.stopRunning)
+
+
+    # GF_window.destroyed.connect(GF_logger.cleanup_thread)
+    # app.aboutToQuit.connect(GF_window.stopRunning)
+
 
     # Safely close and exit
 
