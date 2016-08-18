@@ -147,10 +147,10 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.GENFIRE_ProjectionCalculator.show()
 
     def launchVolumeSlicer(self):
-        import GENFIRE.io
+        import GENFIRE.fileio
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc);;All Files (*)")
         filename = unicode(filename.toUtf8(), encoding='UTF-8')
-        volume = GENFIRE.io.loadVolume(filename)
+        volume = GENFIRE.fileio.loadVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
 
@@ -249,11 +249,11 @@ class GenfireMainWindow(QtGui.QMainWindow):
         if outputfilename:
             import numpy as np
             import os
-            import GENFIRE.io
+            import GENFIRE.fileio
             import matplotlib.pyplot as plt
 
 
-            initialObject = GENFIRE.io.loadVolume(outputfilename)
+            initialObject = GENFIRE.fileio.loadVolume(outputfilename)
             # initialObject = readMRC("outputfilename")
             dims = np.shape(initialObject)
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays

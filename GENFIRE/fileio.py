@@ -124,7 +124,8 @@ def loadProjections(filename):
     filename, file_extension = os.path.splitext(filename)
     if file_extension == ".mat":
         print ("Reading projections from MATLAB file.\n")
-        return readMAT_projections(filename + file_extension)
+        # return readMAT_projections(filename + file_extension)
+        return readMAT_volume(filename + file_extension)
     elif file_extension == ".tif":
         print ("Reading projections from .tif file.\n")
         return readTIFF_projections(filename + file_extension)
