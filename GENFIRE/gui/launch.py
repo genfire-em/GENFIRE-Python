@@ -164,10 +164,14 @@ class GenfireMainWindow(QtGui.QMainWindow):
              self.ui.lineEdit_io.setEnabled(True)
 
     def toggleUseDefaultSupport(self):
-        if self.ui.checkBox_default_support.isEnabled():
+        if self.ui.checkBox_default_support.isChecked():
             self.GENFIRE_ReconstructionParameters.useDefaultSupport = True
+            self.ui.lineEdit_support.setDisabled(True)
+            self.ui.lineEdit_support.setStyleSheet("background-color: gray")
         else:
             self.GENFIRE_ReconstructionParameters.useDefaultSupport = False
+            self.ui.lineEdit_support.setDisabled(False)
+            self.ui.lineEdit_support.setStyleSheet("background-color: white")
 
     def enableDisplayFrequencyChange(self):
         global displayFrequency
