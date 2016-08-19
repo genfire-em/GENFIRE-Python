@@ -336,7 +336,21 @@ def saveResults(reconstruction_outputs, filename):
     """
     import os
     fn, ext = os.path.splitext(filename)
-    writeMRC(filename, reconstruction_outputs['reconstruction'])
+    saveData(filename, reconstruction_outputs['reconstruction'])
     np.savetxt(fn+'_errK.txt',reconstruction_outputs['errK'])
     if 'R_free' in reconstruction_outputs.keys():
         np.savetxt(fn+'_Rfree.txt',reconstruction_outputs['R_free'])
+
+def saveData(filename, data):
+    import os
+    fn, ext = os.path.splitext(filename)
+    if ext == ".mrc":
+        writeMRC(filename, data)
+    elif ext == ".npy":
+        import numpy as np
+        np.save(filename,data)
+    elif ext == ".mat":
+        import scipy.io
+        scipy.io.savemat(filename, {"data":data})
+    else:
+        raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
