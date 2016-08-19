@@ -357,12 +357,14 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.lineEdit_thetaStep.textEdited.connect(self.setThetaStep)
         self.ui.lineEdit_thetaStop.textEdited.connect(self.setThetaStop)
         self.ui.lineEdit_outputFilename.textEdited.connect(self.setOutputFilename)
+
     def setAngleFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_angleFile.text()
         if os.path.isfile(toString(filename)):
             self.calculationParameters.angleFilename = filename
             self.calculationParameters.angleFileProvided = True
             self.ui.lineEdit_angleFile.setText(QtCore.QString(filename))
+            self.disableAngleWidgets()
 
     def selectAngleFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Angles",filter="txt files (*.txt);;All Files (*)")
@@ -370,6 +372,21 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
             self.calculationParameters.angleFilename = filename
             self.calculationParameters.angleFileProvided = True
             self.ui.lineEdit_angleFile.setText(QtCore.QString(filename))
+            self.disableAngleWidgets()
+
+    def disableAngleWidgets(self):
+        print('disabling')
+        self.ui.lineEdit_thetaStart.setEnabled(True)
+        self.ui.lineEdit_thetaStep.setDisabled(True)
+        self.ui.lineEdit_thetaStop.setDisabled(True)
+        self.ui.lineEdit_phi.setDisabled(True)
+        self.ui.lineEdit_psi.setDisabled(True)
+
+        self.ui.lineEdit_thetaStart.setStyleSheet("background-color: gray")
+        self.ui.lineEdit_thetaStep.setStyleSheet("background-color: gray")
+        self.ui.lineEdit_thetaStop.setStyleSheet("background-color: gray")
+        self.ui.lineEdit_phi.setStyleSheet("background-color: gray")
+        self.ui.lineEdit_psi.setStyleSheet("background-color: gray")
 
     def setPhi(self, angle):
         self.calculationParameters.phi = angle.toFloat()[0]
