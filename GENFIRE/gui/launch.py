@@ -33,7 +33,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
         ## Initialize UI
         self.ui = GENFIRE_MainWindow.Ui_GENFIRE_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon('test.png'))
 
         ## Initialize Reconstruction Parameters
         self.GENFIRE_ReconstructionParameters = ReconstructionParameters()
