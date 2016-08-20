@@ -62,7 +62,7 @@ def readMRC(filename, dtype=float, order="C"):
 
         return np.fromfile(file=fid, dtype=datatype,count=dimx*dimy*dimz).reshape((dimx,dimy,dimz),order=order).astype(dtype)
 
-def writeMRC(filename, arr, datatype='f4'):
+def writeMRC(filename, arr, datatype='f4', order="C"):
     """
     * writeMRC *
 
@@ -78,7 +78,12 @@ def writeMRC(filename, arr, datatype='f4'):
     :param dtype: Type of data to write
     """
     import numpy as np
+
     dimx, dimy, dimz = np.shape(arr)
+
+    if order=='F':
+        arr = np.transpose(arr)
+
     if datatype != arr.dtype:
         arr = arr.astype(datatype)
     int_header = np.zeros(56,dtype='int32')
@@ -345,7 +350,7 @@ def saveData(filename, data):
     import os
     fn, ext = os.path.splitext(filename)
     if ext == ".mrc":
-        writeMRC(filename, data)
+        writeMRC(filename, data, order="F")
     elif ext == ".npy":
         import numpy as np
         np.save(filename,data)
