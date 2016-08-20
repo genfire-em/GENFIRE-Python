@@ -81,8 +81,8 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
 
     dimx, dimy, dimz = np.shape(arr)
 
-    if order=='F':
-        arr = np.transpose(arr)
+    # if order=='F':
+    #     arr = np.transpose(arr)
 
     if datatype != arr.dtype:
         arr = arr.astype(datatype)
@@ -108,7 +108,7 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
     with open(filename,'wb') as fid:
         fid.write(int_header.tobytes())
         fid.write(char_header)
-        fid.write(arr.tobytes())
+        fid.write(arr.tobytes(order=order))
 
 
 def loadProjections(filename):

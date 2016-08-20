@@ -8,6 +8,18 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 import numpy as np
 from functools import partial
 
+# class GENFIRE_QScrollBar(QtGui.QScrollBar):
+#     def __init__(self, parent=None):
+#         super(GENFIRE_QScrollBar, self).__init__(self,parent)
+#     def keyPressEvent(self, QKeyEvent):
+#         print"Hey"
+#         if QKeyEvent.key == QtCore.Qt.Key_Up or QKeyEvent.key == QtCore.Qt.Key_Right:
+#             self.setValue(self.value() + 1)
+#         elif QKeyEvent.key == QtCore.Qt.Key_Down or QKeyEvent.key == QtCore.Qt.Key_Left:
+#             self.setValue(self.value() - 1)
+#         else:
+#             QtGui.QScrollBar.KeyPressEvent(self, QKeyEvent)
+
 class VolumeSlicer(QtGui.QMainWindow):
     def __init__(self, volume):
         super(VolumeSlicer, self).__init__()
@@ -85,6 +97,12 @@ class VolumeSlicer(QtGui.QMainWindow):
         self.lockColormap = True
         self.ui.checkBox_lockcmap.setChecked(True)
 
+        # self.scrlbr_fig1 = GENFIRE_QScrollBar(self.ui.centralwidget)
+        # self.scrlbr_fig1.setOrientation(QtCore.Qt.Horizontal)
+        # self.scrlbr_fig1.setInvertedAppearance(False)
+        # self.scrlbr_fig1.setObjectName(VolumeSlicer_MainWindow._fromUtf8("scrlbr_fig1"))
+        # self.ui.sldr_fig1.addWidget(self.scrlbr_fig1)
+        # self.scrlbr_fig1.show()
 
     def updateSliceX(self, nx):
         self.slice1.imshow(np.squeeze(self.volume[nx, :, :]))
