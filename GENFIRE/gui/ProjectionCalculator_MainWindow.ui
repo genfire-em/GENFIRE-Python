@@ -17,27 +17,28 @@
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="1" colspan="3">
-       <widget class="QPushButton" name="btn_clearModel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Clear Model</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="3">
-       <layout class="QVBoxLayout" name="verticalLayout_figure">
+      <item row="1" column="0" colspan="5">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Model</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_modelFile"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_selectModel">
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="4">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -156,92 +157,79 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
-      </item>
-      <item row="2" column="5">
-       <widget class="QPushButton" name="btn_go">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="palette">
-         <palette>
-          <active>
-           <colorrole role="Button">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>179</red>
-              <green>179</green>
-              <blue>179</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </active>
-          <inactive>
-           <colorrole role="Button">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>179</red>
-              <green>179</green>
-              <blue>179</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </inactive>
-          <disabled>
-           <colorrole role="Button">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>179</red>
-              <green>179</green>
-              <blue>179</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </disabled>
-         </palette>
-        </property>
-        <property name="text">
-         <string>Calculate Projection Series</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="6">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+      <item row="0" column="1" colspan="3">
+       <layout class="QVBoxLayout" name="verticalLayout_figure">
         <item>
-         <widget class="QLabel" name="label_2">
+         <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" colspan="5">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="btn_clearModel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
-           <string>Model</string>
+           <string>Clear Model</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_modelFile"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btn_selectModel">
+         <widget class="QPushButton" name="btn_go">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Button">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>179</red>
+                <green>179</green>
+                <blue>179</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Button">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>179</red>
+                <green>179</green>
+                <blue>179</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Button">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>179</red>
+                <green>179</green>
+                <blue>179</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
           <property name="text">
-           <string>Browse</string>
+           <string>Calculate Projection Series</string>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="2" column="4">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </item>

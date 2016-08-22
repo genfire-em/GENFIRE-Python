@@ -20,14 +20,14 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         # self.ui.lineEdit_outputFilename.setText(QtCore.QString(os.getcwd()))
         self.ui.lineEdit_modelFile.setText(QtCore.QString(os.getcwd()))
         # self.ui.lineEdit_angleFile.setText(QtCore.QString(os.getcwd()))
-        self.ui.lineEdit_modelFile.textEdited.connect(self.setModelFilename_fromLineEdit)
+        self.ui.lineEdit_modelFile.editingFinished.connect(self.setModelFilename_fromLineEdit)
         # self.ui.lineEdit_angleFile.textEdited.connect(self.setAngleFilename_fromLineEdit)
 
         ## Push Buttons
         #
         self.ui.btn_selectModel.clicked.connect(self.selectModelFile)
         # self.ui.btn_outputDirectory.clicked.connect(self.selectOutputDirectory)
-        self.ui.btn_refresh.clicked.connect(self.refreshModel)
+        # self.ui.btn_refresh.clicked.connect(self.refreshModel)
 
         ## Sliders
         self.ui.verticalSlider_phi.setValue(0)
@@ -142,41 +142,19 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
             print("Finished calculating {}.".format(filename))
 
     def clearModel(self):
-        self.calculationParameters.model = None
-        self.figure.clf()
+        self.calculationParameters.model         = None
+        self.calculationParameters.interpolator  = None
+        self.calculationParameters.modelFilename = None
+        self.clearFigure()
 
-    # def refreshModel(self):
-    #     self.ui.checkBox_displayFigure.click()
-    #     self.ui.checkBox_displayFigure.click()
 
-    def toggleDisplayFigure(self):
-        if self.calculationParameters.model is None:
-           self.calculationParameters.displayProjectionsFlag = True
-           if self.calculationParameters.modelFilenameProvided:
-                import scipy.io as io
-                # modelFilename = unicode(self.calculationParameters.modelFilename.toUtf8(), encoding='UTF-8')
-                modelFilename = toString(self.calculationParameters.modelFilename)
-                model = GENFIRE.fileio.loadVolume(modelFilename)
-                # self.GENFIRE_load(modelFilename)
-                self.calculationParameters.oversamplingRatio = 3
-                self.calculationParameters.dims = np.shape(self.calculationParameters.model)
-                self.calculationParameters.paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
-                padding = int((self.calculationParameters.paddedDim-self.calculationParameters.dims[0])/2)
-                self.calculationParameters.model = np.pad(self.calculationParameters.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
-                self.calculationParameters.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.calculationParameters.model))))
-                self.calculationParameters.ncOut = np.shape(self.calculationParameters.model)[0]//2
-                if self.calculationParameters.interpolator is None:
-                    self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
-                pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
-                pj = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
-                self.showProjection(pj)
-                self.calculationParameters.modelLoadedFlag = True
-        # elif self.ui.checkBox_displayFigure.isChecked():
-        #     self.showProjection(np.sum(self.calculationParameters.model,axis=0))
+    def displayFigure(self):
+        if self.calculationParameters.model is not None:
+            pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
+            pj = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
+            self.showProjection(pj)
         else:
-            self.calculationParameters.displayProjectionsFlag = False
             self.clearFigure()
-
 
     def updateFigure(self):
         # pj = misc.calculateProjection_interp(self.calculationParameters.model, self.calculationParameters.phi,self.calculationParameters.theta,self.calculationParameters.psi)[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
@@ -195,6 +173,10 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
     def clearFigure(self):
         self.figure.clf()
         self.canvas.draw()
+        self.ax = self.figure.add_subplot(111)
+        self.ax.axes.get_xaxis().set_visible(False)
+        self.ax.axes.get_yaxis().set_visible(False)
+        self.ax.hold(False)
 
     def setPhiSliderValue(self):
         value = self.ui.lineEdit_phi.text().toFloat()[0]
@@ -215,20 +197,17 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
     def setPhiLineEditValue(self, value):
         self.ui.lineEdit_phi.setText(QtCore.QString.number(float(value)/10))
         self.calculationParameters.phi = float(value)/10
-        if self.calculationParameters.displayProjectionsFlag:
-            self.updateFigure()
+        self.updateFigure()
 
     def setThetaLineEditValue(self, value):
         self.ui.lineEdit_theta.setText(QtCore.QString.number(float(value)/10))
         self.calculationParameters.theta = float(value)/10
-        if self.calculationParameters.displayProjectionsFlag:
-            self.updateFigure()
+        self.updateFigure()
 
     def setPsiLineEditValue(self, value):
         self.ui.lineEdit_psi.setText(QtCore.QString.number(float(value)/10))
         self.calculationParameters.psi = float(value)/10
-        if self.calculationParameters.displayProjectionsFlag:
-            self.updateFigure()
+        self.updateFigure()
 
     def setNumberOfProjections(self, number):
         self.calculationParameters.numberOfProjections = number.toInt()[0]
@@ -264,44 +243,42 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
     def setModelFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_modelFile.text()
-        if os.path.isfile(toString(filename)):
-            # self.GENFIRE_load(toString(filename))
-            self.calculationParameters.model = GENFIRE.fileio.loadVolume(toString(filename))
-            self.calculationParameters.modelFilename = filename
-            self.calculationParameters.modelFilenameProvided = True
-            # self.ui.checkBox_displayFigure.setEnabled(True)
+        if os.path.isfile(toString(filename)) and filename != self.calculationParameters.modelFilename:
+            self.setModelFilename(toString(filename))
 
     def setModelFilename(self, filename):
         self.calculationParameters.modelFilename = filename
         self.ui.lineEdit_modelFile.setText(QtCore.QString(filename))
-        self.calculationParameters.modelFilenameProvided = True
+        self.loadModel(filename)
+        self.displayFigure()
         # self.ui.checkBox_displayFigure.setEnabled(True)
 
     def selectModelFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Model",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
-
         if os.path.isfile(toString(filename)):
             self.setModelFilename(filename)
-            # self.GENFIRE_load(toString(filename))
-            self.calculationParameters.model = GENFIRE.fileio.loadVolume(toString(filename))
-            # self.ui.checkBox_displayFigure.setChecked(True)
+            self.loadModel(filename)
+            self.displayFigure()
+
+    def loadModel(self, filename):
+        self.calculationParameters.model = GENFIRE.fileio.loadVolume(toString(filename))
+        self.calculationParameters.dims = np.shape(self.calculationParameters.model)
+        self.calculationParameters.paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
+        padding = int((self.calculationParameters.paddedDim-self.calculationParameters.dims[0])/2)
+        self.calculationParameters.model = np.pad(self.calculationParameters.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
+        self.calculationParameters.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.calculationParameters.model))))
+        self.calculationParameters.ncOut = np.shape(self.calculationParameters.model)[0]//2
+        self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
 
     def setAngleFilename(self, filename):
         if filename:
             self.calculationParameters.angleFilename = filename
-
-    def toggleDisplayProjections(self):
-        if self.calculationParameters.displayProjectionsFlag:
-            self.calculationParameters.displayProjectionsFlag = False
-        else:
-            self.calculationParameters.displayProjectionsFlag = True
 
     def toggleSaveProjections(self):
         print  GENFIRE_ProjectionCalculator.calculationParameters.modelFilename
         print  GENFIRE_ProjectionCalculator.calculationParameters.angleFilename
         print  GENFIRE_ProjectionCalculator.calculationParameters.outputFilename
         print  GENFIRE_ProjectionCalculator.calculationParameters.outputFilesFlag
-        print  GENFIRE_ProjectionCalculator.calculationParameters.displayProjectionsFlag
         print  GENFIRE_ProjectionCalculator.calculationParameters.phiStart
         print  GENFIRE_ProjectionCalculator.calculationParameters.thetaStart
         print  GENFIRE_ProjectionCalculator.calculationParameters.psiStart
@@ -331,12 +308,12 @@ class ProjectionCalculationParameters:
         self.angleFilename              = QtCore.QString('')
         self.outputFilename             = QtCore.QString('')
         self.outputFilesFlag            = False
-        self.displayProjectionsFlag     = False
         self.angleFileProvided          = False
         self.modelFilenameProvided      = False
         self.modelLoadedFlag            = False
         self.interpolator               = None
         self.model                      = None
+        self.ncOut                      = None
         self.phi                        = 0
         self.theta                      = 0
         self.thetaStart                 = 0
@@ -385,7 +362,6 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
             self.disableAngleWidgets()
 
     def disableAngleWidgets(self):
-        print('disabling')
         self.ui.lineEdit_thetaStart.setEnabled(True)
         self.ui.lineEdit_thetaStep.setDisabled(True)
         self.ui.lineEdit_thetaStop.setDisabled(True)
