@@ -10,12 +10,12 @@ from functools import partial
 
 # class GENFIRE_QScrollBar(QtGui.QScrollBar):
 #     def __init__(self, parent=None):
-#         super(GENFIRE_QScrollBar, self).__init__(self,parent)
+#         super(GENFIRE_QScrollBar, self).__init__(parent)
 #     def keyPressEvent(self, QKeyEvent):
 #         print"Hey"
-#         if QKeyEvent.key == QtCore.Qt.Key_Up or QKeyEvent.key == QtCore.Qt.Key_Right:
+#         if QKeyEvent.key() == QtCore.Qt.Key_Up or QKeyEvent.key() == QtCore.Qt.Key_Right:
 #             self.setValue(self.value() + 1)
-#         elif QKeyEvent.key == QtCore.Qt.Key_Down or QKeyEvent.key == QtCore.Qt.Key_Left:
+#         elif QKeyEvent.key() == QtCore.Qt.Key_Down or QKeyEvent.key() == QtCore.Qt.Key_Left:
 #             self.setValue(self.value() - 1)
 #         else:
 #             QtGui.QScrollBar.KeyPressEvent(self, QKeyEvent)
@@ -29,6 +29,13 @@ class VolumeSlicer(QtGui.QMainWindow):
         self.ui.checkBox_lockcmap.toggled.connect(self.toggleLockCmap)
         self.lockColormap = False
         self.ui.checkBox_lockcmap.setChecked(False)
+
+        # self.ui.scrlbr_fig1 = GENFIRE_QScrollBar(self.ui.centralwidget)
+        # self.ui.scrlbr_fig1.setOrientation(QtCore.Qt.Horizontal)
+        # self.ui.scrlbr_fig1.setInvertedAppearance(False)
+        # self.ui.scrlbr_fig1.setObjectName(VolumeSlicer_MainWindow._fromUtf8("scrlbr_fig1"))
+        # self.ui.sldr_fig1.addWidget(self.ui.scrlbr_fig1)
+        # self.ui.scrlbr_fig1.show()
 
         self.fig1 = plt.figure()
         self.fig2 = plt.figure()
@@ -96,13 +103,6 @@ class VolumeSlicer(QtGui.QMainWindow):
 
         self.lockColormap = True
         self.ui.checkBox_lockcmap.setChecked(True)
-
-        # self.scrlbr_fig1 = GENFIRE_QScrollBar(self.ui.centralwidget)
-        # self.scrlbr_fig1.setOrientation(QtCore.Qt.Horizontal)
-        # self.scrlbr_fig1.setInvertedAppearance(False)
-        # self.scrlbr_fig1.setObjectName(VolumeSlicer_MainWindow._fromUtf8("scrlbr_fig1"))
-        # self.ui.sldr_fig1.addWidget(self.scrlbr_fig1)
-        # self.scrlbr_fig1.show()
 
     def updateSliceX(self, nx):
         self.slice1.imshow(np.squeeze(self.volume[nx, :, :]))

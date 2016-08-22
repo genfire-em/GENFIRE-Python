@@ -46,7 +46,7 @@ def main_InteractivelySetParameters():
     reconstruction_parameters.resolutionExtensionSuppressionState  = resolutionExtensionSuppressionState
     reconstruction_parameters.useDefaultSupport                    = useDefaultSupport
     if os.path.isfile(filename_results): # If a valid initial object was provided, use it
-        reconstruction_parameters._initialObjectFilename           = filename_results
+        reconstruction_parameters.initialObjectFilename           = filename_results
 
     main(reconstruction_parameters)
 

@@ -4,26 +4,17 @@ matplotlib.use("Qt4Agg")
 import GENFIRE_MainWindow
 import ProjectionCalculator
 import VolumeSlicer
-import launch
 import os
 import sys
 from GENFIRE.reconstruct import ReconstructionParameters
+from GENFIRE.gui.utility import toString
 import GENFIRE_qrc
-
 class GenfireMainWindow(QtGui.QMainWindow):
     stop_threads = QtCore.pyqtSignal()
     def closeEvent(self, QCloseEvent):
-        import time
-        # import sys; sys.__stdout__.write("HEY")
-        # if GF_logger.listener_thread.isRunning():
-        #     sys.__stdout__.write("yes")
-        # time.sleep(.1)
         self.stop_threads.emit()
         GF_logger.listener_thread.wait()
         GF_error_logger.listener_thread.wait()
-        # if GF_logger.listener_thread.isRunning():
-        #     sys.__stdout__.write("still running")
-        # time.sleep(1)
         QCloseEvent.accept()
     def __init__(self):
 
@@ -36,9 +27,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         ## Initialize Reconstruction Parameters
         self.GENFIRE_ReconstructionParameters = ReconstructionParameters()
-
-
-
 
         ## Initialize file paths in text boxes
         self.ui.lineEdit_results.setText(QtCore.QString(os.path.join(os.getcwd(),'results.mrc')))
@@ -124,7 +112,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         # self.ui.checkBox_displayFigure.toggled.connect(self.GENFIRE_ReconstructionParameters.toggleDisplayFigure)
         # self.ui.checkBox_displayFigure.toggled.connect(self.enableDisplayFrequencyChange)
 
-
+        self.ui.checkBox_rfree.setChecked(True)
         self.ui.checkBox_rfree.toggled.connect(self.calculateRfree)
 
         self.ui.checkBox_provide_io.toggled.connect(self.toggleSelectIO)
@@ -136,7 +124,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.action_Volume_Slicer.triggered.connect(self.launchVolumeSlicer)
 
     def calculateRfree(self):
-        if self.ui.checkBox_rfree.isEnabled() == True:
+        if self.ui.checkBox_rfree.isChecked() == True:
             self.GENFIRE_ReconstructionParameters.calculateRfree = True
         else:
             self.GENFIRE_ReconstructionParameters.calculateRfree = False
@@ -148,7 +136,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
     def launchVolumeSlicer(self):
         import GENFIRE.fileio
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc);;All Files (*)")
-        filename = unicode(filename.toUtf8(), encoding='UTF-8')
+        filename = toString(filename)
+        # filename = unicode(filename.toUtf8(), encoding='UTF-8')
         volume = GENFIRE.fileio.loadVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
@@ -157,7 +146,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         if self.ui.lineEdit_io.isEnabled():
              self.ui.lineEdit_io.setStyleSheet("background-color: gray")
              self.ui.lineEdit_io.setEnabled(False)
-             self.GENFIRE_ReconstructionParameters._initialObjectFilename=""
+             self.GENFIRE_ReconstructionParameters.initialObjectFilename= ""
         else:
              self.ui.lineEdit_io.setStyleSheet("background-color: white")
              self.ui.lineEdit_io.setEnabled(True)
@@ -242,13 +231,14 @@ class GenfireMainWindow(QtGui.QMainWindow):
         # Launch the reconstruction in a separate thread to prevent the GUI blocking while reconstructing
         from threading import Thread
         from functools import partial
-        t = Thread(target=partial(launch.GENFIRE_main, self.GENFIRE_ReconstructionParameters))
+        import GENFIRE.main
+        t = Thread(target=partial(GENFIRE.main.main, self.GENFIRE_ReconstructionParameters))
         t.start()
 
     def displayResults(self):
         outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="Volume files (*.mrc *.mat *.npy)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
-        outputfilename = unicode(outputfilename.toUtf8(), encoding='UTF-8')
-
+        # outputfilename = unicode(outputfilename.toUtf8(), encoding='UTF-8')
+        outputfilename = toString(outputfilename)
         if outputfilename:
             import numpy as np
             import os

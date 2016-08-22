@@ -7,7 +7,7 @@ import os
 import scipy.io
 import pyfftw
 import time
-import GENFIRE.misc
+import GENFIRE.utility
 import weightValues
 from multiprocessing import Pool
 
@@ -395,7 +395,7 @@ if __name__ != "__main__":
 
         # print ("time3 " , time.time()-tic3)
         measuredK[np.isnan(measuredK)] = 0
-        measuredK = GENFIRE.misc.hermitianSymmetrize(measuredK)
+        measuredK = GENFIRE.utility.hermitianSymmetrize(measuredK)
 
         print ("Fourier grid assembled in %d seconds" % (time.time()-tic))
         return measuredK
@@ -642,8 +642,8 @@ class ReconstructionParameters():
         self.isInitialObjectDefined = False
         self.resultsFilename = os.path.join(os.getcwd(), 'results.mrc')
         self.useDefaultSupport = True
-        self.calculateRfree = False
-
+        self.calculateRfree = True
+        self.initialObjectFilename = None
     def checkParameters(self): #verify file extensions are supported
         parametersAreGood = 1
 
@@ -695,12 +695,12 @@ class ReconstructionParameters():
 
 
     def setInitialObjectFilename(self, initialObjectFilename):
-        self._initialObjectFilename = os.path.join(os.getcwd(),unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
+        self.initialObjectFilename = os.path.join(os.getcwd(), unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
         self.isInitialObjectDefined = True
 
     def getInitialObjectFilename(self):
         if self.CheckIfInitialObjectIsDefined():
-            return self._initialObjectFilename
+            return self.initialObjectFilename
         else:
             pass
 

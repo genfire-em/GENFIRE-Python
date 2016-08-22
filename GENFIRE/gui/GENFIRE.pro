@@ -21,4 +21,5 @@ FORMS    += GENFIRE_MainWindow.ui \
             ProjectionCalculator_MainWindow.ui \
             VolumeSlicer_MainWindow.ui \
     CalculateProjectionSeries_Dialog.ui
+
 RESOURCES   += GENFIRE.qrc

@@ -350,7 +350,7 @@ def saveData(filename, data):
     import os
     fn, ext = os.path.splitext(filename)
     if ext == ".mrc":
-        writeMRC(filename, data, order="F")
+        writeMRC(filename, data, order="C")
     elif ext == ".npy":
         import numpy as np
         np.save(filename,data)
