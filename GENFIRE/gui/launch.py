@@ -90,14 +90,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.GENFIRE_ReconstructionParameters.setInterpolationCutoffDistance)
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.checkParameters)
 
-
-        # self.ui.lineEdit_displayFrequency.setDisabled(True)
-        # self.ui.lineEdit_displayFrequency.setStyleSheet("background-color: gray")
-        # self.ui.lineEdit_displayFrequency.textChanged.connect(self.ShoutDisplayFrequency)
-
         self.ui.lineEdit_io.setDisabled(True)
         self.ui.lineEdit_io.setStyleSheet("background-color: gray")
-
 
         ## Radio Buttons -- default is resolution extension suppression
         self.ui.radioButton_on.setChecked(True)
@@ -109,10 +103,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
 
         ## Check Boxes
-
-        # self.ui.checkBox_displayFigure.toggled.connect(self.GENFIRE_ReconstructionParameters.toggleDisplayFigure)
-        # self.ui.checkBox_displayFigure.toggled.connect(self.enableDisplayFrequencyChange)
-
         self.ui.checkBox_rfree.setChecked(True)
         self.ui.checkBox_rfree.toggled.connect(self.calculateRfree)
 
@@ -140,7 +130,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
         import GENFIRE.fileio
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
         filename = toString(filename)
-        # filename = unicode(filename.toUtf8(), encoding='UTF-8')
         volume = GENFIRE.fileio.loadVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
@@ -164,22 +153,13 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.ui.lineEdit_support.setDisabled(False)
             self.ui.lineEdit_support.setStyleSheet("background-color: white")
 
-    def enableDisplayFrequencyChange(self):
-        global displayFrequency
-        displayFrequency = 5
-        self.ui.lineEdit_displayFrequency.setEnabled(True)
-        self.ui.lineEdit_displayFrequency.setText(QtCore.QString("5"))
-        self.ui.lineEdit_displayFrequency.setStyleSheet("background-color: white")
-
-    def ShoutDisplayFrequency(self, frequency):
-        self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency = frequency.toInt()[0]
-        print type(self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency)
-        print "updating displayFrequency", self.GENFIRE_ReconstructionParameters.displayFigure.displayFrequency
-
     def messageWritten(self, message):
         print message
     def __del__(self):
+        import sys
         sys.stdout = sys.__stdout__ # Restore output stream to default upon exiting the GUI
+        sys.stderr = sys.__stderr__
+
     #Functions for selecting input files using QFileDialog
     def selectProjectionFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Projections",filter="Projection Stacks (*.mrc *.mat *.tif *.npy);; MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -240,7 +220,6 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     def displayResults(self):
         outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="Volume files (*.mrc *.mat *.npy)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
-        # outputfilename = unicode(outputfilename.toUtf8(), encoding='UTF-8')
         outputfilename = toString(outputfilename)
         if outputfilename:
             import numpy as np
@@ -248,9 +227,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
             import GENFIRE.fileio
             import matplotlib.pyplot as plt
 
-
             initialObject = GENFIRE.fileio.loadVolume(outputfilename)
-            # initialObject = readMRC("outputfilename")
             dims = np.shape(initialObject)
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays
             n_half_y = int(dims[1]/2)
@@ -327,20 +304,15 @@ class GenfireMainWindow(QtGui.QMainWindow):
                 plt.ylabel('Rfree')
 
             plt.draw()
-            plt.pause(1e-30)
+            plt.pause(1e-30) # slight pause forces redraw
 
-#
     @QtCore.pyqtSlot(str)
     def receive_msg(self, msg):
         global process_finished
         if not process_finished:
             self.ui.log.moveCursor(QtGui.QTextCursor.End)
-            # self.ui.log.setStyleSheet("color: black")
             formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#000000;\" >" + msg + "</span/>"
-            # self.ui.log.insertPlainText(msg)
-
             self.ui.log.append(formatted_msg)
-
 
     @QtCore.pyqtSlot(str)
     def receive_error_msg(self, msg):
@@ -348,24 +320,12 @@ class GenfireMainWindow(QtGui.QMainWindow):
         if not process_finished:
             self.ui.log.moveCursor(QtGui.QTextCursor.End)
             formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#ff0000;\" >" + msg + "</span/>"
-            # self.ui.log.setStyleSheet("color: red")
-
             self.ui.log.append(formatted_msg)
-            # self.ui.log.insertPlainText(msg)
 
     @QtCore.pyqtSlot()
     def stopRunning(self):
         global process_finished
         process_finished = True
-
-class Launcher(QtCore.QObject):
-    def __init__(self, pars):
-        super(Launcher,self).__init__()
-        self.pars = pars
-
-    @QtCore.pyqtSlot()
-    def run(self):
-        launch.GENFIRE_main(self.pars)
 
 class GenfireListener(QtCore.QObject):
     message_pending = QtCore.pyqtSignal(str)
@@ -382,21 +342,17 @@ class GenfireListener(QtCore.QObject):
             if self.process_finished:
                 self.message_pending.emit(msg)
                 return
-            # else:
-            #     print ("failure")
             self.message_pending.emit(msg)
 
     @QtCore.pyqtSlot()
     def stopRunning(self):
         self.process_finished = True
-        # self.msg_queue.put("exit")
 
 class GenfireWriter(object):
     def __init__(self, msg_queue):
         self.msg_queue = msg_queue
 
     def write(self, message):
-        # self.msg_queue.put("GENFIRE: " + message)
         if message != "\n":
             self.msg_queue.put("GENFIRE: " + message)
 
@@ -405,22 +361,16 @@ class GenfireLogger(QtCore.QObject):
         super(GenfireLogger, self).__init__()
         self.msg_queue = msg_queue
         self.listener  = GenfireListener(msg_queue=self.msg_queue)
-
         self.listener_thread = QtCore.QThread()
         self.listener.moveToThread(self.listener_thread)
         self.listener_thread.started.connect(self.listener.run)
-        # QtCore.QCoreApplication.instance().aboutToQuit.connect(self.listener.stopRunning)
-        # QtCore.QCoreApplication.instance().aboutToQuit.connect(self.cleanup_thread)
         self.listener_thread.start()
 
     @QtCore.pyqtSlot()
     def cleanup_thread(self):
-        import sys
         global process_finished
         self.listener.process_finished = True
-        # process_finished = True
         self.msg_queue.put("Safely Exit.") # write a final message to force i/o threads to unblock and see the exit flag
-        # self.listener_thread.wait()
         if self.listener_thread.isRunning():
             self.listener_thread.quit()
             self.listener_thread.wait()
@@ -429,15 +379,14 @@ def main():
 
     # Startup the application
     app = QtGui.QApplication(sys.argv)
-    # app.setStyle('plastique')
-    app.setStyle('mac')
+    app.setStyle('plastique')
+    # app.setStyle('mac')
 
     # Create the GUI
     GF_window  = GenfireMainWindow()
 
     # Render GUI
     GF_window.show()
-
 
     # Redirect standard output to the GUI
     from Queue import Queue
@@ -450,15 +399,11 @@ def main():
     GF_logger  = GenfireLogger(msg_queue)
     sys.stdout = GenfireWriter(msg_queue)
     GF_logger.listener.message_pending[str].connect(GF_window.receive_msg)
-    # app.aboutToQuit.connect(GF_logger.cleanup_thread)
-    # GF_window.destroyed.connect(GF_logger.cleanup_thread)
-
 
     err_msg_queue = Queue()
     GF_error_logger  = GenfireLogger(err_msg_queue)
     sys.stderr = GenfireWriter(err_msg_queue)
     GF_error_logger.listener.message_pending[str].connect(GF_window.receive_error_msg)
-    # app.aboutToQuit.connect(GF_error_logger.cleanup_thread)
 
     GF_window.stop_threads.connect(GF_error_logger.cleanup_thread)
     GF_window.stop_threads.connect(GF_logger.cleanup_thread)
@@ -466,13 +411,7 @@ def main():
     GF_window.stop_threads.connect(GF_error_logger.listener.stopRunning)
     GF_window.stop_threads.connect(GF_logger.listener.stopRunning)
 
-
-    # GF_window.destroyed.connect(GF_logger.cleanup_thread)
-    # app.aboutToQuit.connect(GF_window.stopRunning)
-
-
-    # Safely close and exit
-
+    # Start event loop
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
