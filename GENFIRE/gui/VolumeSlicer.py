@@ -104,6 +104,7 @@ class VolumeSlicer(QtGui.QMainWindow):
         self.lockColormap = True
         self.ui.checkBox_lockcmap.setChecked(True)
 
+
     def updateSliceX(self, nx):
         self.slice1.imshow(np.squeeze(self.volume[nx, :, :]))
         if self.lockColormap:

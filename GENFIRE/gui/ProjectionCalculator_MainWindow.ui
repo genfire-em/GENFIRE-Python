@@ -225,7 +225,7 @@
            </palette>
           </property>
           <property name="text">
-           <string>Calculate Projection Series</string>
+           <string>Calculate Projection Series From Model</string>
           </property>
          </widget>
         </item>

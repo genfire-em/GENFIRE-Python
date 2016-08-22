@@ -9,6 +9,7 @@ import sys
 from GENFIRE.reconstruct import ReconstructionParameters
 from GENFIRE.gui.utility import toString
 import GENFIRE_qrc
+
 class GenfireMainWindow(QtGui.QMainWindow):
     stop_threads = QtCore.pyqtSignal()
     def closeEvent(self, QCloseEvent):
@@ -130,12 +131,14 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.GENFIRE_ReconstructionParameters.calculateRfree = False
 
     def launchProjectionCalculator(self):
+        from functools import partial
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
+        self.GENFIRE_ProjectionCalculator.model_loading_signal.connect(partial(self.receive_msg, "Loading Model..."))
         self.GENFIRE_ProjectionCalculator.show()
 
     def launchVolumeSlicer(self):
         import GENFIRE.fileio
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc);;All Files (*)")
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
         filename = toString(filename)
         # filename = unicode(filename.toUtf8(), encoding='UTF-8')
         volume = GENFIRE.fileio.loadVolume(filename)

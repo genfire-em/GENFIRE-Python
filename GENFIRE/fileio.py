@@ -7,6 +7,9 @@ def loadVolume(filename):
         return readMRC(filename)
     elif (ext == ".mat"):
         return readMAT_volume(filename)
+    elif (ext == ".npy"):
+        return np.load(filename)
+
 def readMAT_volume(filename):
     import numpy as np
     import scipy.io

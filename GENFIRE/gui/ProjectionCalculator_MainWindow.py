@@ -167,5 +167,5 @@ class Ui_ProjectionCalculator(object):
         self.label_8.setText(_translate("ProjectionCalculator", "Psi", None))
         self.label_7.setText(_translate("ProjectionCalculator", "Theta", None))
         self.btn_clearModel.setText(_translate("ProjectionCalculator", "Clear Model", None))
-        self.btn_go.setText(_translate("ProjectionCalculator", "Calculate Projection Series", None))
+        self.btn_go.setText(_translate("ProjectionCalculator", "Calculate Projection Series From Model", None))
 
