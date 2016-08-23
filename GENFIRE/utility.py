@@ -242,4 +242,61 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
 
     return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
 
-#
+def generateKspaceIndices(obj):
+        """
+        * generateKspaceIndices *
+
+        Maps the radial coordinate indices in the matrix obj
+
+        Author: Alan (AJ) Pryor, Jr.
+        Jianwei (John) Miao Coherent Imaging Group
+        University of California, Los Angeles
+        Copyright 2015-2016. All rights reserved.
+
+
+        :param obj: Matrix of size to be mapped
+        :return: 3D indices for each voxel in the volume
+        """
+
+        dims = np.shape(obj)
+        if len(dims) < 3:
+            dims = dims + (0,)
+
+        if dims[0] % 2 == 0:
+            ncK0 = dims[0]/2
+            vec0 = np.arange(-ncK0, ncK0, 1)/ncK0
+        elif dims[0] == 1:
+            vec0 = 0
+            ncK0 = 1
+
+        else:
+            ncK0 = ((dims[0]+1)/2)-1
+            vec0 = np.arange(-ncK0, ncK0+1)/ncK0
+
+
+        if dims[1] % 2 == 0:
+            ncK1 = dims[1]/2
+            vec1 = np.arange(-ncK1, ncK1, 1)/ncK1
+        elif dims[1] == 1:
+            vec1 = 0
+            ncK1 = 1
+
+        else:
+            ncK1 = ((dims[1]+1)/2)-1
+            vec1 = np.arange(-ncK1, ncK1+1)/ncK1
+
+
+        if dims[2] % 2 == 0:
+            ncK2 = dims[2]/2
+            vec2 = np.arange(-ncK2, ncK2, 1)/ncK2
+        elif dims[2] == 1:
+            vec2 = 0
+            ncK2 = 1
+
+        else:
+            ncK2 = ((dims[2]+1)/2)-1
+            vec2 = np.arange(-ncK2, ncK2+1)/ncK2
+
+        kx, ky, kz = np.meshgrid(vec1,vec0,vec2)
+        Kindices = np.sqrt(kx**2 + ky**2 + kz**2)
+        return Kindices

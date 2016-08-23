@@ -37,7 +37,9 @@ if __name__ != "__main__":
         :param displayFigure: Boolean flag to display figures during the reconstruction
         :return: outputs dictionary containing the reconstruction and error metrics
         """
-
+        import time
+        t0 = time.time()
+        print("Reconstruction Started")
         NUMTHREADS = 6 #number of threads to be used for the FFTW interface
         bestErr = 1e30 #initialize error
 
@@ -84,9 +86,6 @@ if __name__ != "__main__":
                 bestErr = 1e30 #reset error
                 currentCutoffNum+=1#update constraint set number
 
-
-            if iterationNum%25==0:
-                print ("iteration number: ", iterationNum)
             initialObject[initialObject<0] = 0 #enforce positivity
             initialObject = initialObject * support #enforce support
 
@@ -95,6 +94,8 @@ if __name__ != "__main__":
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(k[errInd]-measuredK[errInd]))/np.sum(abs(measuredK[errInd]))#monitor error
+            if iterationNum%5==1:
+                print("Iteration number: {0} \t R = {1}".format(iterationNum, errK[iterationNum-1]))
 
             #update best object if a better one has been found
             if errK[iterationNum-1] < bestErr:
@@ -185,66 +186,10 @@ if __name__ != "__main__":
         if R_freeInd_complex:
             outputs['R_free'] = Rfree_complex
         outputs['reconstruction'] = np.fft.fftshift(outputs['reconstruction'])
+        print("Reconstruction finished in {} seconds".format(time.time()-t0))
         return outputs
 
-    def generateKspaceIndices(obj):
-        """
-        * generateKspaceIndices *
 
-        Maps the radial coordinate indices in the matrix obj
-
-        Author: Alan (AJ) Pryor, Jr.
-        Jianwei (John) Miao Coherent Imaging Group
-        University of California, Los Angeles
-        Copyright 2015-2016. All rights reserved.
-
-
-        :param obj: Matrix of size to be mapped
-        :return: 3D indices for each voxel in the volume
-        """
-
-        dims = np.shape(obj)
-        if len(dims) < 3:
-            dims = dims + (0,)
-
-        if dims[0] % 2 == 0:
-            ncK0 = dims[0]/2
-            vec0 = np.arange(-ncK0, ncK0, 1)/ncK0
-        elif dims[0] == 1:
-            vec0 = 0
-            ncK0 = 1
-
-        else:
-            ncK0 = ((dims[0]+1)/2)-1
-            vec0 = np.arange(-ncK0, ncK0+1)/ncK0
-
-
-        if dims[1] % 2 == 0:
-            ncK1 = dims[1]/2
-            vec1 = np.arange(-ncK1, ncK1, 1)/ncK1
-        elif dims[1] == 1:
-            vec1 = 0
-            ncK1 = 1
-
-        else:
-            ncK1 = ((dims[1]+1)/2)-1
-            vec1 = np.arange(-ncK1, ncK1+1)/ncK1
-
-
-        if dims[2] % 2 == 0:
-            ncK2 = dims[2]/2
-            vec2 = np.arange(-ncK2, ncK2, 1)/ncK2
-        elif dims[2] == 1:
-            vec2 = 0
-            ncK2 = 1
-
-        else:
-            ncK2 = ((dims[2]+1)/2)-1
-            vec2 = np.arange(-ncK2, ncK2+1)/ncK2
-
-        kx, ky, kz = np.meshgrid(vec1,vec0,vec2)
-        Kindices = np.sqrt(kx**2 + ky**2 + kz**2)
-        return Kindices
 
 
 
@@ -268,6 +213,7 @@ if __name__ != "__main__":
         :return: the assembled Fourier grid
 
         """
+        print ("Assembling Fourier Grid.")
         tic = time.time()
         dim1 = np.shape(projections)[0]
         dim2 = np.shape(projections)[1]
@@ -540,7 +486,6 @@ if __name__ != "__main__":
             int_header = struct.unpack('=' + 'i'*headerIntNumber, fid.read(headerIntNumber * sizeof_int))
             char_header = struct.unpack('=' + 'c'*headerCharNumber, fid.read(headerCharNumber * sizeof_char))
             dimx, dimy, dimz, data_flag= int_header[:4]
-            print "reading, ", dimx,dimy,dimz
             if (data_flag == 0):
                 datatype='u1'
             elif (data_flag ==1):
@@ -555,8 +500,6 @@ if __name__ != "__main__":
                 datatype='u2'
             else:
                 raise ValueError("No supported datatype found!\n")
-            print dimx,dimy,dimz
-            print datatype
             return np.fromfile(file=fid, dtype=datatype,count=dimx*dimy*dimz).reshape((dimx,dimy,dimz),order=order).astype(dtype)
 
     def writeMRC(filename, arr, datatype='f4'):

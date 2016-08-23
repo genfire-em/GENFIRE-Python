@@ -135,6 +135,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
             print("Successfully calculated {}.".format(filename))
             self.update_filenames_signal.emit()
+            self.close()
     def clearModel(self):
         self.calculationParameters.model         = None
         self.calculationParameters.interpolator  = None

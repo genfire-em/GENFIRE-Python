@@ -114,7 +114,7 @@ def main(reconstruction_parameters):
     measuredK = np.fft.ifftshift(measuredK)
 
     # create a map of the spatial frequency to be used to control resolution extension/suppression behavior
-    K_indices = GENFIRE.reconstruct.generateKspaceIndices(support)
+    K_indices = GENFIRE.utility.generateKspaceIndices(support)
     K_indices = np.fft.fftshift(K_indices)
     resolutionIndicators = np.zeros_like(K_indices)
     resolutionIndicators[measuredK != 0] = 1-K_indices[measuredK != 0]
@@ -176,8 +176,6 @@ def main(reconstruction_parameters):
     ncBig = paddedDim//2
     n2 = dims[0]//2
     reconstructionOutputs['reconstruction'] = reconstructionOutputs['reconstruction'][ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2]
-
-    print ('Reconstruction finished.')
     GENFIRE.fileio.saveResults(reconstructionOutputs, filename_results)
 
 if __name__ == "__main__" and len(sys.argv) == 1:
@@ -240,4 +238,3 @@ elif __name__ == "__main__":
                   resolutionExtensionSuppressionState,
                   displayFigure,
                   calculateRFree)
-

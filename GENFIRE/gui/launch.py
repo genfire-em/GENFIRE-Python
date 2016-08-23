@@ -162,7 +162,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.ui.lineEdit_support.setStyleSheet("background-color: white")
 
     def messageWritten(self, message):
-        print message
+        print(message)
+
     def __del__(self):
         import sys
         sys.stdout = sys.__stdout__ # Restore output stream to default upon exiting the GUI
@@ -174,30 +175,25 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         if filename:
             self.GENFIRE_ReconstructionParameters.setProjectionFilename(filename)
-            print ("Projection Filename:", self.GENFIRE_ReconstructionParameters.getProjectionFilename())
             self.ui.lineEdit_pj.setText(QtCore.QString(filename))
 
     def selectAngleFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support",filter="Euler Angles (*.txt *.mat);; MATLAB files (*.mat);;text files (*.txt);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setAngleFilename(filename)
-            print ("Angle Filename:", self.GENFIRE_ReconstructionParameters.getAngleFilename())
             self.ui.lineEdit_angle.setText(QtCore.QString(filename))
 
     def selectSupportFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setSupportFilename(filename)
-            print ("Support Filename:", self.GENFIRE_ReconstructionParameters.getSupportFilename())
             self.ui.lineEdit_support.setText(QtCore.QString(filename))
             self.ui.checkBox_default_support.setChecked(False)
-            print("VALUE is", self.GENFIRE_ReconstructionParameters.useDefaultSupport)
 
     def selectInitialObjectFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Initial Object", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setInitialObjectFilename(filename)
-            print ("Initial Object Filename:", self.GENFIRE_ReconstructionParameters.getProjectionFilename())
             self.ui.lineEdit_io.setText(QtCore.QString(filename))
 
     #Define constraint enforcement mode
