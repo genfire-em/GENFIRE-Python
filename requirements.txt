@@ -1,10 +1,5 @@
-cycler==0.10.0
-Cython==0.24.1
-matplotlib==1.5.1
-numpy==1.11.0
-pyFFTW==0.10.1
-pyparsing==2.1.4
-python-dateutil==2.5.3
-pytz==2016.4
-scipy==0.17.1
-six==1.10.0
+Cython
+numpy
+matplotlib
+pyFFTW
+
