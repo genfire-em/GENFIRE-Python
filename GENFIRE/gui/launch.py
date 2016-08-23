@@ -379,8 +379,8 @@ def main():
 
     # Startup the application
     app = QtGui.QApplication(sys.argv)
-    app.setStyle('plastique')
-    # app.setStyle('mac')
+    # app.setStyle('plastique')
+    app.setStyle('mac')
 
     # Create the GUI
     GF_window  = GenfireMainWindow()

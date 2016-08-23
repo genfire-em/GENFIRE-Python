@@ -7,9 +7,7 @@ def generate_html(filename=None):
 
     # if filename is None and len(sys.argv)>1:
     #     filename=sys.argv[1]
-
     html_filename = os.path.abspath(os.path.splitext(filename)[0]) + '.html'
-
     header_str = """<!doctype html>
 <html lang="en">
 <head>
@@ -28,19 +26,40 @@ def generate_html(filename=None):
 
     with open(filename,'r') as fid_source:
         with open(html_filename,'w') as fid:
+            print ("html_filename = " , html_filename)
             fid.write(header_str)
             fid.write("<code>")
-            fid.write(code_formatter(fid_source.read()))
+            in_comment_flag = 0
+            for line in fid_source:
+                if line.lstrip().startswith("#") or in_comment_flag == 1: # then this line is a single line comment and we don't format it
+                    fid.write(line.replace('\n',"<br>"))
+                elif "\"\"\"" in line: # ignore formatting on multi-line comments
+                    fid.write(line.replace('\n',"<br>"))
+                    in_comment_flag = (in_comment_flag + 1) % 2
+                else:
+                    inline_comment_start = line.find("#")
+                    if inline_comment_start == -1: # no inline comment
+                        fid.write(code_formatter(line))
+                    else:
+                        fid.write(code_formatter(line[:inline_comment_start].replace('\n',"<br>")))
+                        fid.write(line[inline_comment_start:].replace('\n',"<br>"))
             fid.write("</code>")
             fid.write(closing_str)
 
 def code_formatter(input):
-    color_string = "\"green\""
-    keywords = ["from", "def","class", "self", "__main__", "for", "if", "while","import"]
+    color_string = "\"orange\""
+    keywords = ["from", "def","class", "self", "__main__", "for", "if",\
+                "while","import","else","elif", "True","False", "del"]
+    for i, v in enumerate(keywords):
+        keywords[i] = v + " "
     format_string = ("<font color=" + color_string + ">", "</font>")
     replacers={}
     for kw in keywords:
         replacers[kw] = format_string
+
+    GENFIRE_format_string = ("<b><font color=" + color_string + ">", "</font></b>")
+    replacers['GENFIRE'] = GENFIRE_format_string
+    replacers['genfire'] = GENFIRE_format_string
     # replacers={"from":("<font color=" + color_string + ">", "</font>")}
 
 
@@ -48,7 +67,7 @@ def code_formatter(input):
     string = string.replace('\t', "&nbsp&nbsp&nbsp&nbsp")
     if replacers is not None:
         for key, value in replacers.iteritems():
-            print (key, value)
+            # print (key, value)
             string = string.replace(key,value[0] + key + value[1])
     return string
 
