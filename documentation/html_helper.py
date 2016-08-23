@@ -47,15 +47,17 @@ def generate_html(filename=None):
             fid.write("</code>")
             fid.write(closing_str)
 
-def code_formatter(input):
+def code_formatter(string):
     # A simple custom HTML code formatter that colors some keywords and tries to avoid instances of them within comments
     color_string = "\"orange\""
     keywords = ["from", "def","class", "self", "__main__", "for", "if",\
                 "while","import","else","elif", "True","False", "del"]
+    short_keywords = keywords[:]
     new_keywords = []
     for i, v in enumerate(keywords):
         keywords[i] = v + " "
         new_keywords.append(v + ".")
+        new_keywords.append(v + "\n")
     keywords += new_keywords
     format_string = ("<font color=" + color_string + ">", "</font>")
     replacers={}
@@ -66,15 +68,23 @@ def code_formatter(input):
     GENFIRE_format_string = ("<b><font color=" + color_string + ">", "</font></b>")
     replacers['GENFIRE'] = GENFIRE_format_string
     replacers['genfire'] = GENFIRE_format_string
+
+
+
     # replacers={"from":("<font color=" + color_string + ">", "</font>")}
 
 
-    string = input.replace('\n',"<br>")
+
     string = string.replace('\t', "&nbsp&nbsp&nbsp&nbsp")
     if replacers is not None:
         for key, value in replacers.iteritems():
             # print (key, value)
             string = string.replace(key,value[0] + key + value[1])
+
+    # for key in short_keywords:
+    #     if string.endswith(key):
+    #         string.replace(key, ("<font color=" + color_string + ">" + key+ "</font>") )
+    string = string.replace('\n',"<br>")
     return string
 
 if __name__=="__main__":
