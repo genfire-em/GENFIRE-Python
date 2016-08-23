@@ -1,0 +1,2 @@
+find ../ -iname "*py" | xargs python html_helper.py
+find ../ -iname "*.html" | xargs -I $ mv $ ./src_html/

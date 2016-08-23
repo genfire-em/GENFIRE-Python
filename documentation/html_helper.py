@@ -1,4 +1,5 @@
 def generate_html(filename=None):
+    #convert source code files into formatted html for documentation
     import sys
     import os
     print(filename)
@@ -47,13 +48,18 @@ def generate_html(filename=None):
             fid.write(closing_str)
 
 def code_formatter(input):
+    # A simple custom HTML code formatter that colors some keywords and tries to avoid instances of them within comments
     color_string = "\"orange\""
     keywords = ["from", "def","class", "self", "__main__", "for", "if",\
                 "while","import","else","elif", "True","False", "del"]
+    new_keywords = []
     for i, v in enumerate(keywords):
         keywords[i] = v + " "
+        new_keywords.append(v + ".")
+    keywords += new_keywords
     format_string = ("<font color=" + color_string + ">", "</font>")
     replacers={}
+
     for kw in keywords:
         replacers[kw] = format_string
 
