@@ -94,8 +94,7 @@ if __name__ != "__main__":
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(k[errInd]-measuredK[errInd]))/np.sum(abs(measuredK[errInd]))#monitor error
-            if iterationNum%5==1:
-                print("Iteration number: {0} \t R = {1}".format(iterationNum, errK[iterationNum-1]))
+            print("Iteration number: {0}           error = {1}".format(iterationNum, errK[iterationNum-1]))
 
             #update best object if a better one has been found
             if errK[iterationNum-1] < bestErr:
@@ -564,12 +563,13 @@ if __name__ != "__main__":
             self.reconstructionDisplayWindowSize = 0
 
 
-def toString(filename):
+def toString(string):
     try:
-        from GENFIRE.gui.utility import toString
+        import GENFIRE.gui.utility
+        return GENFIRE.gui.utility.toString(string)
     except ImportError:
-        def toString(string):
-            return str(string)
+        return str(string)
+
 class ReconstructionParameters():
 
     """

@@ -129,9 +129,9 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.GENFIRE_ProjectionCalculator.show()
 
     def updateFilenames(self):
-        self.ui.lineEdit_angle.setText(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename)
+        self.ui.lineEdit_angle.setText(QtCore.QString(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename))
         self.ui.lineEdit_angle.textChanged.emit(self.ui.lineEdit_angle.text())
-        self.ui.lineEdit_pj.setText(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename)
+        self.ui.lineEdit_pj.setText(QtCore.QString(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename))
         self.ui.lineEdit_pj.textChanged.emit(self.ui.lineEdit_pj.text())
 
     def launchVolumeSlicer(self):
