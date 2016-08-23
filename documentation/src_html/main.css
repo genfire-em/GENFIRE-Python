@@ -12,7 +12,7 @@ body {
 	background: #080808;
 }
 		
-a:link, a:visited { color: #00cc00; text-decoration: none; font-weight: normal; } 
+a:link, a:visited { color: #ff6600; text-decoration: none; font-weight: normal; } 
 a:active, a:hover { color: #FFCC00; text-decoration: underline; }
 
 p { margin: 0px; padding: 0px; }
@@ -53,7 +53,7 @@ h1 {
 	font-size: 30px;
 	font-weight: bold;
 	background-color: black;
-	color: #00cc00;
+	color: #ffffff;
 /* 	float: left */
 }
 
@@ -83,6 +83,7 @@ h3 {
 	font-size: 14px;
 	font-weight: normal;
 	color: #d7e13d;	
+	color: orange;	
 	border-bottom: 1px dotted #d7e13d;
 }
 

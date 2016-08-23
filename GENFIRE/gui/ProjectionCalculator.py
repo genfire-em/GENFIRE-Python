@@ -14,6 +14,7 @@ from GENFIRE.gui.utility import toString
 
 class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
     model_loading_signal = QtCore.pyqtSignal()
+    update_filenames_signal = QtCore.pyqtSignal()
     def __init__(self, parent=None):
         super(ProjectionCalculator, self).__init__()
         self.ui = ProjectionCalculator_MainWindow.Ui_ProjectionCalculator()
@@ -53,7 +54,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         self.ui.btn_go.clicked.connect(self.calculateProjections)
         self.ui.btn_go.setEnabled(False)
 
-        self.figure = plt.figure(1)
+        self.figure = plt.figure(3)
         self.figure.clf() # clear figure in case it was rendered somewhere else previously
         self.canvas = FigureCanvas(self.figure)
         self.navigationToolbar = NavigationToolbar(self.canvas, self)
@@ -116,8 +117,24 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                 filename = self.calculationParameters.outputFilename
                 filename = toString(filename)
                 GENFIRE.fileio.saveData(filename,projections)
-            print("Finished calculating {}.".format(filename))
+                if self.calculationParameters.writeAnglesFlag:
+                    output_filename_base, ext  = os.path.split(toString(self.calculationParameters.outputFilename))
+                    output_angle_filename      = output_filename_base + "/euler_angles.txt"
+                    if os.path.isfile(output_angle_filename):
+                        print("{} already exists and will be overwritten.".format(output_angle_filename))
+                    self.calculationParameters.outputAngleFilename = output_angle_filename
+                    num_projections = np.size(theta)
+                    phi = np.repeat(phi, num_projections)
+                    psi = np.repeat(psi, num_projections)
+                    with open(output_angle_filename,'w') as fid:
+                        for euler in zip(phi, theta, psi):
+                            string = str(euler[0]) + ' ' + str(euler[1]) + ' ' + str(euler[2]) + '\n'
+                            fid.write(string)
+                    print("Successfully calculated {}.".format(output_angle_filename))
 
+
+            print("Successfully calculated {}.".format(filename))
+            self.update_filenames_signal.emit()
     def clearModel(self):
         self.calculationParameters.model         = None
         self.calculationParameters.interpolator  = None
@@ -278,18 +295,20 @@ class ProjectionCalculationParameters:
         self.modelFilename              = QtCore.QString('')
         self.angleFilename              = QtCore.QString('')
         self.outputFilename             = QtCore.QString('')
+        self.outputAngleFilename        = QtCore.QString('')
         self.outputFilesFlag            = False
         self.angleFileProvided          = False
         self.modelFilenameProvided      = False
         self.modelLoadedFlag            = False
+        self.writeAnglesFlag            = True
         self.interpolator               = None
         self.model                      = None
         self.ncOut                      = None
         self.phi                        = 0
         self.theta                      = 0
         self.thetaStart                 = 0
-        self.thetaStep                  = 1
-        self.thetaStop                  = 1
+        self.thetaStep                  = 3
+        self.thetaStop                  = 180
         self.psi                        = 0
 
 class CalculateProjectionSeries_popup(QtGui.QDialog):
@@ -301,7 +320,9 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui = CalculateProjectionSeries_Dialog.Ui_CalculateProjectionSeries_Dialog()
         self.ui.setupUi(self)
         import os
-        self.ui.lineEdit_outputFilename.setText(os.path.abspath(os.getcwd()))
+
+        self.calculationParameters.outputFilename = os.path.abspath(os.getcwd() + '/projections.mrc')
+        self.ui.lineEdit_outputFilename.setText(self.calculationParameters.outputFilename)
         self.ui.lineEdit_phi.setText(QtCore.QString(str(self.calculationParameters.phi)))
         self.ui.lineEdit_psi.setText(QtCore.QString(str(self.calculationParameters.psi)))
         self.ui.lineEdit_thetaStart.setText(QtCore.QString(str(self.calculationParameters.thetaStart)))
@@ -315,7 +336,8 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.lineEdit_thetaStep.textEdited.connect(self.setThetaStep)
         self.ui.lineEdit_thetaStop.textEdited.connect(self.setThetaStop)
         self.ui.lineEdit_outputFilename.textEdited.connect(self.setOutputFilename)
-
+        self.ui.checkBox_saveAngles.setChecked(True)
+        self.ui.checkBox_saveAngles.toggled.connect(self.toggleSaveAngles)
     def setAngleFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_angleFile.text()
         if os.path.isfile(toString(filename)):
@@ -331,7 +353,11 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
             self.calculationParameters.angleFileProvided = True
             self.ui.lineEdit_angleFile.setText(QtCore.QString(filename))
             self.disableAngleWidgets()
-
+    def toggleSaveAngles(self):
+        if self.ui.checkBox_saveAngles.isChecked():
+            self.calculationParameters.writeAnglesFlag = True
+        else:
+            self.calculationParameters.writeAnglesFlag = False
     def disableAngleWidgets(self):
         self.ui.lineEdit_thetaStart.setEnabled(True)
         self.ui.lineEdit_thetaStep.setDisabled(True)
@@ -344,6 +370,9 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.lineEdit_thetaStop.setStyleSheet("background-color: gray")
         self.ui.lineEdit_phi.setStyleSheet("background-color: gray")
         self.ui.lineEdit_psi.setStyleSheet("background-color: gray")
+        self.ui.checkBox_saveAngles.setChecked(False)
+        self.ui.checkBox_saveAngles.setEnabled(False)
+
 
     def setPhi(self, angle):
         self.calculationParameters.phi = angle.toFloat()[0]

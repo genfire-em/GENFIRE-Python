@@ -361,4 +361,4 @@ def saveData(filename, data):
         import scipy.io
         scipy.io.savemat(filename, {"data":data})
     else:
-        raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
+        raise IOError("Unsupported file extension \"{}\" for volume object".format(ext))

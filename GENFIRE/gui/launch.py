@@ -109,6 +109,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.checkBox_provide_io.toggled.connect(self.toggleSelectIO)
 
         self.ui.checkBox_default_support.toggled.connect(self.toggleUseDefaultSupport)
+        self.ui.checkBox_default_support.setChecked(True)
 
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
@@ -124,7 +125,14 @@ class GenfireMainWindow(QtGui.QMainWindow):
         from functools import partial
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
         self.GENFIRE_ProjectionCalculator.model_loading_signal.connect(partial(self.receive_msg, "Loading Model..."))
+        self.GENFIRE_ProjectionCalculator.update_filenames_signal.connect(self.updateFilenames)
         self.GENFIRE_ProjectionCalculator.show()
+
+    def updateFilenames(self):
+        self.ui.lineEdit_angle.setText(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename)
+        self.ui.lineEdit_angle.textChanged.emit(self.ui.lineEdit_angle.text())
+        self.ui.lineEdit_pj.setText(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename)
+        self.ui.lineEdit_pj.textChanged.emit(self.ui.lineEdit_pj.text())
 
     def launchVolumeSlicer(self):
         import GENFIRE.fileio
@@ -182,6 +190,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
             self.GENFIRE_ReconstructionParameters.setSupportFilename(filename)
             print ("Support Filename:", self.GENFIRE_ReconstructionParameters.getSupportFilename())
             self.ui.lineEdit_support.setText(QtCore.QString(filename))
+            self.ui.checkBox_default_support.setChecked(False)
+            print("VALUE is", self.GENFIRE_ReconstructionParameters.useDefaultSupport)
 
     def selectInitialObjectFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Initial Object", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
@@ -292,7 +302,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
                 plt.ylabel('Mean R-free')
 
 
-                plt.figure(4)
+                plt.figure()
                 mngr = plt.get_current_fig_manager()
                 mngr.window.setGeometry(700,650,550, 250)
                 plt.hold(False)

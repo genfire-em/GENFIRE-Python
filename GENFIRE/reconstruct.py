@@ -7,10 +7,9 @@ import os
 import scipy.io
 import pyfftw
 import time
-import GENFIRE.utility
+import GENFIRE
 import weightValues
 from multiprocessing import Pool
-
 
 PI = np.pi
 if __name__ != "__main__":
@@ -622,7 +621,12 @@ if __name__ != "__main__":
             self.reconstructionDisplayWindowSize = 0
 
 
-
+def toString(filename):
+    try:
+        from GENFIRE.gui.utility import toString
+    except ImportError:
+        def toString(string):
+            return str(string)
 class ReconstructionParameters():
 
     """
@@ -644,6 +648,7 @@ class ReconstructionParameters():
         self.useDefaultSupport = True
         self.calculateRfree = True
         self.initialObjectFilename = None
+
     def checkParameters(self): #verify file extensions are supported
         parametersAreGood = 1
 
@@ -667,35 +672,35 @@ class ReconstructionParameters():
     # Define setters/getters
     def setProjectionFilename(self, projectionFilename):
         if projectionFilename:
-            self.projectionFilename = os.path.join(os.getcwd(), unicode(projectionFilename.toUtf8(), encoding='UTF-8'))
+            self.projectionFilename = os.path.join(os.getcwd(), toString(projectionFilename))
 
     def getProjectionFilename(self):
         return self.projectionFilename
 
     def setAngleFilename(self, angleFilename):
         if angleFilename:
-            self.angleFilename = os.path.join(os.getcwd(), unicode(angleFilename.toUtf8(), encoding='UTF-8'))
+            self.angleFilename = os.path.join(os.getcwd(), toString(angleFilename))
 
     def getAngleFilename(self):
         return self.angleFilename
 
     def setSupportFilename(self, supportFilename):
         if supportFilename:
-            self.supportFilename = os.path.join(os.getcwd(), unicode(supportFilename.toUtf8(), encoding='UTF-8'))
+            self.supportFilename = os.path.join(os.getcwd(), toString(supportFilename))
 
     def getSupportFilename(self):
         return self.supportFilename
 
     def setResultsFilename(self, resultsFilename):
         if resultsFilename:
-            self.resultsFilename = os.path.join(os.getcwd(), unicode(resultsFilename.toUtf8(), encoding='UTF-8'))
+            self.resultsFilename = os.path.join(os.getcwd(), toString(resultsFilename))
 
     def getResultsFilename(self):
         return self.resultsFilename
 
 
     def setInitialObjectFilename(self, initialObjectFilename):
-        self.initialObjectFilename = os.path.join(os.getcwd(), unicode(initialObjectFilename.toUtf8(), encoding='UTF-8'))
+        self.initialObjectFilename = os.path.join(os.getcwd(), toString(initialObjectFilename))
         self.isInitialObjectDefined = True
 
     def getInitialObjectFilename(self):
