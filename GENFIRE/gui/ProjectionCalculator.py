@@ -305,12 +305,12 @@ class ProjectionCalculationParameters:
         self.interpolator               = None
         self.model                      = None
         self.ncOut                      = None
-        self.phi                        = 0
-        self.theta                      = 0
-        self.thetaStart                 = 0
-        self.thetaStep                  = 3
-        self.thetaStop                  = 180
-        self.psi                        = 0
+        self.phi                        = 0.0
+        self.theta                      = 0.0
+        self.thetaStart                 = 0.0
+        self.thetaStep                  = 3.0
+        self.thetaStop                  = 180.0
+        self.psi                        = 0.0
 
 class CalculateProjectionSeries_popup(QtGui.QDialog):
     def __init__(self, calculation_parameters = ProjectionCalculationParameters()):
