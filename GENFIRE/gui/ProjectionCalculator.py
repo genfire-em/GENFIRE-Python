@@ -339,6 +339,7 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.lineEdit_outputFilename.textEdited.connect(self.setOutputFilename)
         self.ui.checkBox_saveAngles.setChecked(True)
         self.ui.checkBox_saveAngles.toggled.connect(self.toggleSaveAngles)
+        self.ui.buttonBox.button(QtGui.QDialogButtonBox.Ok).setText("Calculate Projections")
     def setAngleFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_angleFile.text()
         if os.path.isfile(toString(filename)):
