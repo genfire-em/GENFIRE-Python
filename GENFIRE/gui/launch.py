@@ -124,17 +124,22 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     def launchProjectionCalculator(self):
         from functools import partial
-        self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
+        self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator(self)
         self.GENFIRE_ProjectionCalculator.model_loading_signal.connect(partial(self.receive_msg, "Loading Model..."))
         self.GENFIRE_ProjectionCalculator.emit_message_signal.connect(self.receive_msg)
         self.GENFIRE_ProjectionCalculator.update_filenames_signal.connect(self.updateFilenames)
         self.GENFIRE_ProjectionCalculator.show()
 
     def updateFilenames(self):
-        self.ui.lineEdit_angle.setText(QtCore.QString(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename))
+        import os
+        base, file = os.path.split(toString(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename))
+
+        self.ui.lineEdit_angle.setText(QtCore.QString(str(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename)))
         self.ui.lineEdit_angle.textChanged.emit(self.ui.lineEdit_angle.text())
-        self.ui.lineEdit_pj.setText(QtCore.QString(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename))
+        self.ui.lineEdit_pj.setText(QtCore.QString(str(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename)))
         self.ui.lineEdit_pj.textChanged.emit(self.ui.lineEdit_pj.text())
+        self.ui.lineEdit_results.setText(QtCore.QString(str(base + "/results.mrc")))
+        self.ui.lineEdit_results.textChanged.emit(self.ui.lineEdit_results.text())
 
     def launchVolumeSlicer(self):
         import GENFIRE.fileio

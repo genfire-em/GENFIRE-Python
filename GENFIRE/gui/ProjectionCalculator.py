@@ -20,6 +20,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         super(ProjectionCalculator, self).__init__()
         self.ui = ProjectionCalculator_MainWindow.Ui_ProjectionCalculator()
         self.ui.setupUi(self)
+        self.parent = parent
         self.calculationParameters = ProjectionCalculationParameters()
 
         self.ui.lineEdit_modelFile.setText(QtCore.QString(os.getcwd()))
@@ -74,19 +75,15 @@ class ProjectionCalculator(QtGui.QMainWindow):
 
     def readyToCalculateProjections(self):
         self.emit_message_signal.emit("GENFIRE: Calculating projections...")
-        from threading import Thread
         self.calculation_thread = ProjectionCalculator_thread(self)
         self.calculation_thread.finished.connect(self.readyToClose)
         self.calculation_thread.start()
-        # self.calculation_thread.wait()
-        # self.calculation_thread = Thread(target=self.calculateProjections)
-        # self.calculation_thread.start()
-        # self.update_filenames_signal.emit()
-        # self.calculation_thread.join()
-        # self.close()
+        self.parent.raise_()
+
     def readyToClose(self):
         self.update_filenames_signal.emit()
         self.close()
+
     def calculateProjections(self):
         if self.calculateProjections_Dialog.status:
             self.calculationParameters.modelFilename = toString(self.calculationParameters.modelFilename)
@@ -117,8 +114,8 @@ class ProjectionCalculator(QtGui.QMainWindow):
                 for projNum in range(0,np.size(phi)):
                     pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model))
                     projections[:, :, projNum] = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
-
-                np.save(filename,projections)
+                # projections[ projections<0 ] = 0
+                GENFIRE.fileio.saveData(filename,projections)
             else:
                 if self.calculationParameters.interpolator is None:
                     self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
@@ -134,6 +131,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
                     projections[:, :, i] = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
                 filename = self.calculationParameters.outputFilename
                 filename = toString(filename)
+                # projections[ projections<0 ] = 0
                 GENFIRE.fileio.saveData(filename,projections)
                 if self.calculationParameters.writeAnglesFlag:
                     output_filename_base, ext  = os.path.splitext(toString(self.calculationParameters.outputFilename))
@@ -164,6 +162,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         if self.calculationParameters.model is not None:
             pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
             pj = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
+            pj[ pj<0 ] = 0
             self.showProjection(pj)
         else:
             self.clearFigure()
@@ -173,6 +172,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
             self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
         pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
         pj = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
+        pj[ pj<0 ] = 0
         self.ax.imshow(pj)
         self.canvas.draw()
 
