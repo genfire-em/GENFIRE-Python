@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ProjectionCalculator_MainWindow.ui'
+# Form implementation generated from reading ui file 'GENFIRE/gui/ProjectionCalculator_MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -102,6 +102,7 @@ class Ui_ProjectionCalculator(object):
         self.horizontalLayout_7.addWidget(self.verticalSlider_psi)
         self.gridLayout.addLayout(self.horizontalLayout_7, 0, 2, 1, 1)
         self.lineEdit_psi = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit_psi.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_psi.setObjectName(_fromUtf8("lineEdit_psi"))
         self.gridLayout.addWidget(self.lineEdit_psi, 1, 2, 1, 1)
         self.label_8 = QtGui.QLabel(self.centralwidget)
@@ -109,6 +110,7 @@ class Ui_ProjectionCalculator(object):
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.gridLayout.addWidget(self.label_8, 2, 2, 1, 1)
         self.lineEdit_theta = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit_theta.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_theta.setObjectName(_fromUtf8("lineEdit_theta"))
         self.gridLayout.addWidget(self.lineEdit_theta, 1, 1, 1, 1)
         self.label_7 = QtGui.QLabel(self.centralwidget)
@@ -121,6 +123,7 @@ class Ui_ProjectionCalculator(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_phi.sizePolicy().hasHeightForWidth())
         self.lineEdit_phi.setSizePolicy(sizePolicy)
+        self.lineEdit_phi.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_phi.setObjectName(_fromUtf8("lineEdit_phi"))
         self.gridLayout.addWidget(self.lineEdit_phi, 1, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 3, 1, 1)
