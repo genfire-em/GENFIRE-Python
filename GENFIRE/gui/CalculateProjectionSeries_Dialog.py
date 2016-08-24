@@ -144,7 +144,7 @@ class Ui_CalculateProjectionSeries_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_thetaStop.sizePolicy().hasHeightForWidth())
         self.lineEdit_thetaStop.setSizePolicy(sizePolicy)
-        self.lineEdit_thetaStop.setMaxLength(4)
+        self.lineEdit_thetaStop.setMaxLength(6)
         self.lineEdit_thetaStop.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_thetaStop.setObjectName(_fromUtf8("lineEdit_thetaStop"))
         self.verticalLayout_4.addWidget(self.lineEdit_thetaStop)
