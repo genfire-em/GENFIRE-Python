@@ -1,3 +1,7 @@
+GENFIRE.egg-info/
+build/
+dist/
+UNKNOWN.egg-info/
 PhaseRetrieval/
 dist/
 build/

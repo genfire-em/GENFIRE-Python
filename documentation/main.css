@@ -1,4 +1,8 @@
-
+#bounding_box {
+width:1000px;
+padding = 14px 40px;
+text-align:justify
+}
 h1 {
 	margin: 10px;
 	padding: 14px 0px;
@@ -26,10 +30,12 @@ a:active, a:hover { color: #FFCC00; text-decoration: underline; }
 
 p { 
 margin: 10px;
-margin-right:25px;
+margin-right:155px;
 padding: 0px;
 text-align:justify;
 }
+
+
 
 img {
 margin: 0px;
@@ -69,7 +75,7 @@ h4 {
 
 #Sidebar {
  	position: fixed;
-    width: 350px;
+    width: 250px;
     background-color: #DDD; 
     font-size: 12px;
     overflow-y: scroll;

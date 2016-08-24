@@ -242,7 +242,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         self.displayFigure()
 
     def selectModelFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Model",filter="MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
+        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Model",filter="Volume files (*.mrc *.mat *.npy);;MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;numpy (*.npy);;All Files (*)")
         if os.path.isfile(toString(filename)):
             self.ui.btn_go.setEnabled(True)
             self.setModelFilename(filename)
