@@ -324,7 +324,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         global process_finished
         if not process_finished:
             self.ui.log.moveCursor(QtGui.QTextCursor.End)
-            formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#000000;\" >" + msg + "</span/>"
+            formatted_msg = "<span style=\" font-size:14pt; font-weight:600; color:#000000;\" >" + msg + "</span/>"
             self.ui.log.append(formatted_msg)
 
     @QtCore.pyqtSlot(str)
@@ -332,7 +332,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         global process_finished
         if not process_finished:
             self.ui.log.moveCursor(QtGui.QTextCursor.End)
-            formatted_msg = "<span style=\" font-size:11pt; font-weight:600; color:#ff0000;\" >" + msg + "</span/>"
+            formatted_msg = "<span style=\" font-size:14pt; font-weight:600; color:#ff0000;\" >" + msg + "</span/>"
             self.ui.log.append(formatted_msg)
 
     @QtCore.pyqtSlot()
