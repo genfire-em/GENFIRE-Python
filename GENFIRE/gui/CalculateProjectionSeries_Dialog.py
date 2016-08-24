@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'calculateprojectionseries_dialog.ui'
+# Form implementation generated from reading ui file 'GENFIRE/gui/calculateprojectionseries_dialog.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -81,7 +81,7 @@ class Ui_CalculateProjectionSeries_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_phi.sizePolicy().hasHeightForWidth())
         self.lineEdit_phi.setSizePolicy(sizePolicy)
-        self.lineEdit_phi.setMaxLength(4)
+        self.lineEdit_phi.setMaxLength(6)
         self.lineEdit_phi.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_phi.setObjectName(_fromUtf8("lineEdit_phi"))
         self.verticalLayout_6.addWidget(self.lineEdit_phi)
@@ -93,7 +93,7 @@ class Ui_CalculateProjectionSeries_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_thetaStart.sizePolicy().hasHeightForWidth())
         self.lineEdit_thetaStart.setSizePolicy(sizePolicy)
-        self.lineEdit_thetaStart.setMaxLength(4)
+        self.lineEdit_thetaStart.setMaxLength(6)
         self.lineEdit_thetaStart.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_thetaStart.setObjectName(_fromUtf8("lineEdit_thetaStart"))
         self.verticalLayout.addWidget(self.lineEdit_thetaStart)
@@ -106,7 +106,7 @@ class Ui_CalculateProjectionSeries_Dialog(object):
         self.lineEdit_psi.setSizePolicy(sizePolicy)
         self.lineEdit_psi.setMinimumSize(QtCore.QSize(10, 20))
         self.lineEdit_psi.setBaseSize(QtCore.QSize(2, 0))
-        self.lineEdit_psi.setMaxLength(4)
+        self.lineEdit_psi.setMaxLength(6)
         self.lineEdit_psi.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_psi.setObjectName(_fromUtf8("lineEdit_psi"))
         self.verticalLayout_6.addWidget(self.lineEdit_psi)
@@ -128,7 +128,7 @@ class Ui_CalculateProjectionSeries_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEdit_thetaStep.sizePolicy().hasHeightForWidth())
         self.lineEdit_thetaStep.setSizePolicy(sizePolicy)
-        self.lineEdit_thetaStep.setMaxLength(4)
+        self.lineEdit_thetaStep.setMaxLength(6)
         self.lineEdit_thetaStep.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_thetaStep.setObjectName(_fromUtf8("lineEdit_thetaStep"))
         self.verticalLayout_3.addWidget(self.lineEdit_thetaStep)
