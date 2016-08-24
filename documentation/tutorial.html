@@ -76,25 +76,35 @@
     	Now calculate a projection image dataset from this model by clicking "Calculate Projection
     	Series from Model"
     	</p>
-		<center><img src="images/CalculateProjection_dialog_empty.png" alt="The GENFIRE Projection Calculator Module with Model" 
+		<center><img src="images/CalculateProjection_dialog_empty.png" alt="Dialog to specify Euler angles -- empty" 
     	style="width:544px; height:582px" align="middle"</center>
     	<p>
     	From this dialog you can specify the Euler angles for each of the calculated projections. 
-    	To accomplish this you have two options.<br>
+    	To accomplish this you have two options.
+    	</p>
+    	<p>
     	The first is to provide the Euler angles as a space-delimited .txt file where each 
     	row corresponds to one projection and provides the Euler angles as phi theta psi. 
-    	If you are confused about this format you can view the outputted file with option 2 to see an example. <br>
+    	If you are confused about this format you can view the outputted file with option 2 to see an example.
+    	</p>
+    	<p>
     	The second option is to specify a single-axis tilt series. Specify the tilt angle, theta,
     	as start = 0, step = 2, stop = 180 to calculate 91 equally spaced projections with no missing wedge.
     	Choose an output filename for the projection, make sure "Save Angles" is checked, 
     	then click "Calculate Projections" to perform the calculation. 
     	</p>
-    	<center><img src="images/CalculateProjection_dialog_ready.png" alt="The GENFIRE Projection Calculator Module with Model" 
+    	<center><img src="images/CalculateProjection_dialog_ready.png" alt="Dialog to specify Euler angles -- ready" 
     	style="width:544px; height:582px" align="middle"</center>
-    	<p></p>
-    	<center><img src="images/CalculateProjection_dialog_ready.png" alt="The GENFIRE Projection Calculator Module with Model" 
+    	<p>
+    	Once the calculation is complete, the projection calculator will close. Hopefully the message log
+    	now contains success messages like this
+    	</p>
+    	<center><img src="images/gui_ready.png" alt="GENFIRE GUI ready to reconstruct" 
     	style="width:544px; height:582px" align="middle"</center>
-    	<p></p>
+    	<p>
+    	Note that the file created containing the Euler angles is the same name as the corresponding
+    	projections with "_euler_angles" appended.
+    	</p>
      <h2> References </h2>	
     	<p> 
     			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor <br>

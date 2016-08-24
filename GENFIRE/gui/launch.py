@@ -16,6 +16,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.stop_threads.emit()
         GF_logger.listener_thread.wait()
         GF_error_logger.listener_thread.wait()
+        import matplotlib.pyplot as plt; plt.close("all")
         QCloseEvent.accept()
     def __init__(self):
 
@@ -94,7 +95,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_io.setStyleSheet("background-color: gray")
 
         ## Radio Buttons -- default is resolution extension suppression
-        self.ui.radioButton_on.setChecked(True)
+        self.ui.radioButton_off.setChecked(True)
         self.ui.radioButton_on.toggled.connect(self.selectResolutionExtensionSuppressionState)
 
         self.ui.radioButton_off.toggled.connect(self.selectResolutionExtensionSuppressionState)
@@ -125,6 +126,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         from functools import partial
         self.GENFIRE_ProjectionCalculator = ProjectionCalculator.ProjectionCalculator()
         self.GENFIRE_ProjectionCalculator.model_loading_signal.connect(partial(self.receive_msg, "Loading Model..."))
+        self.GENFIRE_ProjectionCalculator.emit_message_signal.connect(self.receive_msg)
         self.GENFIRE_ProjectionCalculator.update_filenames_signal.connect(self.updateFilenames)
         self.GENFIRE_ProjectionCalculator.show()
 
@@ -216,7 +218,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     @QtCore.pyqtSlot()
     def startReconstruction(self):
-        print('Launching GENFIRE Reconstruction')
+        print('Launching GENFIRE reconstruction')
         # Launch the reconstruction in a separate thread to prevent the GUI blocking while reconstructing
         from threading import Thread
         from functools import partial

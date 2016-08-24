@@ -12,9 +12,10 @@ import ProjectionCalculator_MainWindow
 import CalculateProjectionSeries_Dialog
 from GENFIRE.gui.utility import toString
 
-class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
+class ProjectionCalculator(QtGui.QMainWindow):
     model_loading_signal = QtCore.pyqtSignal()
     update_filenames_signal = QtCore.pyqtSignal()
+    emit_message_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
         super(ProjectionCalculator, self).__init__()
         self.ui = ProjectionCalculator_MainWindow.Ui_ProjectionCalculator()
@@ -50,8 +51,9 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
         self.ui.lineEdit_theta.editingFinished.connect(self.setThetaSliderValue)
         self.ui.lineEdit_psi.editingFinished.connect(self.setPsiSliderValue)
 
-
-        self.ui.btn_go.clicked.connect(self.calculateProjections)
+        self.calculateProjections_Dialog = CalculateProjectionSeries_popup(self.calculationParameters)
+        self.ui.btn_go.clicked.connect(self.showDialog)
+        self.calculateProjections_Dialog.ui.buttonBox.accepted.connect(self.readyToCalculateProjections)
         self.ui.btn_go.setEnabled(False)
 
         self.figure = plt.figure(3)
@@ -67,11 +69,26 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
         self.ui.btn_clearModel.clicked.connect(self.clearModel)
 
+    def showDialog(self):
+        self.calculateProjections_Dialog.show()
+
+    def readyToCalculateProjections(self):
+        self.emit_message_signal.emit("GENFIRE: Calculating projections...")
+        from threading import Thread
+        self.calculation_thread = ProjectionCalculator_thread(self)
+        self.calculation_thread.finished.connect(self.readyToClose)
+        self.calculation_thread.start()
+        # self.calculation_thread.wait()
+        # self.calculation_thread = Thread(target=self.calculateProjections)
+        # self.calculation_thread.start()
+        # self.update_filenames_signal.emit()
+        # self.calculation_thread.join()
+        # self.close()
+    def readyToClose(self):
+        self.update_filenames_signal.emit()
+        self.close()
     def calculateProjections(self):
-        self.calculateProjections_Dialog = CalculateProjectionSeries_popup(self.calculationParameters)
-        result = self.calculateProjections_Dialog.exec_()
-        if result == QtGui.QDialog.Accepted:
-            print("Calculating projections...")
+        if self.calculateProjections_Dialog.status:
             self.calculationParameters.modelFilename = toString(self.calculationParameters.modelFilename)
             if not self.calculationParameters.modelLoadedFlag:
 
@@ -122,7 +139,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                     output_filename_base, ext  = os.path.splitext(toString(self.calculationParameters.outputFilename))
                     output_angle_filename      = output_filename_base + "_euler_angles.txt"
                     if os.path.isfile(output_angle_filename):
-                        print("{} already exists and will be overwritten.".format(output_angle_filename))
+                        print("WARNING! Filename {} already exists and will be overwritten.".format(output_angle_filename))
                     self.calculationParameters.outputAngleFilename = output_angle_filename
                     num_projections = np.size(theta)
                     phi = np.repeat(phi, num_projections)
@@ -135,8 +152,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
 
             print("Successfully calculated {}.".format(filename))
-            self.update_filenames_signal.emit()
-            self.close()
+
     def clearModel(self):
         self.calculationParameters.model         = None
         self.calculationParameters.interpolator  = None
@@ -292,7 +308,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
 
 
 class ProjectionCalculationParameters:
-    oversamplingRatio = 2
+    oversamplingRatio = 3
     def __init__(self):
         self.modelFilename              = QtCore.QString('')
         self.angleFilename              = QtCore.QString('')
@@ -322,7 +338,7 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui = CalculateProjectionSeries_Dialog.Ui_CalculateProjectionSeries_Dialog()
         self.ui.setupUi(self)
         import os
-
+        from functools import partial
         self.calculationParameters.outputFilename = os.path.abspath(os.getcwd() + '/projections.mrc')
         self.ui.lineEdit_outputFilename.setText(self.calculationParameters.outputFilename)
         self.ui.lineEdit_phi.setText(QtCore.QString(str(self.calculationParameters.phi)))
@@ -341,6 +357,12 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.checkBox_saveAngles.setChecked(True)
         self.ui.checkBox_saveAngles.toggled.connect(self.toggleSaveAngles)
         self.ui.buttonBox.button(QtGui.QDialogButtonBox.Ok).setText("Calculate Projections")
+        self.ui.buttonBox.accepted.connect(partial(self.setStatus, 1))
+
+        self.status = 0
+
+    def setStatus(self,status):
+        self.status = status
     def setAngleFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_angleFile.text()
         if os.path.isfile(toString(filename)):
@@ -396,6 +418,12 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         if filename:
             self.calculationParameters.outputFilename = filename
 
+class ProjectionCalculator_thread(QtCore.QThread):
+    def __init__(self, parent):
+        super(ProjectionCalculator_thread, self).__init__()
+        self.parent = parent
+    def run(self):
+        self.parent.calculateProjections()
 if __name__ == "__main__":
     import sys
 

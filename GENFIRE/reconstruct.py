@@ -39,7 +39,7 @@ if __name__ != "__main__":
         """
         import time
         t0 = time.time()
-        print("Reconstruction Started")
+        print("Reconstruction started")
         NUMTHREADS = 6 #number of threads to be used for the FFTW interface
         bestErr = 1e30 #initialize error
 
@@ -94,7 +94,7 @@ if __name__ != "__main__":
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(k[errInd]-measuredK[errInd]))/np.sum(abs(measuredK[errInd]))#monitor error
-            print("Iteration number: {0}           error = {1}".format(iterationNum, errK[iterationNum-1]))
+            print("Iteration number: {0}           error = {1:0.5f}".format(iterationNum, errK[iterationNum-1]))
 
             #update best object if a better one has been found
             if errK[iterationNum-1] < bestErr:
@@ -185,7 +185,7 @@ if __name__ != "__main__":
         if R_freeInd_complex:
             outputs['R_free'] = Rfree_complex
         outputs['reconstruction'] = np.fft.fftshift(outputs['reconstruction'])
-        print("Reconstruction finished in {} seconds".format(time.time()-t0))
+        print("Reconstruction finished in {0:0.1f} seconds".format(time.time()-t0))
         return outputs
 
 
@@ -212,7 +212,7 @@ if __name__ != "__main__":
         :return: the assembled Fourier grid
 
         """
-        print ("Assembling Fourier Grid.")
+        print ("Assembling Fourier grid.")
         tic = time.time()
         dim1 = np.shape(projections)[0]
         dim2 = np.shape(projections)[1]
@@ -341,7 +341,7 @@ if __name__ != "__main__":
         measuredK[np.isnan(measuredK)] = 0
         measuredK = GENFIRE.utility.hermitianSymmetrize(measuredK)
 
-        print ("Fourier grid assembled in %d seconds" % (time.time()-tic))
+        print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
         return measuredK
 
 
