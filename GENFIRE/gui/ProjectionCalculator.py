@@ -119,7 +119,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                 GENFIRE.fileio.saveData(filename,projections)
                 if self.calculationParameters.writeAnglesFlag:
                     output_filename_base, ext  = os.path.split(toString(self.calculationParameters.outputFilename))
-                    output_angle_filename      = output_filename_base + "/euler_angles.txt"
+                    output_angle_filename      = self.calculationParameters.outputFilename + "_euler_angles.txt"
                     if os.path.isfile(output_angle_filename):
                         print("{} already exists and will be overwritten.".format(output_angle_filename))
                     self.calculationParameters.outputAngleFilename = output_angle_filename
