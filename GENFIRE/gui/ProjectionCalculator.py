@@ -107,7 +107,7 @@ class ProjectionCalculator(QtGui.QMainWindow): #QDialog?
                 phi = self.calculationParameters.phi
                 psi = self.calculationParameters.psi
                 theta = np.arange(self.calculationParameters.thetaStart, \
-                                  self.calculationParameters.thetaStop + 1e-30, \
+                                  self.calculationParameters.thetaStop + 1e-10, \
                                   self.calculationParameters.thetaStep)
                 projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(theta)),dtype=float)
                 for i, current_theta in enumerate(theta):
