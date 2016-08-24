@@ -81,7 +81,7 @@ def main(reconstruction_parameters):
     if useDefaultSupport or filename_support == "":
         support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
     else:
-        support = GENFIRE.fileio.loadVolume(filename_support)
+        support = GENFIRE.fileio.readVolume(filename_support)
 
     displayFigure.reconstructionDisplayWindowSize = np.shape(support) # this is used to show the central region of reconstruction
 

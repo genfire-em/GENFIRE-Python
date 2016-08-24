@@ -89,7 +89,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
             self.calculationParameters.modelFilename = toString(self.calculationParameters.modelFilename)
             if not self.calculationParameters.modelLoadedFlag:
 
-                self.calculationParameters.model = GENFIRE.fileio.loadVolume(self.calculationParameters.modelFilename)
+                self.calculationParameters.model = GENFIRE.fileio.readVolume(self.calculationParameters.modelFilename)
                 self.calculationParameters.oversamplingRatio = self.calculationParameters.oversamplingRatio
                 self.calculationParameters.dims = np.shape(self.calculationParameters.model)
                 paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
@@ -115,7 +115,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
                     pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model))
                     projections[:, :, projNum] = pj[self.calculationParameters.ncOut-self.calculationParameters.dims[0]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[0]/2, self.calculationParameters.ncOut-self.calculationParameters.dims[1]/2:self.calculationParameters.ncOut+self.calculationParameters.dims[1]/2]
                 # projections[ projections<0 ] = 0
-                GENFIRE.fileio.saveData(filename,projections)
+                GENFIRE.fileio.writeVolume(filename, projections)
             else:
                 if self.calculationParameters.interpolator is None:
                     self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
@@ -132,7 +132,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
                 filename = self.calculationParameters.outputFilename
                 filename = toString(filename)
                 # projections[ projections<0 ] = 0
-                GENFIRE.fileio.saveData(filename,projections)
+                GENFIRE.fileio.writeVolume(filename, projections)
                 if self.calculationParameters.writeAnglesFlag:
                     output_filename_base, ext  = os.path.splitext(toString(self.calculationParameters.outputFilename))
                     output_angle_filename      = output_filename_base + "_euler_angles.txt"
@@ -269,7 +269,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         t = Thread(target=lambda:print("Loading Model..."))
         t.start()
         self.ui.btn_go.setEnabled(True)
-        self.calculationParameters.model = GENFIRE.fileio.loadVolume(toString(filename))
+        self.calculationParameters.model = GENFIRE.fileio.readVolume(toString(filename))
         self.calculationParameters.dims = np.shape(self.calculationParameters.model)
         self.calculationParameters.paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
         padding = int((self.calculationParameters.paddedDim-self.calculationParameters.dims[0])/2)

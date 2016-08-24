@@ -1,10 +1,10 @@
 import numpy as np
 
-def loadVolume(filename):
+def readVolume(filename, order="C"):
     import os
     base, ext = os.path.splitext(filename)
     if (ext == ".mrc"):
-        return readMRC(filename)
+        return readMRC(filename, order)
     elif (ext == ".mat"):
         return readMAT_volume(filename)
     elif (ext == ".npy"):
@@ -344,16 +344,16 @@ def saveResults(reconstruction_outputs, filename):
     """
     import os
     fn, ext = os.path.splitext(filename)
-    saveData(filename, reconstruction_outputs['reconstruction'])
+    writeVolume(filename, reconstruction_outputs['reconstruction'])
     np.savetxt(fn+'_errK.txt',reconstruction_outputs['errK'])
     if 'R_free' in reconstruction_outputs.keys():
         np.savetxt(fn+'_Rfree.txt',reconstruction_outputs['R_free'])
 
-def saveData(filename, data):
+def writeVolume(filename, data, order="C"):
     import os
     fn, ext = os.path.splitext(filename)
     if ext == ".mrc":
-        writeMRC(filename, data, order="C")
+        writeMRC(filename, data, order)
     elif ext == ".npy":
         import numpy as np
         np.save(filename,data)

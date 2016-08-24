@@ -145,7 +145,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         import GENFIRE.fileio
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
         filename = toString(filename)
-        volume = GENFIRE.fileio.loadVolume(filename)
+        volume = GENFIRE.fileio.readVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
 
@@ -240,7 +240,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
             import GENFIRE.fileio
             import matplotlib.pyplot as plt
 
-            initialObject = GENFIRE.fileio.loadVolume(outputfilename)
+            initialObject = GENFIRE.fileio.readVolume(outputfilename)
             dims = np.shape(initialObject)
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays
             n_half_y = int(dims[1]/2)
