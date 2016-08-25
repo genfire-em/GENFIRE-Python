@@ -4,7 +4,7 @@ def readVolume(filename, order="C"):
     import os
     base, ext = os.path.splitext(filename)
     if (ext == ".mrc"):
-        return readMRC(filename, order)
+        return readMRC(filename, order=order)
     elif (ext == ".mat"):
         return readMAT_volume(filename)
     elif (ext == ".npy"):
@@ -353,7 +353,7 @@ def writeVolume(filename, data, order="C"):
     import os
     fn, ext = os.path.splitext(filename)
     if ext == ".mrc":
-        writeMRC(filename, data, order)
+        writeMRC(filename, data=data, order=order)
     elif ext == ".npy":
         import numpy as np
         np.save(filename,data)
