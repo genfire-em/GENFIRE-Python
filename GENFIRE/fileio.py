@@ -353,7 +353,7 @@ def writeVolume(filename, data, order="C"):
     import os
     fn, ext = os.path.splitext(filename)
     if ext == ".mrc":
-        writeMRC(filename, data=data, order=order)
+        writeMRC(filename, arr=data, order=order)
     elif ext == ".npy":
         import numpy as np
         np.save(filename,data)
