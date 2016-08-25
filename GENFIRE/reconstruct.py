@@ -581,7 +581,7 @@ class ReconstructionParameters():
         self.projectionFilename = ""
         self.angleFilename = ""
         self.supportFilename = ""
-        self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
+        self.resolutionExtensionSuppressionState = 2 #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.numIterations = 50
         self.displayFigure = DisplayFigure()
         self.oversamplingRatio = 3
