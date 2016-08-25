@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>819</width>
-    <height>1024</height>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Projection Calculator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'GENFIRE/gui/ProjectionCalculator_MainWindow.ui'
+# Form implementation generated from reading ui file 'ProjectionCalculator_MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,7 +25,7 @@ except AttributeError:
 class Ui_ProjectionCalculator(object):
     def setupUi(self, ProjectionCalculator):
         ProjectionCalculator.setObjectName(_fromUtf8("ProjectionCalculator"))
-        ProjectionCalculator.resize(819, 1024)
+        ProjectionCalculator.resize(819, 1000)
         self.centralwidget = QtGui.QWidget(ProjectionCalculator)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_3 = QtGui.QGridLayout(self.centralwidget)
@@ -163,7 +163,7 @@ class Ui_ProjectionCalculator(object):
         ProjectionCalculator.setTabOrder(self.lineEdit_modelFile, self.btn_selectModel)
 
     def retranslateUi(self, ProjectionCalculator):
-        ProjectionCalculator.setWindowTitle(_translate("ProjectionCalculator", "MainWindow", None))
+        ProjectionCalculator.setWindowTitle(_translate("ProjectionCalculator", "Projection Calculator", None))
         self.btn_clearModel.setText(_translate("ProjectionCalculator", "Clear Model", None))
         self.btn_go.setText(_translate("ProjectionCalculator", "Calculate Projection Series From Model", None))
         self.label_6.setText(_translate("ProjectionCalculator", "Phi", None))

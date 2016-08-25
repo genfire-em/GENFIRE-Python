@@ -158,7 +158,7 @@ class Ui_VolumeSlicer(object):
         QtCore.QMetaObject.connectSlotsByName(VolumeSlicer)
 
     def retranslateUi(self, VolumeSlicer):
-        VolumeSlicer.setWindowTitle(_translate("VolumeSlicer", "MainWindow", None))
+        VolumeSlicer.setWindowTitle(_translate("VolumeSlicer", "Volume Slicer", None))
         self.label.setText(_translate("VolumeSlicer", "X = ", None))
         self.label_2.setText(_translate("VolumeSlicer", "Y = ", None))
         self.label_3.setText(_translate("VolumeSlicer", "Z = ", None))
