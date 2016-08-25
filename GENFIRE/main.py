@@ -62,7 +62,6 @@ def main(reconstruction_parameters):
     interpolationCutoffDistance             = reconstruction_parameters.interpolationCutoffDistance
     displayFigure                           = reconstruction_parameters.displayFigure
     resolutionExtensionSuppressionState     = reconstruction_parameters.resolutionExtensionSuppressionState
-    print("RES STATE = ",resolutionExtensionSuppressionState)
     calculateRFree                          = reconstruction_parameters.calculateRfree
     useDefaultSupport                       = reconstruction_parameters.useDefaultSupport
     if reconstruction_parameters.isInitialObjectDefined:

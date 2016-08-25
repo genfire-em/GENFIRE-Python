@@ -79,7 +79,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_results.textChanged.connect(self.GENFIRE_ReconstructionParameters.setResultsFilename)
         self.ui.lineEdit_results.textChanged.connect(self.checkParameters)
 
-        self.ui.lineEdit_numIterations.setText(QtCore.QString("50"))
+        self.ui.lineEdit_numIterations.setText(QtCore.QString("100"))
         self.ui.lineEdit_numIterations.textChanged.connect(self.GENFIRE_ReconstructionParameters.setNumberOfIterations)
         self.ui.lineEdit_numIterations.textChanged.connect(self.checkParameters)
 
@@ -95,7 +95,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_io.setStyleSheet("background-color: gray")
 
         ## Radio Buttons -- default is resolution extension suppression
-        self.ui.radioButton_off.setChecked(True)
+        self.ui.radioButton_on.setChecked(True)
         self.ui.radioButton_on.toggled.connect(self.selectResolutionExtensionSuppressionState)
 
         self.ui.radioButton_off.toggled.connect(self.selectResolutionExtensionSuppressionState)
