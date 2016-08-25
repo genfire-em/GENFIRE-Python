@@ -13,7 +13,16 @@ h1 {
 	text-align: center
 /* 	float: left */
 }
-
+.h1_left {
+	margin: 10px;
+	padding: 14px 0px;
+	font-size: 36px;
+	font-weight: bold;
+	background-color: black;
+	color: #ffffff;
+	text-align: left;
+/* 	float: left */
+}
 
 
 body {
@@ -28,12 +37,14 @@ body {
 		
 a:link, a:visited {
 color: #ff6600;
+color:orange;
 text-decoration: none;
 font-weight: normal;
 }
  
 a:active, a:hover{ 
 color: #FFCC00;
+color:orange;
 text-decoration: underline;
 }
 
@@ -75,6 +86,17 @@ h3 {
 	border-bottom: 1px dotted #d7e13d;
 }
 
+
+.h3_left {
+	margin-left:10px;
+	font-size: 20px;
+	font-weight: bold;
+	background-color: black;
+	color: #ffffff;
+	text-align: left;
+/* 	float: left */
+}
+
 h4 {
 	margin: 0px;
 	padding: 0px;
@@ -82,17 +104,49 @@ h4 {
 	font-weight: bold;
 }
 
+#Main_Header {
+background: #EEEEEE;
+height: 150px;
+}
+
+#welcome {
+float:left;
+height: 150px;
+width:450px;
+color:black;
+font-family: 'Brush Script MT', cursive;
+/* font: 400 100px/1.2 'Leckerli One', Helvetica, sans-serif; */
+/*   color: #000; */
+/*   text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); */
+font-size:120px;
+
+text-align:center;
+/* background:orange; */
+vertical-align:middle;
+
+}
+
+#GENFIRE_logo{
+margin-right:65px;
+}
+
+
 #Sidebar {
  	position: fixed;
     width: 250px;
     height: 220px;
-    background-color: #DDD; 
+    background-color: #777777; 
     font-size: 12px;
     overflow-y: scroll;
     top: 0; 
     bottom: 0;
     right: 0;
 }
+#Sidebar .h2_sidebar{
+font-size: 16px;
+color: #FFFFFF;
+}
+
 #Sidebar .h1_sidebar{
 font-size: 20px;
 font-weight: bold;
@@ -103,10 +157,35 @@ margin-bottom:15px;
 
 #Sidebar .h2_sidebar{
 font-size: 16px;
-color: #444444;
+color: #FFFFFF;
 }
 
+
+#Sidebar_lowered {
+	margin-top: 150px;
+ 	position: fixed;
+    width: 250px;
+    height: 220px;
+    background-color: #777777; 
+    font-size: 12px;
+    overflow-y: scroll;
+    top: 0; 
+    bottom: 0;
+    right: 0;
+}
+#Sidebar_lowered .h1_sidebar{
+font-size: 20px;
+font-weight: bold;
+color: black;
+text-align: center;
+margin-bottom:15px;
+}
+#Sidebar_lowered .h2_sidebar{
+font-size: 16px;
+color: #FFFFFF;
+}
 .side_link{
 font-size: 12px;
 margin-left: 15px;
+color:white;
 }

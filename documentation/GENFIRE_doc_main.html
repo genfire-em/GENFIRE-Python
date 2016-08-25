@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
 
-  <title>GENFIRE Documentation</title>
-  <meta name="description" content="GENFIRE Documentation">
+  <title>GENFIRE Tutorial</title>
+  <meta name="description" content="GENFIRE Tutorial">
   <meta name="author" content="Alan (AJ) Pryor, Jr.">
 
   <link rel="stylesheet" href="css/styles.css?v=1.0">
@@ -14,60 +14,82 @@
 </head>
 
 <body>
-  <h1>  Welcome to GENFIRE</h1>
-  	<p> 
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor <br>
-		incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud<br>
-		 exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute<br>
-		  irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla<br>
-		   pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia<br>
-		    deserunt mollit anim id est laborum.  	
-  	</p>
-  	<div id="Sidebar">
-    <div class="h2_sidebar"> Functions</div>
-    	<p> Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
+   <div id="Main_Header">  
+  	<div id="welcome"><br><br><br><br>Welcome to<br><br></div>
+	<div id="GENFIRE_logo">
+		<img src="images/GENFIRE.png" alt="GENFIRE" 
+			style="width:512; height:93" align="right">
+	</div>
+    
+  </div>
+ <div id="bounding_box">
+	<div class="h1_left"> Introduction</div>
+	<p>
+	GENFIRE, for GENeralized Fourier Iterative REconstruction, is an open-sourced, GUI-enabled
+	python package for 3D reconstruction from arbitrarily oriented projection images. GENFIRE
+	was developed at the University of California, Los Angeles and has found a number of 
+	successful applications in a number of imaging fields including Atomic Electron Tomography (AET),
+	electron cryo-tomography, tomographic Scanning Transmission X-ray Microscopy (STXM), and
+	phase-contrast X-ray ptychographic tomography.<br><br>
+	GENFIRE iterates between real and reciprocal space using the Fast Fourier Transform (FFT),
+	enforcing constraints in both. This technique of alternating projections onto convex sets allows
+	GENFIRE to recover unmeasured datapoints, producing reconstructions with superior contrast 
+	and mitigated missing-wedge artifacts when compared with traditional tomographic techniques such as 
+	filtered backprojection. This type of reconstruction algorithm was originally demonstrated
+	in the form of Equally Sloped Tomography (EST). GENFIRE builds upon EST by introducing a 3D
+	gridding routine, allowing it to tolerate arbitrary Euler rotations of the input projection images.
+	In addition, GENFIRE introduces a novel technique for enforcing Fourier constraints deemed 
+	resolution extension/suppression and implements a modified version of R-free from X-ray crystallography
+	for the purposes of prevention of overfitting data.<br><br>
+	GENFIRE is written in python using primarily NumPy, SciPy, and pyFFTW. The gridding routine is 
+	accelerated using Cython. The GUI is programmed entirely using Qt and the PyQt4 bindings to the Qt
+	framework. The user interface was designed with Qt Creator. Embedded plots were made with matplotlib.
+	
 
-    		<bold>Lorem</bold> ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>
-    		Lorem ipsum dolor sit <a href="http://www.facebook.com">amet</a>, consectetur adipiscing elit<br>    	
+	</p>
+	<div class="h1_left"> Getting started </div>
+	<p>
+	GENFIRE can be downloaded for free <a href="tutorial.html">here</a>. There are precompiled binaries for Mac OS X, Windows, and Linux, 
+	and the code is also available as a python package. Installation instructions are 
+	<a href="installation.html">here</a> Once you have installed GENFIRE, check out the 
+	<a href="tutorial.html" alt="GENFIRE tutorial">tutorial</a>.
+	</p>
+	<div class="h1_left">  About </div>
+		<div class="h3_left">  Coordinate Conventions </div>
+
+	<p>
+	The coordinate and Euler angle conventions used in GENFIRE are the standard defined by 
+	<a href="http://www.ncbi.nlm.nih.gov/pubmed/16043364">Heymann et. al (2005)</a>.<br> For 3D
+	arrays the fastest changing index represents X, the second-fastest represents Y, and the slowest
+	Z. GENFIRE is built on top of numpy and uses row-major array storage (sometimes called "C-style". 
+	As such an array is indexed as [x, y, z]. <br>
+	Euler rotations are composed of angle triplets in the form (phi, theta, psi) where:
+		<ul>
+			<li>Phi represents a rotation about the Z-axis</li>
+			<li>Theta represents a rotation about the new Y-axis</li>
+			<li>Psi represents a rotation about the new Z-axis</li>
+		</ul>
+	</p>
+  	<div id="Sidebar_lowered">
+  	
+  	<div class="h1_sidebar"> Source Code </div>
+    <div class="h2_sidebar"> GENFIRE </div>
+		<div class="side_link"><a href="src_html/fileio.html">fileio</a><br></div>
+		<div class="side_link"><a href="src_html/reconstruct.html">reconstruct</a><br></div>
+		<div class="side_link"><a href="src_html/utility.html">utility</a><br></div>
     	</p>
-    <div class="h2_sidebar"> Classes </div>
+    <div class="h2_sidebar"> GUI </div>
+		<div class="side_link"><a href="src_html/launch.html">Launch</a><br></div>
+		<div class="side_link"><a href="src_html/GENFIRE_MainWindow.html">GENFIRE Main Window</a><br></div>
+		<div class="side_link"><a href="src_html/ProjectionCalculator_MainWindow.html">Projection Calculator Main Window</a><br></div>
+		<div class="side_link"><a href="src_html/CalculateProjectionSeries_Dialog.html">Projection Calculator Dialog</a><br></div>
+		<div class="side_link"><a href="src_html/VolumeSlicer.html">Volume Slicer Main Window</a><br></div>
     </div>
-    <h2> Installation </h2>	
-    	<p> 
-    			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor <br>
-		incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud<br>
-		 exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute<br>
-		  irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla<br>
-		   pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia<br>
-		    deserunt mollit anim id est laborum. 
-    	</p>
-     <h2> References </h2>	
-    	<p> 
-    			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor <br>
-		incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud<br>
-		 exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute<br>
-		  irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla<br>
-		   pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia<br>
-		    deserunt mollit anim id est laborum. 
-    	</p>
+
+
+
+  
+
+    	</div>
 </body>
 </html>
