@@ -61,7 +61,7 @@
 	The coordinate and Euler angle conventions used in GENFIRE are the standard defined by 
 	<a href="http://www.ncbi.nlm.nih.gov/pubmed/16043364">Heymann et. al (2005)</a>.<br> For 3D
 	arrays the fastest changing index represents X, the second-fastest represents Y, and the slowest
-	Z. GENFIRE is built on top of numpy and uses row-major array storage (sometimes called "C-style". 
+	Z. GENFIRE is built on top of NumPy and uses row-major array storage (sometimes called "C-style". 
 	As such an array is indexed as [x, y, z]. <br>
 	Euler rotations are composed of angle triplets in the form (phi, theta, psi) where:
 		<ul>
@@ -69,6 +69,23 @@
 			<li>Theta represents a rotation about the new Y-axis</li>
 			<li>Psi represents a rotation about the new Z-axis</li>
 		</ul>
+	</p>
+	<div class="h3_left">  File Formats </div>
+	<p>
+	GENFIRE natively works with <a href="https://en.wikipedia.org/wiki/MRC_(file_format)">.mrc</a>, 
+	<a href="https://www.mathworks.com/help/pdf_doc/matlab/matfile_format.pdf">.mat</a>, and 
+	<a href="http://docs.scipy.org/doc/numpy-dev/neps/npy-format.html">.npy</a> files for volume data.
+	Euler angle triplets and error curves are stored as plain .txt files. File formats can 
+	be mix-and-matched using the GUI without trouble, or users can convert filetypes from
+	the command line using GENFIRE's fileio module. For example the following code reads in 
+	an .mrc file and saves it in .mat format.
+	<div class="code_box">
+		<div class="code">
+		$ from GENFIRE.fileio import readVolume, writeVolume<br>
+		$ volume = readVolume('foo.mrc')<br>
+		$ writeVolume('bar.mat')<br>
+		</div>
+	</div>
 	</p>
   	<div id="Sidebar_lowered">
   	
@@ -86,9 +103,13 @@
 		<div class="side_link"><a href="src_html/VolumeSlicer.html">Volume Slicer Main Window</a><br></div>
     </div>
 
-
-
-  
+  <div class="h3_left">Author Information</div>
+  <p>
+         Author: Alan (AJ) Pryor, Jr.<br>
+         Jianwei (John) Miao Coherent Imaging Group<br>
+         University of California, Los Angeles<br>
+         Copyright 2015-2016. All rights reserved.
+  </p>
 
     	</div>
 </body>

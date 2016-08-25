@@ -54,7 +54,21 @@ margin-right:155px;
 padding: 0px;
 text-align:justify;
 }
+.code_box{
+width:1000;
+}
+.code { 
+width:75%;
+/* margin-left:500px; */
+background:#666666;
+color:orange;
+margin: 25px 25px 25px 25px;
+/* margin-right:155px; */
+/* margin:0 auto; */
+padding: 15;
+text-align:justify;
 
+}
 
 
 img {
@@ -94,9 +108,18 @@ h3 {
 	background-color: black;
 	color: #ffffff;
 	text-align: left;
+	text-decoration:underline;
 /* 	float: left */
 }
-
+.h5_left {
+	margin-left:10px;
+	font-size: 20px;
+	font-weight: bold;
+	background-color: black;
+	color: #ffffff;
+	text-align: left;
+/* 	float: left */
+}
 h4 {
 	margin: 0px;
 	padding: 0px;
