@@ -6,10 +6,11 @@ text-align:justify
 h1 {
 	margin: 10px;
 	padding: 14px 0px;
-	font-size: 30px;
+	font-size: 36px;
 	font-weight: bold;
 	background-color: black;
 	color: #ffffff;
+	text-align: center
 /* 	float: left */
 }
 
@@ -25,8 +26,16 @@ body {
 	background: #080808;
 }
 		
-a:link, a:visited { color: #ff6600; text-decoration: none; font-weight: normal; } 
-a:active, a:hover { color: #FFCC00; text-decoration: underline; }
+a:link, a:visited {
+color: #ff6600;
+text-decoration: none;
+font-weight: normal;
+}
+ 
+a:active, a:hover{ 
+color: #FFCC00;
+text-decoration: underline;
+}
 
 p { 
 margin: 10px;
@@ -76,6 +85,7 @@ h4 {
 #Sidebar {
  	position: fixed;
     width: 250px;
+    height: 220px;
     background-color: #DDD; 
     font-size: 12px;
     overflow-y: scroll;
@@ -83,5 +93,20 @@ h4 {
     bottom: 0;
     right: 0;
 }
+#Sidebar .h1_sidebar{
+font-size: 20px;
+font-weight: bold;
+color: black;
+text-align: center;
+margin-bottom:15px;
+}
 
+#Sidebar .h2_sidebar{
+font-size: 16px;
+color: #444444;
+}
 
+.side_link{
+font-size: 12px;
+margin-left: 15px;
+}
