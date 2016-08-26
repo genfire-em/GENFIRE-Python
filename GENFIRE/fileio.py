@@ -14,10 +14,19 @@ import numpy as np
 
 def readVolume(filename, order="C"):
     """
+    * readVolume *
 
-    :param filename:
-    :param order:
+    Load volume into a numpy array
+
+    :param filename: filename of volume
+    :param order: "C" for row-major order (C-style), "F" for column-major (Fortran style)
     :return:
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
     """
     import os
     base, ext = os.path.splitext(filename)
@@ -29,6 +38,9 @@ def readVolume(filename, order="C"):
         return np.load(filename)
 
 def readMAT_volume(filename):
+
+    #wrapper around scipy's loadmat
+
     import numpy as np
     import scipy.io
     data = scipy.io.loadmat(filename)
@@ -48,13 +60,14 @@ def readMRC(filename, dtype=float, order="C"):
 
     Read in a volume in .mrc file format. See http://bio3d.colorado.edu/imod/doc/mrc_format.txt
 
+    :param filename: Filename of .mrc
+    :return: NumPy array containing the .mrc data
+
     Author: Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved.
 
-    :param filename: Filename of .mrc
-    :return: NumPy array containing the .mrc data
     """
     import numpy as np
     import struct
@@ -88,22 +101,22 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
     * writeMRC *
 
     Write a volume to .mrc file format. See http://bio3d.colorado.edu/imod/doc/mrc_format.txt
+    This version is bare-bones and doesn't write out the full header -- just the critical bits and the
+    volume itself
+
+    :param filename: Filename of .mrc file to write
+    :param arr: NumPy volume of data to write
+    :param dtype: Type of data to write
+
 
     Author: Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved
-
-    :param filename: Filename of .mrc file to write
-    :param arr: NumPy volume of data to write
-    :param dtype: Type of data to write
     """
     import numpy as np
 
     dimx, dimy, dimz = np.shape(arr)
-
-    # if order=='F':
-    #     arr = np.transpose(arr)
 
     if datatype != arr.dtype:
         arr = arr.astype(datatype)
@@ -138,13 +151,14 @@ def loadProjections(filename):
 
     Wrapper function for loading in projections of arbitrary (supported) extension
 
+    :param filename: Filename of images to load
+    :return: NumPy array containing projections
+
+
     Author: Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved.
-
-    :param filename: Filename of images to load
-    :return: NumPy array containing projections
     """
     import os
     filename, file_extension = os.path.splitext(filename)
@@ -165,23 +179,24 @@ def loadProjections(filename):
         raise Exception('File format %s not supported.', file_extension)
 
 def readMAT_projections(filename):
-    import scipy.io
-    import numpy as np
-    import os
     """
     * readMAT *
 
     Read projections from a .mat file
 
+    :param filename: MATLAB file (.mat) containing projections
+    :return: NumPy array containing projections
+
+
     Author: Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved.
-
-    :param filename: MATLAB file (.mat) containing projections
-    :return: NumPy array containing projections
     """
 
+    import scipy.io
+    import numpy as np
+    import os
     try: #try to open the projections as a stack
         projections = scipy.io.loadmat(filename)
         key = None
@@ -228,15 +243,15 @@ def readTIFF_projections(filename):
 
     Read (possibly multiple) TIFF images into a NumPy array
 
-    Author: Alan (AJ) Pryor, Jr.
-    Jianwei (John) Miao Coherent Imaging Group
-    University of California, Los Angeles
-    Copyright 2015-2016. All rights reserved.
-
     :param filename: Name of TIFF file or TIFF file basename to read. If the filename is a base then
     #       the images must begin with the string contained in filename followed by consecutive integers with
     #       no zero padding, i.e. foo1.tiff, foo2.tiff,..., foo275.tiff
     :return: NumPy array containing projections
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
     """
     import functools
     from PIL import Image
@@ -276,14 +291,14 @@ def readInTiffProjection(filename_base, fileNumber):
 
     Reads and returns a single TIFF image as a NumPy array
 
+    :param filename_base: Base filename of TIFF
+    :param fileNumber: Image number
+    :return: Image in a 2D NumPy array
+
     Author: Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved.
-
-    :param filename_base: Base filename of TIFF
-    :param fileNumber: Image number
-    :return: Image in a 2D NumPy array
     """
     from PIL import Image
     import numpy as np
@@ -318,33 +333,6 @@ def loadAngles(filename):
     else:
         raise IOError("Unsupported file extension \"{}\" for Euler angles".format(ext))
 
-def loadInitialObject(filename):
-    """
-    * loadInitialObject *
-
-    Author: Alan (AJ) Pryor, Jr.
-    Jianwei (John) Miao Coherent Imaging Group
-    University of California, Los Angeles
-    Copyright 2015-2016. All rights reserved.
-
-    :param filename:
-    :return:
-    """
-    import os
-    base,ext = os.path.splitext(filename)
-    ext = ext.lower()
-    if ext == ".npy":
-        return np.load(filename)
-    elif ext==".mat":
-        import scipy.io
-        data = scipy.io.loadmat(filename)
-        if "initial_object" not in data.keys():
-            raise LookupError("No variable called 'initial_object' found in \"{}\"!".format(filename))
-        return np.array(data['initial_object'],dtype=float)
-    elif ext==".mrc":
-        raise NotImplementedError("mrc file format not yet supported")
-    else:
-        raise IOError("Unsupported file extension \"{}\" for initial object".format(ext))
 
 def saveResults(reconstruction_outputs, filename):
     """
@@ -352,13 +340,13 @@ def saveResults(reconstruction_outputs, filename):
 
     Helper function to save results of GENFIRE reconstruction
 
+    :param reconstruction_outputs: dictionary containing reconstruction, reciprocal error (errK), and possible R_free
+    :param filename: Output filename
+
     Author: Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved
-
-    :param reconstruction_outputs: dictionary containing reconstruction, reciprocal error (errK), and possible R_free
-    :param filename: Output filename
     """
     import os
     fn, ext = os.path.splitext(filename)
@@ -368,6 +356,15 @@ def saveResults(reconstruction_outputs, filename):
         np.savetxt(fn+'_Rfree.txt',reconstruction_outputs['R_free'])
 
 def writeVolume(filename, data, order="C"):
+    """
+    * writeVolume *
+
+    Wrapper volume to file
+
+    :param filename: output filename with valid extension
+    :param data: numpy volume to write
+    :param order: "C" for row-major order (C-style), "F" for column-major (Fortran style)
+    """
     import os
     fn, ext = os.path.splitext(filename)
     if ext == ".mrc":

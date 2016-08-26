@@ -102,7 +102,7 @@ def main(reconstruction_parameters):
 
     #load initial object, or initialize it to zeros if none was given
     if filename_initialObject is not None and os.path.isfile(filename_initialObject):
-        initialObject = GENFIRE.loadInitialObject(filename_initialObject)
+        initialObject = GENFIRE.fileio.readVolume(filename_initialObject)
         initialObject = np.pad(initialObject,((padding,padding),(padding,padding),(padding,padding)),'constant')
     else:
         initialObject = np.zeros_like(support)
