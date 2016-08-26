@@ -1,16 +1,5 @@
 from setuptools import find_packages,setup, Extension
 from subprocess import call
-from Cython.Build import cythonize
-
-
-import numpy
-extensions = [
-		Extension('weightValues',['./GENFIRE/weightValues.pyx'], include_dirs=[numpy.get_include()])]
-
-setup(
-		ext_modules=cythonize(extensions)
-		)
-		
 
 setup(
 	name 				= "GENFIRE",

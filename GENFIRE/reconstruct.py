@@ -226,7 +226,7 @@ if __name__ != "__main__":
         measuredY = np.zeros([dim1*dim2,numProjections])
         measuredZ = np.zeros([dim1*dim2,numProjections])
         kMeasured = np.zeros([dim1,dim1,numProjections], dtype=complex)
-        confidenceWeights = np.zeros([dim1,dim1,numProjections]) #do I need this??
+        confidenceWeights = np.zeros([dim1,dim1,numProjections])
         ky,kx = np.meshgrid(np.arange(-n2,n2,1),np.arange(-n2,n2,1))
         Q = np.sqrt(ky**2+kx**2)/n2
         kx = np.reshape(kx, [1, dim1*dim2], 'F')
@@ -296,21 +296,10 @@ if __name__ != "__main__":
                     masterConfidenceWeights=np.append(masterConfidenceWeights, tmpConfidenceWeights[goodInd])
 
 
-                    t = 0
-
         masterInd = np.array(masterInd).astype(np.int64)
         masterVals = np.array(masterVals)
         masterDistances = np.array(masterDistances)
         masterConfidenceWeights = np.array(masterConfidenceWeights)
-
-
-
-        # sortIndices = np.argsort(masterInd)
-        # masterInd = masterInd[sortIndices]
-        # masterVals = masterVals[sortIndices]
-        # masterDistances = masterDistances[sortIndices]
-        # masterConfidenceWeights = masterConfidenceWeights[sortIndices]
-
 
         halfwayCutoff = ((dim1+1)**3)//2+1
 
@@ -320,37 +309,20 @@ if __name__ != "__main__":
         masterConfidenceWeights = masterConfidenceWeights[masterInd <= halfwayCutoff]
         masterInd = masterInd[masterInd <= halfwayCutoff]
 
-
-        # uniqueVals, uniqueInd = np.unique(masterInd, return_index=True)
-
-        # uniqueInd = np.append(uniqueInd, 0)
-
-        # diffVec = np.diff(uniqueInd)
-        # singleInd = diffVec == 1
-        # multiInd = np.where(diffVec != 1)
         measuredK = np.zeros([dim1**3], dtype=complex)
 
-        # measuredK[uniqueVals[singleInd]] = masterVals[uniqueInd[0:-1][singleInd]]
-
-        # inverse_masterDistances = np.copy(masterDistances)
-        masterDistances[masterDistances!=0] = 1 / masterDistances[masterDistances!=0]
+        masterDistances += 1e-20
 
         vals_real = np.bincount(masterInd, weights=(masterDistances * np.real(masterVals)))
         vals_cx = np.bincount(masterInd, weights=(masterDistances * np.imag(masterVals)))
         vals = vals_real + 1j * vals_cx
         sum_weights = np.bincount(masterInd, weights=(masterDistances))
         vals[sum_weights != 0] = vals[sum_weights != 0] / sum_weights[sum_weights != 0]
-
-        # vals = weightValues.weightValue(np.array(multiInd[0][:],dtype=int), uniqueInd, masterDistances, masterVals)
-
-        # measuredK[uniqueVals[multiInd[0][:]]] = vals
         measuredK[np.arange(np.size(vals))] = vals
         measuredK = np.reshape(measuredK,[dim1,dim1,dim1],order='F')
 
-        # print ("time3 " , time.time()-tic3)
         measuredK[np.isnan(measuredK)] = 0
         measuredK = GENFIRE.utility.hermitianSymmetrize(measuredK)
-
         print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
         return measuredK
 
