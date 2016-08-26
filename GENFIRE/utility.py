@@ -1,26 +1,38 @@
+"""
+* utility *
+
+This module contains various useful functions that do not fit into another category
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
+
 from __future__ import division
 import numpy as np
 import pyfftw
 from scipy.interpolate import RegularGridInterpolator
 PI = np.pi
 
+def hermitianSymmetrize(volume):
+    """
+    * hermitianSymmetrize *
 
+    Enforce Hermitian symmetry to volume
 
-## hermitianSymmetrize ##
+    :param volume: 3D volume to symmetrize
+    :return: symmetrized volume
+    
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright (c) 2016. All Rights Reserved.
+    """
 
-## Applies Hermitian symmetry to "input". If one symmetry mate is not equal to the complex conjugate of the other
-## their average is taken. If only one of them exists (is nonzero), then the one value is used. If neither exists
-## the value remains 0. In terms of implementation, this function produces Hermitian symmetry by adding the object
-## to its complex conjugate with the indices reversed. This requires the array to be odd, so there is also a check
-## to make the array odd and then take back the original size at the end, if necessary.
-
-## Author: AJ Pryor
-## Jianwei (John) Miao Coherent Imaging Group
-## University of California, Los Angeles
-## Copyright (c) 2016. All Rights Reserved.
-def hermitianSymmetrize(input):
-
-    startDims = np.shape(input) # initial dimensions
+    startDims = np.shape(volume) # initial dimensions
 
     # remember the initial dimensions for the end
     dimx = startDims[0]
@@ -41,9 +53,9 @@ def hermitianSymmetrize(input):
         dimz += 1
         flag = True
 
-    if flag: # if any dimensions are even, create a new with all odd dimensions and copy input
+    if flag: # if any dimensions are even, create a new with all odd dimensions and copy volume
         newInput = np.zeros((dimx,dimy,dimz), dtype=complex) #new array
-        newInput[:startDims[0], :startDims[1], :startDims[2]] = input # copy values
+        newInput[:startDims[0], :startDims[1], :startDims[2]] = volume # copy values
         numberOfValues = (newInput != 0).astype(float) #track number of values for averaging
         newInput = newInput + np.conj(newInput[::-1, ::-1, ::-1]) # combine Hermitian symmetry mates
         numberOfValues = numberOfValues + numberOfValues[::-1, ::-1, ::-1] # track number of points included in each sum
@@ -55,29 +67,29 @@ def hermitianSymmetrize(input):
 
 
     else: # otherwise, save yourself the trouble of copying the matrix over. See previous comments for line-by-line
-        numberOfValues = (input != 0).astype(int)
-        input += np.conjugate(input[::-1, ::-1, ::-1])
+        numberOfValues = (volume != 0).astype(int)
+        volume += np.conjugate(volume[::-1, ::-1, ::-1])
         numberOfValues += numberOfValues[::-1, ::-1, ::-1]
-        input[numberOfValues != 0] /= numberOfValues[numberOfValues != 0]
-        input[np.isnan(input)] = 0
-        return input
+        volume[numberOfValues != 0] /= numberOfValues[numberOfValues != 0]
+        volume[np.isnan(volume)] = 0
+        return volume
 
-
-
-
-## smooth3D ##
-
-## Smooths the real space object "object" by applying a Gaussian filter with standard
-## deviation determined by "resolutionCutoff" which is a parameter expressed as a fraction
-## of Nyquist frequency that determines the point at which the Gaussian filter decreases
-## by 1/e
-
-## Author: AJ Pryor
-## Jianwei (John) Miao Coherent Imaging Group
-## University of California, Los Angeles
-## Copyright (c) 2016. All Rights Reserved.
 
 def smooth3D(object,resolutionCutoff):
+    """
+    * smooth3D *
+
+    Low pass filter a 3D volume
+
+    :param object: 3D volume
+    :param resolutionCutoff: Fraction of Nyquist frequency to use as sigma for the Gaussian filter
+    :return: smoothed volume
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright (c) 2016. All Rights Reserved.
+    """
     dims = np.shape(object)
     if dims[2] == 1:
         raise Exception('This is not a 3D object, use smooth2D instead.')
@@ -109,19 +121,22 @@ def smooth3D(object,resolutionCutoff):
 
 
 
-## smooth2D ##
-
-## Smooths the 2D real space object "object" by applying a Gaussian filter with standard
-## deviation determined by "resolutionCutoff" which is a parameter expressed as a fraction
-## of Nyquist frequency that determines the point at which the Gaussian filter decreases
-## by 1/e
-
-## Author: AJ Pryor
-## Jianwei (John) Miao Coherent Imaging Group
-## University of California, Los Angeles
-## Copyright (c) 2016. All Rights Reserved.
 
 def smooth2D(object,resolutionCutoff):
+    """
+    * smooth2D *
+
+    Low pass filter a 2D image
+
+    :param object: 2D image
+    :param resolutionCutoff: Fraction of Nyquist frequency to use as sigma for the Gaussian filter
+    :return: smoothed image
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright (c) 2016. All Rights Reserved.
+    """
     dims = np.shape(object)
     if len(dims)>2:
         raise Exception('This is a 3D object, use smooth3D instead.')
@@ -152,6 +167,18 @@ def smooth2D(object,resolutionCutoff):
 
 
 def calculateProjection_interp(modelK, phi, theta, psi):
+    """
+    * calculateProjection_interp *
+
+    Calculate a projection of a 3D volume from it's oversampled Fourier transform by interpolating
+    the central slice at the orientation determined by Euler angles (phi, theta, psi)
+
+    :param modelK: numpy array holding the oversampled FFT of the model
+    :param phi: euler angle 1
+    :param theta: euler angle 2
+    :param psi: euler angle 3
+    :return: projection
+    """
 
     # projection = None
     dims = np.shape(modelK)
@@ -198,6 +225,20 @@ def calculateProjection_interp(modelK, phi, theta, psi):
 
 
 def getProjectionInterpolator(modelK):
+    """
+    * generateKspaceIndices *
+
+    Maps the radial coordinate indices in the matrix obj
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+
+
+    :param obj: Matrix of size to be mapped
+    :return: 3D indices for each voxel in the volume
+    """
     dims = np.shape(modelK)
     Xcenter = round(dims[0]//2)
     Ycenter = round(dims[1]//2)
@@ -211,6 +252,22 @@ def getProjectionInterpolator(modelK):
     return RegularGridInterpolator((kx, ky, kz), modelK, bounds_error=False, fill_value=0)
 
 def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, dims):
+    """
+    * calculateProjection_interp_fromInterpolator *
+
+    Calculate a projection from precomputed interpolator object
+
+    :param interpolator: RegularGridInterpolator object from scipy.
+    :param phi: euler angle 1
+    :param theta: euler angle 2
+    :param psi: euler angle 3
+    :param dims: dimensions of the object
+
+    Author: Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+    """
     # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
     phi *= PI/180
     theta *= PI/180

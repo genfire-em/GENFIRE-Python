@@ -1,6 +1,24 @@
+"""
+* fileio *
+
+The primary file input/output module for GENFIRE.
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
 import numpy as np
 
 def readVolume(filename, order="C"):
+    """
+
+    :param filename:
+    :param order:
+    :return:
+    """
     import os
     base, ext = os.path.splitext(filename)
     if (ext == ".mrc"):

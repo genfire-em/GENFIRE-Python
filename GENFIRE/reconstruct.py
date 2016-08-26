@@ -1,3 +1,16 @@
+"""
+* reconstruct *
+
+This module contains the core of GENFIRE's functions for computing reconstructions
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
+
 from __future__ import division
 import numpy as np
 import matplotlib

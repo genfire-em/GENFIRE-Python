@@ -1,3 +1,16 @@
+"""
+* ProjectionCalculator *
+
+The projection calculator module
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
+
 from __future__ import print_function
 
 from PyQt4 import QtCore, QtGui

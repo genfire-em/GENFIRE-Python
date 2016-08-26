@@ -1,3 +1,15 @@
+"""
+* main *
+
+The primary control module for running GENFIRE reconstructions.
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
 from __future__ import division
 import numpy as np
 import GENFIRE
@@ -14,7 +26,6 @@ def main_InteractivelySetParameters():
     # GENFIRE's reconstruction parameters can be edited here by the user and run interactively, any inputs provided
     # by either the command line or the GUI will override these momentarily
 
-    # filename_projections = './data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
     filename_projections = '../data/projections.mat'  #filename of projections, which should be size NxNxN_projections where N_projections is the number of projections
     filename_angles = '../data/angles.mat'  #angles can be either a 1xN_projections array containing a single tilt series, or 3xN_projections array containing 3 Euler angles for each projections in the form [phi;theta;psi]
     filename_support = '../data/support60.mat'  #NxNxN binary array specifying a region of 1's in which the reconstruction can exist

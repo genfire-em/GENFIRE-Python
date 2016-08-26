@@ -60,11 +60,15 @@
     	style="width:544px; height:582px" align="middle"</center>
     	<p>
     	Now we need to select a 3D model. Click Browse, find "vesicle.mrc" in the data
-    	directory of the GENFIRE source code, then click open. For large models this step may take some
-    	time to load as GENFIRE must load it into memory, zero-pad it to 3x the original size, 
+    	directory of the GENFIRE source code, then click open. You will be prompted to select
+    	an oversampling ratio. The oversampling ratio controls the amount of zero padding applied 
+    	to the model -- specifically the oversampling ratio is the total array size divided
+    	by the size of the object. The purpose of this zero-padding is to increase the accuracy
+    	of the projection calculation. The tradeoff is that larger oversampling ratios mean the
+    	array size is bigger, and, therefore, slower. I find that an oversampling ratio of 3
+    	is a good choice. Click OK, and GENFIRE will load the model, pad it,
     	compute the 3D FFT, and construct a linear interpolator. Once finished projections 
-    	may be calculated quickly, just be aware that if your model array size is large this
-    	process may consume significant resources.
+    	may be calculated relatively quickly.
     	</p>
 
     	<p>

@@ -1,3 +1,16 @@
+"""
+* launch *
+
+This is the script for launching the GENFIRE GUI
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
+
 from PyQt4 import QtCore, QtGui
 import matplotlib
 matplotlib.use("Qt4Agg")

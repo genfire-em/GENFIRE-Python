@@ -1,3 +1,15 @@
+"""
+* VolumeSlicer *
+
+The volume slicer module
+
+
+Author: Alan (AJ) Pryor, Jr.
+Jianwei (John) Miao Coherent Imaging Group
+University of California, Los Angeles
+Copyright 2015-2016. All rights reserved.
+"""
+
 import VolumeSlicer_MainWindow
 from PyQt4 import QtCore, QtGui
 import matplotlib
@@ -7,6 +19,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import numpy as np
 from functools import partial
+
 
 class VolumeSlicer(QtGui.QMainWindow):
     def __init__(self, volume):
