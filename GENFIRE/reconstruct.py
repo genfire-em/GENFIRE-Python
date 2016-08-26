@@ -332,7 +332,16 @@ if __name__ != "__main__":
 
         measuredK[uniqueVals[singleInd]] = masterVals[uniqueInd[0:-1][singleInd]]
 
-        vals = weightValues.weightValue(np.array(multiInd[0][:],dtype=int), uniqueInd, masterDistances, masterVals)
+        inverse_masterDistances = np.copy(masterDistances)
+        inverse_masterDistances[inverse_masterDistances!=0] = 1 / inverse_masterDistances[inverse_masterDistances!=0]
+
+        vals_real = np.bincount(multiInd[0][:], weights=(inverse_masterDistances * np.real(masterVals)))
+        vals_cx = np.bincount(multiInd[0][:], weights=(inverse_masterDistances * np.imag(masterVals)))
+        vals = vals_real + 1j * vals_cx
+        sum_weights = np.bincount(multiInd[0][:], weights=(inverse_masterDistances))
+        vals[sum_weights != 0] = vals[sum_weights != 0] / sum_weights[sum_weights != 0]
+
+        # vals = weightValues.weightValue(np.array(multiInd[0][:],dtype=int), uniqueInd, masterDistances, masterVals)
 
         measuredK[uniqueVals[multiInd[0][:]]] = vals
         measuredK = np.reshape(measuredK,[dim1,dim1,dim1],order='F')
