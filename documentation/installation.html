@@ -61,7 +61,7 @@
 			Navigate to the source code directory</p>
 			<div class="code_box">
 			<div class="code">
-			$ cd GENFIRE-v1.0
+			$ cd /path/to/GENFIRE
 			</div>
 			</div>
 			<p>
@@ -81,7 +81,7 @@
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ <pre>/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</pre><br>
+			$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"<br>
 			$ brew install sip<br>
 			$ brew install pyqt
 			</div>
@@ -108,7 +108,7 @@
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ python
+			$ python<br>
 			$ import GENFIRE
 			</div>
 			</div>
@@ -118,7 +118,7 @@
 			Navigate to the source code directory</p>
 			<div class="code_box">
 			<div class="code">
-			$ cd GENFIRE-v1.0
+			$ cd /path/to/GENFIRE
 			</div>
 			</div>
 			<p>
@@ -129,12 +129,79 @@
 			$ pip install -r requirements.txt
 			</div>
 			</div>
+			<p>
+			You will also need sip and PyQt4, this command should install both.</p>
+			<div class="code_box">
+			<div class="code">
+			$ sudo apt-get install python-qt4<br>
+			</div>
+			</div>
 			
 		</p>
+				<p>
+		You should now have all the dependencies necessary to run GENFIRE. To install it, make
+		sure you are in the directory with setup.py and enter
+		</p>
+			<div class="code_box">
+			<div class="code">
+			$ python setup.py install
+			</div>
+			</div>
+		<p>
+		If everything worked, you can now launch the gui from the command line with
+		</p>
+			<div class="code_box">
+			<div class="code">
+			$ genfire
+			</div>
+			</div>
+		<p>
+		You can also use GENFIRE from python
+		</p>
+			<div class="code_box">
+			<div class="code">
+			$ python<br>
+			$ import GENFIRE
+			</div>
+			</div>
+			
+			
+		
 		<br><br><div class="h5_left"> Windows 10 </div>
 		<p>
+		Open up a cmd prompt and navigate to the source directory
 		</p>
-
+			<div class="code_box">
+			<div class="code">
+			$ chdir C:\path\to\GENFIRE <br>
+			$ import GENFIRE
+			</div>
+			</div>
+			<p>
+			Install (most of the) dependencies using pip</p>
+			<div class="code_box">
+			<div class="code">
+			$ pip install --upgrade pip<br>
+			$ pip install -r requirements.txt
+			</div>
+			</div>
+			<p>
+			You will also need <a href="https://www.riverbankcomputing.com/software/sip/download">sip</a>
+			and <a href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a>.
+			</p>
+			<div class="code_box">
+			<div class="code">
+			$ sudo apt-get install python-qt4<br>
+			</div>
+			</div>
+		<br><br><div class="h5_left"> Installation Troubleshooting </div>
+		<p>
+		If you have trouble installing PyQt4 or sip, consult their 
+		<a href="http://pyqt.sourceforge.net/Docs/PyQt4/installation.html"> documentation</a><br>
+		If you have some problem with the "pip install -r requirements.txt" step, you can view
+		the requirements.txt file to see the packages that are necessary, and try to install 
+		them one-by-one.
+		</p>
     	</div>
 </body>
 </html>
