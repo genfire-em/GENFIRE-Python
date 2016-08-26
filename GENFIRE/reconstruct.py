@@ -305,11 +305,11 @@ if __name__ != "__main__":
 
 
 
-        sortIndices = np.argsort(masterInd)
-        masterInd = masterInd[sortIndices]
-        masterVals = masterVals[sortIndices]
-        masterDistances = masterDistances[sortIndices]
-        masterConfidenceWeights = masterConfidenceWeights[sortIndices]
+        # sortIndices = np.argsort(masterInd)
+        # masterInd = masterInd[sortIndices]
+        # masterVals = masterVals[sortIndices]
+        # masterDistances = masterDistances[sortIndices]
+        # masterConfidenceWeights = masterConfidenceWeights[sortIndices]
 
 
         halfwayCutoff = ((dim1+1)**3)//2+1
@@ -321,29 +321,30 @@ if __name__ != "__main__":
         masterInd = masterInd[masterInd <= halfwayCutoff]
 
 
-        uniqueVals, uniqueInd = np.unique(masterInd, return_index=True)
+        # uniqueVals, uniqueInd = np.unique(masterInd, return_index=True)
 
-        uniqueInd = np.append(uniqueInd, 0)
+        # uniqueInd = np.append(uniqueInd, 0)
 
-        diffVec = np.diff(uniqueInd)
-        singleInd = diffVec == 1
-        multiInd = np.where(diffVec != 1)
+        # diffVec = np.diff(uniqueInd)
+        # singleInd = diffVec == 1
+        # multiInd = np.where(diffVec != 1)
         measuredK = np.zeros([dim1**3], dtype=complex)
 
-        measuredK[uniqueVals[singleInd]] = masterVals[uniqueInd[0:-1][singleInd]]
+        # measuredK[uniqueVals[singleInd]] = masterVals[uniqueInd[0:-1][singleInd]]
 
-        inverse_masterDistances = np.copy(masterDistances)
-        inverse_masterDistances[inverse_masterDistances!=0] = 1 / inverse_masterDistances[inverse_masterDistances!=0]
+        # inverse_masterDistances = np.copy(masterDistances)
+        masterDistances[masterDistances!=0] = 1 / masterDistances[masterDistances!=0]
 
-        vals_real = np.bincount(multiInd[0][:], weights=(inverse_masterDistances * np.real(masterVals)))
-        vals_cx = np.bincount(multiInd[0][:], weights=(inverse_masterDistances * np.imag(masterVals)))
+        vals_real = np.bincount(masterInd, weights=(masterDistances * np.real(masterVals)))
+        vals_cx = np.bincount(masterInd, weights=(masterDistances * np.imag(masterVals)))
         vals = vals_real + 1j * vals_cx
-        sum_weights = np.bincount(multiInd[0][:], weights=(inverse_masterDistances))
+        sum_weights = np.bincount(masterInd, weights=(masterDistances))
         vals[sum_weights != 0] = vals[sum_weights != 0] / sum_weights[sum_weights != 0]
 
         # vals = weightValues.weightValue(np.array(multiInd[0][:],dtype=int), uniqueInd, masterDistances, masterVals)
 
-        measuredK[uniqueVals[multiInd[0][:]]] = vals
+        # measuredK[uniqueVals[multiInd[0][:]]] = vals
+        measuredK[np.arange(np.size(vals))] = vals
         measuredK = np.reshape(measuredK,[dim1,dim1,dim1],order='F')
 
         # print ("time3 " , time.time()-tic3)
