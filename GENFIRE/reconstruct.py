@@ -8,7 +8,6 @@ import scipy.io
 import pyfftw
 import time
 import GENFIRE
-import weightValues
 from multiprocessing import Pool
 
 PI = np.pi
