@@ -269,7 +269,7 @@ if __name__ != "__main__":
         masterVals = []
         masterDistances = []
         masterConfidenceWeights = []
-        shiftMax = 0
+        shiftMax = 1
 
         for Yshift in range(-shiftMax, shiftMax+1):
             for Xshift in range(-shiftMax, shiftMax+1):

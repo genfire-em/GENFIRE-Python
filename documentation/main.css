@@ -2,6 +2,7 @@
 width:1000px;
 padding = 14px 40px;
 text-align:justify
+overflow-x: hidden;
 }
 h1 {
 	margin: 10px;
@@ -132,6 +133,7 @@ h4 {
 #Main_Header {
 background: #EEEEEE;
 height: 150px;
+/* overflow:auto; */
 }
 
 #welcome {
@@ -148,19 +150,25 @@ font-size:120px;
 text-align:center;
 /* background:orange; */
 vertical-align:middle;
+/* overflow:auto; */
 
 }
 
 #GENFIRE_logo{
-margin-right:65px;
+/* float:right; */
+position:absolute;
+/* margin-right:65px; */
+right:0px;
+/* overflow:auto; */
 }
 
 
 #Sidebar {
+/* float:right; */
  	position: fixed;
     width: 250px;
-    height: 220px;
-    background-color: #777777; 
+    height: 335px;
+    background-color: #888888; 
     font-size: 12px;
     overflow-y: scroll;
     top: 0; 
@@ -190,8 +198,8 @@ color: #FFFFFF;
 	margin-top: 150px;
  	position: fixed;
     width: 250px;
-    height: 220px;
-    background-color: #777777; 
+    height: 335px;
+    background-color: #888888; 
     font-size: 12px;
     overflow-y: scroll;
     top: 0; 

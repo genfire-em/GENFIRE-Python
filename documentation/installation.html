@@ -15,13 +15,20 @@
 
 <body>
  <div id="bounding_box">
+
   	<div id="Sidebar">
+  	  	<div class="h1_sidebar"> Navigation </div>
+		<div class="side_link"><a href="index.html">About</a><br></div>
+		<div class="side_link"><a href="installation.html">Installation</a><br></div>
+		<div class="side_link"><a href="tutorial.html">Tutorial</a><br></div>
+		<br><br>
+    
   	<div class="h1_sidebar"> Source Code </div>
     <div class="h2_sidebar"> GENFIRE </div>
 		<div class="side_link"><a href="src_html/fileio.html">fileio</a><br></div>
 		<div class="side_link"><a href="src_html/reconstruct.html">reconstruct</a><br></div>
 		<div class="side_link"><a href="src_html/utility.html">utility</a><br></div>
-    	</p>
+    	
     <div class="h2_sidebar"> GUI </div>
 		<div class="side_link"><a href="src_html/launch.html">Launch</a><br></div>
 		<div class="side_link"><a href="src_html/GENFIRE_MainWindow.html">GENFIRE Main Window</a><br></div>
@@ -29,6 +36,7 @@
 		<div class="side_link"><a href="src_html/CalculateProjectionSeries_Dialog.html">Projection Calculator Dialog</a><br></div>
 		<div class="side_link"><a href="src_html/VolumeSlicer.html">Volume Slicer Main Window</a><br></div>
     </div>
+
 
 
 
@@ -58,7 +66,22 @@
   	</p>
 		<div class="h5_left"> Mac OS X </div>
 		<p>
-			Navigate to the source code directory</p>
+		Python is preinstalled on Mac OS X, but it is generally a bad idea to alter the system
+		python in /usr/bin as some programs depend on it. I would highly recommend using the
+		package manager homebrew to create a python environment for you. The following
+		commands will install homebrew and python
+		</p>
+		</p>
+			<div class="code_box">
+			<div class="code">
+			$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"<br>
+			$ brew install python
+			</div>
+			</div>
+		<p>
+		<p>
+			Once that's done, navigate to the top source code directory. You should be in the same
+			folder as requirements.txt and setup.py</p>
 			<div class="code_box">
 			<div class="code">
 			$ cd /path/to/GENFIRE
@@ -76,12 +99,10 @@
 		</p>
 		<p>
 		You will also need sip and PyQt4, which unfortunately cannot be installed with pip. They're easy 
-		to install using the package manager homebrew. The following commands will install homebrew
-		and then use it to install sip and pyqt
+		to install using homebrew.
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"<br>
 			$ brew install sip<br>
 			$ brew install pyqt
 			</div>
@@ -169,7 +190,11 @@
 		
 		<br><br><div class="h5_left"> Windows 10 </div>
 		<p>
-		Open up a cmd prompt and navigate to the source directory
+		For python on Windows 10 I would recommend using <a href="https://www.continuum.io/downloads">
+		Anaconda from Continuum Analytics</a>. It's a distribution of python that contains
+		most of the packages used by GENFIRE all wrapped into a simple-to-use installer.
+		Once you have python setup, open up a cmd prompt and navigate to the source directory.
+		You should be in the same folder as requirements.txt and setup.py
 		</p>
 			<div class="code_box">
 			<div class="code">
@@ -181,19 +206,54 @@
 			Install (most of the) dependencies using pip</p>
 			<div class="code_box">
 			<div class="code">
-			$ pip install --upgrade pip<br>
-			$ pip install -r requirements.txt
+			$ C:\path\to\Anaconda\Scripts\pip install --upgrade pip<br>
+			$ C:\path\to\Anaconda\Scripts\pip install -r requirements.txt
 			</div>
 			</div>
 			<p>
 			You will also need <a href="https://www.riverbankcomputing.com/software/sip/download">sip</a>
 			and <a href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a>.
+			Download the binary installer for your version of Windows.
+			</p>
+			<p>
+			Once you have installed the dependencies, install GENFIRE with</p>
+			<div class="code_box">
+			<div class="code">
+			$ C:\path\to\Anaconda\python setup.py install<br>
+			</div>
+			</div>
+			<p>
+			If everything worked you can now use GENFIRE from a python console.
+		</p>
+			<div class="code_box">
+			<div class="code">
+			$ python<br>
+			$ import GENFIRE
+			</div>
+			</div>
+
+			In principle you should also be able to run GENFIRE from the terminal with
 			</p>
 			<div class="code_box">
 			<div class="code">
-			$ sudo apt-get install python-qt4<br>
+			$ genfire
 			</div>
 			</div>
+			<p>
+			however, this type of bash executable doesn't appear to work the same is it does for Mac/Linux.
+			Although my intentions were pure, at this point I must admit I am not a Windows user. If
+			any of you who are much wiser than I know a solution, feel free to email me.
+			</p>
+			<p>
+			Instead, you can just run the gui as a python script
+			</p>
+			<div class="code_box">
+			<div class="code">
+			$ C:\path\to\Anaconda\python \path\to\GENFIRE\GENFIRE\gui\launch.py
+			</div>
+			</div>
+			<p>
+		<p>
 		<br><br><div class="h5_left"> Installation Troubleshooting </div>
 		<p>
 		If you have trouble installing PyQt4 or sip, consult their 

@@ -17,8 +17,8 @@
    <div id="Main_Header">  
   	<div id="welcome"><br><br><br><br>Welcome to<br><br></div>
 	<div id="GENFIRE_logo">
-		<img src="images/GENFIRE.png" alt="GENFIRE" 
-			style="width:512; height:93" align="right">
+		<img src="images/GENFIRE.png" alt="GENFIRE">
+<!-- 			style="width:512; height:93" align="right"> -->
 	</div>
     
   </div>
@@ -41,8 +41,7 @@
 	In addition, GENFIRE introduces a novel technique for enforcing Fourier constraints deemed 
 	resolution extension/suppression and implements a modified version of R-free from X-ray crystallography
 	for the purposes of prevention of overfitting data.<br><br>
-	GENFIRE is written in python using primarily NumPy, SciPy, and pyFFTW. The gridding routine is 
-	accelerated using Cython. The GUI is programmed entirely using Qt and the PyQt4 bindings to the Qt
+	GENFIRE is written in python using primarily NumPy, SciPy, and pyFFTW. The GUI is programmed entirely using Qt and the PyQt4 bindings to the Qt
 	framework. The user interface was designed with Qt Creator. Embedded plots were made with matplotlib.
 	
 
@@ -88,13 +87,18 @@
 	</div>
 	</p>
   	<div id="Sidebar_lowered">
-  	
+  	  	<div class="h1_sidebar"> Navigation </div>
+		<div class="side_link"><a href="index.html">About</a><br></div>
+		<div class="side_link"><a href="installation.html">Installation</a><br></div>
+		<div class="side_link"><a href="tutorial.html">Tutorial</a><br></div>
+		<br><br>
+    
   	<div class="h1_sidebar"> Source Code </div>
     <div class="h2_sidebar"> GENFIRE </div>
 		<div class="side_link"><a href="src_html/fileio.html">fileio</a><br></div>
 		<div class="side_link"><a href="src_html/reconstruct.html">reconstruct</a><br></div>
 		<div class="side_link"><a href="src_html/utility.html">utility</a><br></div>
-    	</p>
+    	
     <div class="h2_sidebar"> GUI </div>
 		<div class="side_link"><a href="src_html/launch.html">Launch</a><br></div>
 		<div class="side_link"><a href="src_html/GENFIRE_MainWindow.html">GENFIRE Main Window</a><br></div>
