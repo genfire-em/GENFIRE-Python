@@ -1,3 +1,6 @@
+"""
+bla
+"""
 def generate_html(filename=None):
     #convert source code files into formatted html for documentation
     import sys
@@ -32,11 +35,13 @@ def generate_html(filename=None):
             fid.write("<code>")
             in_comment_flag = 0
             for line in fid_source:
-                if line.lstrip().startswith("#") or in_comment_flag == 1: # then this line is a single line comment and we don't format it
+                if line.lstrip().startswith("#"): # then this line is a single line comment and we don't format it
                     fid.write(line.replace('\n',"<br>"))
-                elif "\"\"\"" in line: # ignore formatting on multi-line comments
+                elif line.lstrip().startswith("\"\"\""): # ignore formatting on multi-line comments
                     fid.write(line.replace('\n',"<br>"))
                     in_comment_flag = (in_comment_flag + 1) % 2
+                elif in_comment_flag:
+                    fid.write(line.replace('\n',"<br>"))
                 else:
                     inline_comment_start = line.find("#")
                     if inline_comment_start == -1: # no inline comment
@@ -51,7 +56,8 @@ def code_formatter(string):
     # A simple custom HTML code formatter that colors some keywords and tries to avoid instances of them within comments
     color_string = "\"orange\""
     keywords = ["from", "def","class", "self", "__main__", "for", "if",\
-                "while","import","else","elif", "True","False", "del"]
+                "while","import","else","elif", "True","False", "del", \
+                "with", "plt", "QtCore", "QtGui", "Qt", "ui"]
     short_keywords = keywords[:]
     new_keywords = []
     for i, v in enumerate(keywords):
@@ -93,5 +99,5 @@ if __name__=="__main__":
         for j in range(1,len(sys.argv)):
             generate_html(sys.argv[j])
     else:
-        generate_html("test.py")
+        generate_html("html_helper.py")
         
