@@ -1,5 +1,5 @@
 """
-* VolumeSlicer *
+* GENFIRE.gui.VolumeSlicer *
 
 The volume slicer module
 
@@ -124,6 +124,9 @@ class VolumeSlicer(QtGui.QMainWindow):
 
     def toggleLockCmap(self):
         if self.ui.checkBox_lockcmap.isChecked():
+            self.clim1 = plt.getp(plt.getp(self.slice1,'images')[0],'clim')
+            self.clim2 = plt.getp(plt.getp(self.slice2,'images')[0],'clim')
+            self.clim3 = plt.getp(plt.getp(self.slice3,'images')[0],'clim')
             self.lockColormap = True
         else:
             self.lockColormap = False

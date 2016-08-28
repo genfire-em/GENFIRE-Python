@@ -6,7 +6,7 @@ setup(
 	packages		    = find_packages(),
 	version 			= "1.0",
 	description 		= "GENeralized Fourier Iterative REconstruction",
-	author 				= "Alan (AJ) Pryor, Jr. ",
+	author 				= "Alan (AJ) Pryor, Jr.",
     author_email 		= "apryor6@gmail.com",
     install_requires	= ['Pillow','numpy','matplotlib','scipy', 'pyFFTW','pyparsing','six'],
 	scripts				= ['bin/genfire']

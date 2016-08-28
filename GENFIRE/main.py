@@ -1,5 +1,5 @@
 """
-* main *
+* GENFIRE.main *
 
 The primary control module for running GENFIRE reconstructions.
 

@@ -1,5 +1,5 @@
 """
-* launch *
+* GENFIRE.gui.launch *
 
 This is the script for launching the GENFIRE GUI
 
@@ -69,6 +69,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.btn_io.clicked.connect(self.selectInitialObjectFile)
         self.ui.btn_io.clicked.connect(self.checkParameters)
 
+        self.ui.btn_reconstruct.setEnabled(False)
         self.ui.btn_reconstruct.clicked.connect(self.startReconstruction)
         self.ui.btn_reconstruct.clicked.connect(self.checkParameters)
         self.ui.btn_reconstruct.setStyleSheet("background-color: rgb(221,0,0)")
@@ -228,6 +229,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
     def checkParameters(self):
         parametersAreGood = self.GENFIRE_ReconstructionParameters.checkParameters()
         if parametersAreGood: #update "go" button if we are ready
+            self.ui.btn_reconstruct.setEnabled(True)
             self.ui.btn_reconstruct.setStyleSheet("background-color: GREEN; color:#ffffff;font-size:30px")
             # GF_window.ui.btn_reconstruct.setStyleSheet("color: WHITE")
             self.ui.btn_reconstruct.setText("Launch Reconstruction!")

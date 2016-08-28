@@ -1,5 +1,5 @@
 """
-* ProjectionCalculator *
+* GENFIRE.gui.ProjectionCalculator *
 
 The projection calculator module
 

@@ -1,5 +1,5 @@
 """
-* fileio *
+* GENFIRE.fileio *
 
 The primary file input/output module for GENFIRE.
 
@@ -178,63 +178,63 @@ def loadProjections(filename):
     else:
         raise Exception('File format %s not supported.', file_extension)
 
-def readMAT_projections(filename):
-    """
-    * readMAT *
-
-    Read projections from a .mat file
-
-    :param filename: MATLAB file (.mat) containing projections
-    :return: NumPy array containing projections
-
-
-    Author: Alan (AJ) Pryor, Jr.
-    Jianwei (John) Miao Coherent Imaging Group
-    University of California, Los Angeles
-    Copyright 2015-2016. All rights reserved.
-    """
-
-    import scipy.io
-    import numpy as np
-    import os
-    try: #try to open the projections as a stack
-        projections = scipy.io.loadmat(filename)
-        key = None
-        for k in projections.keys():
-            if k[0] != "_":
-                key = k
-                break
-
-        projections = np.array(projections[key])
-    except: ## -- figure out where error is thrown
-         #check if the projections are in individual files
-        flag = True
-        filename_base, file_extension = os.path.splitext(filename)
-        projectionCount = 1
-        while flag: #first count the number of projections so the array can be initialized
-            projectionCount = projectionCount
-            nextFile = filename_base + str(projectionCount) + file_extension
-            if os.path.isfile(nextFile):
-                projectionCount += 1
-            else:
-                flag = False
-
-
-        ## open first projection to get dimensions
-        pj = scipy.io.loadmat(filename_base + str(1) + file_extension)
-        pj = pj[projections.keys()[0]]
-        dims = np.shape(pj)
-        #initialize projection array
-        projections = np.zeros((dims[0], dims[1], projectionCount),dtype=int)
-
-        #now actually load in the tiff images
-        for projNum in range(projectionCount):
-            nextFile = filename_base + str(projNum) + file_extension
-            pj = scipy.io.loadmat(filename_base + str(projNum) + file_extension)
-            pj = pj[pj.keys()[0]]
-            projections[:, :, projNum] = np.array(pj)
-
-    return projections
+# def readMAT_projections(filename):
+#     """
+#     * readMAT *
+#
+#     Read projections from a .mat file
+#
+#     :param filename: MATLAB file (.mat) containing projections
+#     :return: NumPy array containing projections
+#
+#
+#     Author: Alan (AJ) Pryor, Jr.
+#     Jianwei (John) Miao Coherent Imaging Group
+#     University of California, Los Angeles
+#     Copyright 2015-2016. All rights reserved.
+#     """
+#
+#     import scipy.io
+#     import numpy as np
+#     import os
+#     try: #try to open the projections as a stack
+#         projections = scipy.io.loadmat(filename)
+#         key = None
+#         for k in projections.keys():
+#             if k[0] != "_":
+#                 key = k
+#                 break
+#
+#         projections = np.array(projections[key])
+#     except: ## -- figure out where error is thrown
+#          #check if the projections are in individual files
+#         flag = True
+#         filename_base, file_extension = os.path.splitext(filename)
+#         projectionCount = 1
+#         while flag: #first count the number of projections so the array can be initialized
+#             projectionCount = projectionCount
+#             nextFile = filename_base + str(projectionCount) + file_extension
+#             if os.path.isfile(nextFile):
+#                 projectionCount += 1
+#             else:
+#                 flag = False
+#
+#
+#         ## open first projection to get dimensions
+#         pj = scipy.io.loadmat(filename_base + str(1) + file_extension)
+#         pj = pj[projections.keys()[0]]
+#         dims = np.shape(pj)
+#         #initialize projection array
+#         projections = np.zeros((dims[0], dims[1], projectionCount),dtype=int)
+#
+#         #now actually load in the tiff images
+#         for projNum in range(projectionCount):
+#             nextFile = filename_base + str(projNum) + file_extension
+#             pj = scipy.io.loadmat(filename_base + str(projNum) + file_extension)
+#             pj = pj[pj.keys()[0]]
+#             projections[:, :, projNum] = np.array(pj)
+#
+#     return projections
 
 
 def readTIFF_projections(filename):

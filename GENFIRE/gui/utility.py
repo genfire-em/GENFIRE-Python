@@ -1,5 +1,5 @@
 """
-* utility *
+* GENFIRE.gui.utility *
 
 The gui utility function module
 

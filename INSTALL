@@ -1,0 +1,19 @@
+First install dependencies with pip:
+
+$ pip install -r requirements.txt
+
+You will also need to download sip and PyQt. More detail is given
+in the GENFIRE documentation.
+
+https://www.riverbankcomputing.com/software/sip/intro
+http://pyqt.sourceforge.net/Docs/PyQt4/installation.html
+
+Finally, install GENFIRE with
+
+$ python setup.py install
+
+You can verify that the install worked with
+
+$ python -c "import GENFIRE"
+
+If no errors occur, the installation was successful.

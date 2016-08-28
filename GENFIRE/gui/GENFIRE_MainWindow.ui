@@ -68,68 +68,38 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="11" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Results Filename</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
-         <widget class="QLineEdit" name="lineEdit_angle"/>
-        </item>
-        <item row="7" column="0">
-         <widget class="QCheckBox" name="checkBox_provide_io">
-          <property name="text">
-           <string>Provide initial object</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QPushButton" name="btn_angles">
-          <property name="text">
-           <string>Select Angle File</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QCheckBox" name="checkBox_default_support">
-          <property name="text">
-           <string>Use default support</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="2">
          <widget class="QLineEdit" name="lineEdit_pj"/>
         </item>
-        <item row="8" column="0">
+        <item row="9" column="0">
          <widget class="QPushButton" name="btn_io">
           <property name="text">
            <string>Select Inital Object File</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="lineEdit_support"/>
+        <item row="12" column="2">
+         <widget class="QLineEdit" name="lineEdit_results"/>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QPushButton" name="btn_support">
           <property name="text">
            <string>Select Support File</string>
           </property>
          </widget>
         </item>
-        <item row="12" column="0">
+        <item row="13" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout"/>
         </item>
-        <item row="8" column="2">
+        <item row="9" column="2">
          <widget class="QLineEdit" name="lineEdit_io"/>
         </item>
-        <item row="11" column="2">
-         <widget class="QLineEdit" name="lineEdit_results"/>
+        <item row="1" column="0" colspan="3">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0">
          <widget class="QPushButton" name="btn_projections">
@@ -138,7 +108,7 @@
           </property>
          </widget>
         </item>
-        <item row="12" column="2">
+        <item row="13" column="2">
          <widget class="QLabel" name="label_5">
           <property name="text">
            <string>*.mrc, *.npy, or *.mat</string>
@@ -148,31 +118,61 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0" colspan="3">
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0" colspan="3">
+        <item row="7" column="0" colspan="3">
          <widget class="Line" name="line_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="9" column="0" colspan="3">
+        <item row="5" column="0" colspan="3">
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0" colspan="3">
          <widget class="Line" name="line_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="lineEdit_support"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QPushButton" name="btn_angles">
+          <property name="text">
+           <string>Select Angle File</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Results Filename</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QLineEdit" name="lineEdit_angle"/>
+        </item>
+        <item row="8" column="0">
+         <widget class="QCheckBox" name="checkBox_provide_io">
+          <property name="text">
+           <string>Provide initial object</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="checkBox_default_support">
+          <property name="text">
+           <string>Use default support</string>
           </property>
          </widget>
         </item>

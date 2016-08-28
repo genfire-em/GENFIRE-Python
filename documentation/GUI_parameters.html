@@ -1,0 +1,89 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>GENFIRE GUI Parameters</title>
+  <meta name="description" content="GENFIRE GUI Parameters">
+  <meta name="author" content="Alan (AJ) Pryor, Jr.">
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <link rel="stylesheet" type="text/css" href="main.css">
+
+</head>
+
+<body>
+ <div id="bounding_box">
+  	<div id="Sidebar">
+  	<div class="h1_sidebar"> Source Code </div>
+    <div class="h2_sidebar"> GENFIRE </div>
+		<div class="side_link"><a href="src_html/fileio.html">fileio</a><br></div>
+		<div class="side_link"><a href="src_html/reconstruct.html">reconstruct</a><br></div>
+		<div class="side_link"><a href="src_html/utility.html">utility</a><br></div>
+    	</p>
+    <div class="h2_sidebar"> GUI </div>
+		<div class="side_link"><a href="src_html/launch.html">Launch</a><br></div>
+		<div class="side_link"><a href="src_html/GENFIRE_MainWindow.html">GENFIRE Main Window</a><br></div>
+		<div class="side_link"><a href="src_html/ProjectionCalculator_MainWindow.html">Projection Calculator Main Window</a><br></div>
+		<div class="side_link"><a href="src_html/CalculateProjectionSeries_Dialog.html">Projection Calculator Dialog</a><br></div>
+		<div class="side_link"><a href="src_html/VolumeSlicer.html">Volume Slicer Main Window</a><br></div>
+    </div>
+
+
+
+  <h1>  GUI Parameter Details </h1>
+	 <div class="h3_left"> GENFIRE Main Window </div>
+  	<p> 
+		"Select Projection File" - Choose filename containing projection images. Alternatively you enter a file by editing
+		the text, but it must be a valid file type.<br>
+		"Use default support" - Automatically generate a cubic support defined by the oversampling ratio. For example
+		if the projections are size 128x128 and the oversampling ratio is set to 3, the default support will be
+		384x384x384 with a central 128x128x128 region of 1's and the remaining region set to 0. Uncheck to enter a filename manually. <br>
+		"Select Support File" - Choose filename containing the 3D support. Alternatively you enter a file by editing
+		the text, but it must be a valid file type. The array width should match that of the inputted projections.<br>
+		"Select Angle File" - Choose filename with the Euler angles.
+		"Provide initial object" - Check to enable selection of an intial model.
+		"Select Initial Object File" - Choose filename containing the initial model.
+		"Results Filename" - Filename for the output volume. Must be a valid filetype. Error curves
+		are saved as .txt files with the same base filename as the results.
+		"Resolution Extension/Suppression" - Choose the style of constraint enforcement.
+			<ul>
+	 			<li> On - Enforce only lowest resolution information on initial iterations, extending slowly until all information
+				is enforced by the middle iterations, and then reverse the process. This is more robust to noise.</li>
+	 			<li> Off - Enforce all information at all times.</li>
+	 			<li> Extension Only - Enforce only lowest resolution information on initial iterations, extending slowly until all information
+				is enforced by the final iterations. </li>
+ 			</ul>
+	 	"Number of Iterations" - Number of GENFIRE iterations to use
+	 	"Oversampling Ratio" - Final oversampling ratio to use when gridding the projections. Larger oversampling ratios
+	 	will produce more accurate griddings at the cost of larger array size. Ideally use at least 3.
+	 	"Interpolation Cutoff Distance (pixels)" - Size of the interpolation kernel used for gridding. Small radii
+	 	will result in an assembled grid with fewer values, but more accurate ones. Conversely, larger values for this
+	    parameter will be more accepting of datapoints, but at the cost of accuracy. The default 0.7 was found to be
+	 	ideal based on simulations.
+	 	"Summarize Results" - Display a summary of reconstruction results. Choose a volume file, and projections and central
+	 	slices along the three principal directions will appear. Error curves will be plotted if the corresponding files exist.
+	 	"Launch Reconstruction" - Begin the reconstruction, if the parameters are valid.
+  	</p>
+	 <div class="h3_left"> Projection Calculator </div>
+	 <p>
+		 "Model" - Filename of volume from which to calculate projections.<br>
+		 "Clear Model" - Clear display and model from memory.<br>
+		 "Calculate Projection Series from Model" - Use the current model to simulate a series of projections.<br>
+		 "Phi" - set Phi Euler angle interactively.<br>
+		 "Theta" - set Theta Euler angle interactively.<br>
+		 "Psi" - set Psi Euler angle interactively.<br>
+	 </p>
+	 <div class="h3_left"> Volume Slicer </div>
+	 <p>
+		 "X" - Set X value for the YZ plane.<br>
+		 "Y" - Set Y value for the XZ plane.<br>
+		 "Z" - Set Z value for the XY plane.<br>
+		 "Lock Colormap" - If checked, locks the colormap for each image based on the current ones. If you want to lock
+		 a different colormap, uncheck the box, move the slicer, and recheck the box to lock the new setting.
+	 </p>
+
+    	</div>
+</body>
+</html>

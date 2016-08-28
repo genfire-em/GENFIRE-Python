@@ -1,5 +1,5 @@
 """
-* reconstruct *
+* GENFIRE.reconstruct *
 
 This module contains the core of GENFIRE's functions for computing reconstructions
 
@@ -31,13 +31,6 @@ if __name__ != "__main__":
 
          Primary GENFIRE reconstruction function
 
-
-         Author: Alan (AJ) Pryor, Jr.
-         Jianwei (John) Miao Coherent Imaging Group
-         University of California, Los Angeles
-         Copyright 2015-2016. All rights reserved.
-
-
         :param numIterations: Integer number of iterations to run
         :param initialObject: Initial guess of 3D object
         :param support: Binary matrix representing where the object is allowed to exist
@@ -48,6 +41,11 @@ if __name__ != "__main__":
         :param R_freeVals_complex: Complex valued component at the indices given by R_freeInd_complex
         :param displayFigure: Boolean flag to display figures during the reconstruction
         :return: outputs dictionary containing the reconstruction and error metrics
+
+         Author: Alan (AJ) Pryor, Jr.
+         Jianwei (John) Miao Coherent Imaging Group
+         University of California, Los Angeles
+         Copyright 2015-2016. All rights reserved.
         """
         import time
         t0 = time.time()
@@ -201,27 +199,21 @@ if __name__ != "__main__":
         return outputs
 
 
-
-
-
-
-
-
     def fillInFourierGrid(projections,angles,interpolationCutoffDistance):
         """
         * fillInFourierGrid *
 
         Primary function for converting a set of 2D projection images into a 3D Fourier grid
 
-        Author: Alan (AJ) Pryor, Jr.
-        Jianwei (John) Miao Coherent Imaging Group
-        University of California, Los Angeles
-        Copyright 2015-2016. All rights reserved.
-
         :param projections: N x N x num_projections NumPy array containing the projections
         :param angles: 3 x num_projections NumPy array of Euler angles phi,theta, psi
         :param interpolationCutoffDistance: Radius of interpolation kernel. Only values within this radius of a grid point are considered
         :return: the assembled Fourier grid
+
+        Author: Alan (AJ) Pryor, Jr.
+        Jianwei (John) Miao Coherent Imaging Group
+        University of California, Los Angeles
+        Copyright 2015-2016. All rights reserved.
 
         """
         print ("Assembling Fourier grid.")
@@ -587,26 +579,32 @@ class ReconstructionParameters():
         self.initialObjectFilename = None
 
     def checkParameters(self): #verify file extensions are supported
+        import os
         parametersAreGood = 1
 
         projection_extension = os.path.splitext(self.projectionFilename)
-        if projection_extension[1] not in ReconstructionParameters._supportedFiletypes:
+        if projection_extension[1] not in ReconstructionParameters._supportedFiletypes \
+                or not os.path.isfile(self.projectionFilename):
             parametersAreGood = 0
 
         angle_extension = os.path.splitext(self.angleFilename)
-        if angle_extension[1] not in ReconstructionParameters._supportedAngleFiletypes:
+        if angle_extension[1] not in ReconstructionParameters._supportedAngleFiletypes \
+                or not os.path.isfile(self.angleFilename):
             parametersAreGood = 0
 
-        if self.supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
+        if self.supportFilename != "" or self.useDefaultSupport: #empty support filename is okay, as this will trigger generation of a default support
             support_extension = os.path.splitext(self.supportFilename)
-            if support_extension[1] not in ReconstructionParameters._supportedFiletypes:
+            if support_extension[1] not in ReconstructionParameters._supportedFiletypes \
+                    or not os.path.isfile(self.supportFilename):
                 parametersAreGood = 0
 
         if not self.getResultsFilename():
             parametersAreGood = 0
         return parametersAreGood
 
-    # Define setters/getters
+    # Define setters/getters. It's not very pythonic to do so, but  I came from C++ and wrote
+    # this before I knew better. In any case it doesn't affect much.
+
     def setProjectionFilename(self, projectionFilename):
         if projectionFilename:
             self.projectionFilename = os.path.join(os.getcwd(), toString(projectionFilename))

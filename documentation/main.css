@@ -12,17 +12,16 @@ h1 {
 	background-color: black;
 	color: #ffffff;
 	text-align: center
-/* 	float: left */
 }
 .h1_left {
 	margin: 10px;
 	padding: 14px 0px;
 	font-size: 36px;
 	font-weight: bold;
-	background-color: black;
 	color: #ffffff;
+	background-color: black;
+
 	text-align: left;
-/* 	float: left */
 }
 
 
@@ -34,6 +33,8 @@ body {
 	font-size: 12px;
 	color: #AAAAAA;
 	background: #080808;
+    background: black;
+
 }
 		
 a:link, a:visited {
@@ -142,29 +143,21 @@ height: 150px;
 width:450px;
 color:black;
 font-family: 'Brush Script MT', cursive;
-/* font: 400 100px/1.2 'Leckerli One', Helvetica, sans-serif; */
-/*   color: #000; */
-/*   text-shadow: 2px 2px 0px rgba(0,0,0,0.2), 4px 4px 8px rgba(0,0,0,0.2); */
 font-size:120px;
 
 text-align:center;
-/* background:orange; */
 vertical-align:middle;
-/* overflow:auto; */
 
 }
 
 #GENFIRE_logo{
-/* float:right; */
-position:absolute;
-/* margin-right:65px; */
-right:0px;
-/* overflow:auto; */
+right:45px;
+height: 150px;
+overflow:auto;
 }
 
 
 #Sidebar {
-/* float:right; */
  	position: fixed;
     width: 250px;
     height: 335px;
@@ -183,7 +176,7 @@ color: #FFFFFF;
 #Sidebar .h1_sidebar{
 font-size: 20px;
 font-weight: bold;
-color: black;
+color: #222222;
 text-align: center;
 margin-bottom:15px;
 }
@@ -209,13 +202,16 @@ color: #FFFFFF;
 #Sidebar_lowered .h1_sidebar{
 font-size: 20px;
 font-weight: bold;
-color: black;
+color: #FFFFFF;
 text-align: center;
 margin-bottom:15px;
+text-decoration:underline;
 }
 #Sidebar_lowered .h2_sidebar{
 font-size: 16px;
 color: #FFFFFF;
+color: #222222;
+
 }
 .side_link{
 font-size: 12px;
