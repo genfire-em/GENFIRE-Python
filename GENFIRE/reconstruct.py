@@ -18,10 +18,11 @@ matplotlib.use("Qt4Agg")
 import matplotlib.pyplot as plt
 import os
 import scipy.io
-import pyfftw
 import time
 import GENFIRE
 from multiprocessing import Pool
+from GENFIRE.utility import fftn, fftn_fftshift,rfftn, \
+    rfftn_fftshift,ifftn, ifftn_fftshift, irfftn, irfftn_fftshift
 
 PI = np.pi
 if __name__ != "__main__":
@@ -49,6 +50,7 @@ if __name__ != "__main__":
         """
         import time
         t0 = time.time()
+        GENFIRE.fileio.writeVolume('debug.mat',measuredK,order="F")
         print("Reconstruction started")
         NUMTHREADS = 6 #number of threads to be used for the FFTW interface
         bestErr = 1e30 #initialize error
@@ -100,7 +102,7 @@ if __name__ != "__main__":
             initialObject = initialObject * support #enforce support
 
             #take FFT of current reconstruction
-            k = pyfftw.interfaces.numpy_fft.rfftn(initialObject,overwrite_input=True,threads=NUMTHREADS)
+            k = rfftn(initialObject)
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(k[errInd]-measuredK[errInd]))/np.sum(abs(measuredK[errInd]))#monitor error
@@ -124,7 +126,7 @@ if __name__ != "__main__":
 
             #replace Fourier components with ones from measured data from the current set of constraints
             k[constraintInd_complex] = measuredK[constraintInd_complex]
-            initialObject = pyfftw.interfaces.numpy_fft.irfftn(k,overwrite_input=True,threads=NUMTHREADS)
+            initialObject = irfftn(k)
 
             #update display
             if displayFigure.DisplayFigureON:
@@ -132,28 +134,28 @@ if __name__ != "__main__":
 
                     plt.figure(1000)
                     plt.subplot(233)
-                    plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+                    plt.imshow(np.squeeze(irfftn_fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
                     plt.title("central YZ slice")
 
                     plt.subplot(232)
-                    plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+                    plt.imshow(np.squeeze(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
                     plt.title("central XZ slice")
 
                     plt.subplot(231)
                     plt.title("central XY slice")
-                    plt.imshow(np.squeeze(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
+                    plt.imshow(np.squeeze(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
 
                     plt.subplot(236)
                     plt.title("YZ projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
+                    plt.imshow(np.squeeze(np.sum(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
 
                     plt.subplot(235)
                     plt.title("XZ projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
+                    plt.imshow(np.squeeze(np.sum(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
 
                     plt.subplot(234)
                     plt.title("XY projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.ifftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
+                    plt.imshow(np.squeeze(np.sum(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
                     plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
                     plt.draw()
 
@@ -256,7 +258,7 @@ if __name__ != "__main__":
             measuredX[:, projNum] = rotkCoords[0, :]
             measuredY[:, projNum] = rotkCoords[1, :]
             measuredZ[:, projNum] = rotkCoords[2, :]
-            kMeasured[:, :, projNum] = np.fft.fftshift(np.fft.fftn(np.fft.ifftshift(projections[:, :, projNum])))
+            kMeasured[:, :, projNum] = fftn_fftshift(projections[:, :, projNum])
 
         measuredX = np.reshape(measuredX,[1, np.size(kMeasured)], 'F')
         measuredY = np.reshape(measuredY,[1, np.size(kMeasured)], 'F')
@@ -592,11 +594,12 @@ class ReconstructionParameters():
                 or not os.path.isfile(self.angleFilename):
             parametersAreGood = 0
 
-        if self.supportFilename != "" or self.useDefaultSupport: #empty support filename is okay, as this will trigger generation of a default support
-            support_extension = os.path.splitext(self.supportFilename)
-            if support_extension[1] not in ReconstructionParameters._supportedFiletypes \
-                    or not os.path.isfile(self.supportFilename):
-                parametersAreGood = 0
+        if not self.useDefaultSupport:
+            if self.supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
+                support_extension = os.path.splitext(self.supportFilename)
+                if support_extension[1] not in ReconstructionParameters._supportedFiletypes \
+                        or not os.path.isfile(self.supportFilename):
+                    parametersAreGood = 0
 
         if not self.getResultsFilename():
             parametersAreGood = 0

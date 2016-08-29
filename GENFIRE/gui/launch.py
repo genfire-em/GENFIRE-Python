@@ -254,6 +254,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
             import os
             import GENFIRE.fileio
             import matplotlib.pyplot as plt
+            plt.close('all')
 
             initialObject = GENFIRE.fileio.readVolume(outputfilename)
             dims = np.shape(initialObject)

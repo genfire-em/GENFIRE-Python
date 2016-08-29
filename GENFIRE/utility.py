@@ -13,9 +13,48 @@ Copyright 2015-2016. All rights reserved.
 
 from __future__ import division
 import numpy as np
-import pyfftw
 from scipy.interpolate import RegularGridInterpolator
 PI = np.pi
+
+try:
+    import pyfftw
+    def rfftn(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.rfftn(arr,overwrite_input=True,threads=threads)
+    def irfftn(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.irfftn(arr,overwrite_input=True,threads=threads)
+    def rfftn_fftshift(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.rfftn(pyfftw.interfaces.numpy_fft.ifftshift(arr),overwrite_input=True,threads=threads))
+    def irfftn_fftshift(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.irfftn(pyfftw.interfaces.numpy_fft.ifftshift(arr),overwrite_input=True,threads=threads))
+    def fftn(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.fftn(arr,overwrite_input=True,threads=threads)
+    def ifftn(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.ifftn(arr,overwrite_input=True,threads=threads)
+    def fftn_fftshift(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift(arr),overwrite_input=True,threads=threads))
+    def ifftn_fftshift(arr, threads=6):
+        return pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(arr),overwrite_input=True,threads=threads))
+
+except ImportError:
+    print("No pyFFTW installation found. Continuing with NumPy FFT")
+    import numpy as np
+    def rfftn(arr):
+        return np.fft.rfftn(arr)
+    def irfftn(arr):
+        return np.fft.irfftn(arr)
+    def rfftn_fftshift(arr):
+        return np.fft.fftshift(np.fft.rfftn(np.fft.ifftshift(arr)))
+    def irfftn_fftshift(arr):
+        return np.fft.fftshift(np.fft.irfftn(np.fft.ifftshift(arr)))
+    def fftn(arr):
+        return np.fft.fftn(arr)
+    def ifftn(arr):
+        return np.fft.ifftn(arr)
+    def fftn_fftshift(arr):
+        return np.fft.fftshift(np.fft.fftn(np.fft.ifftshift(arr)))
+    def irfftn_fftshift(arr):
+        return np.fft.fftshift(np.fft.ifftn(np.fft.ifftshift(arr)))
+
 
 def hermitianSymmetrize(volume):
     """
