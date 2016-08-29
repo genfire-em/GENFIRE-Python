@@ -52,7 +52,7 @@ except ImportError:
         return np.fft.ifftn(arr)
     def fftn_fftshift(arr):
         return np.fft.fftshift(np.fft.fftn(np.fft.ifftshift(arr)))
-    def irfftn_fftshift(arr):
+    def ifftn_fftshift(arr):
         return np.fft.fftshift(np.fft.ifftn(np.fft.ifftshift(arr)))
 
 
@@ -151,13 +151,14 @@ def smooth3D(object,resolutionCutoff):
     K_filter /= np.max(np.max(np.max(abs(K_filter))))
 
     # take FFT and multiply by filter
-    kbinned = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(object,overwrite_input=True)) * K_filter
+    # kbinned = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(object,overwrite_input=True)) * K_filter
+    kbinned = fftn_fftshift(object) * K_filter
 
     # Assuming the input is real, the output will be approximately real, but will have some
     # tiny imaginary part due to rounding errors. This function would work for smoothing a
     # complex object, but this return statement would need to be modified
-    return np.real(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(kbinned)))
-
+    # return np.real(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(kbinned)))
+    return np.real(fftn_fftshift(kbinned))
 
 
 
@@ -196,13 +197,13 @@ def smooth2D(object,resolutionCutoff):
     K_filter /= np.max(np.max(np.max(abs(K_filter))))
 
     # take FFT and multiply by filter
-    kbinned =  pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(object,overwrite_input=True)) * K_filter
-
+    # kbinned =  pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(object,overwrite_input=True)) * K_filter
+    kbinned = fftn_fftshift(object) * K_filter
     # Assuming the input is real, the output will be approximately real, but will have some
     # tiny imaginary part due to rounding errors. This function would work for smoothing a
     # complex object, but this return statement would need to be modified
-    return np.real(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(kbinned)))
-
+    # return np.real(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(kbinned)))
+    return np.real(ifftn_fftshift(kbinned))
 
 
 def calculateProjection_interp(modelK, phi, theta, psi):
@@ -260,8 +261,8 @@ def calculateProjection_interp(modelK, phi, theta, psi):
     projection = np.reshape(projection, [dims[0], dims[1]], order='F')
 
 
-    return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
-
+    # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
+    return np.real(ifftn_fftshift(projection))
 
 def getProjectionInterpolator(modelK):
     """
@@ -336,8 +337,8 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
     projection = np.reshape(projection, [dims[0], dims[1]], order='F')
 
 
-    return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
-
+    # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
+    return np.real(ifftn_fftshift(projection))
 def generateKspaceIndices(obj):
     """
     * generateKspaceIndices *

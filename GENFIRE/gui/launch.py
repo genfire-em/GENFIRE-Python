@@ -22,6 +22,8 @@ import sys
 from GENFIRE.reconstruct import ReconstructionParameters
 from GENFIRE.gui.utility import toString
 import GENFIRE_qrc
+from GENFIRE.utility import fftn, fftn_fftshift,rfftn, \
+    rfftn_fftshift,ifftn, ifftn_fftshift, irfftn, irfftn_fftshift
 
 class GenfireMainWindow(QtGui.QMainWindow):
     stop_threads = QtCore.pyqtSignal()

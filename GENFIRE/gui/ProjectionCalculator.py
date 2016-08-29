@@ -16,7 +16,6 @@ from __future__ import print_function
 from PyQt4 import QtCore, QtGui
 import os
 import GENFIRE
-import pyfftw
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -24,6 +23,8 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 import ProjectionCalculator_MainWindow
 import CalculateProjectionSeries_Dialog
 from GENFIRE.gui.utility import toString
+from GENFIRE.utility import fftn, fftn_fftshift,rfftn, \
+    rfftn_fftshift,ifftn, ifftn_fftshift, irfftn, irfftn_fftshift
 
 class ProjectionCalculator(QtGui.QMainWindow):
     model_loading_signal = QtCore.pyqtSignal()
@@ -108,7 +109,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
                 paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
                 padding = int((paddedDim-self.calculationParameters.dims[0])/2)
                 self.calculationParameters.model = np.pad(self.calculationParameters.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
-                self.calculationParameters.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.calculationParameters.model))))
+                self.calculationParameters.model = fftn_fftshift(self.calculationParameters.model)
                 self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
             self.calculationParameters.ncOut = np.shape(self.calculationParameters.model)[0]//2
 
@@ -288,7 +289,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.calculationParameters.paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
         padding = int((self.calculationParameters.paddedDim-self.calculationParameters.dims[0])/2)
         self.calculationParameters.model = np.pad(self.calculationParameters.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
-        self.calculationParameters.model = pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.fftn(pyfftw.interfaces.numpy_fft.ifftshift((self.calculationParameters.model))))
+        self.calculationParameters.model = fftn_fftshift(self.calculationParameters.model)
         self.calculationParameters.ncOut = np.shape(self.calculationParameters.model)[0]//2
         self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
         t.join()

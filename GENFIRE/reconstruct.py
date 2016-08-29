@@ -50,9 +50,7 @@ if __name__ != "__main__":
         """
         import time
         t0 = time.time()
-        GENFIRE.fileio.writeVolume('debug.mat',measuredK,order="F")
         print("Reconstruction started")
-        NUMTHREADS = 6 #number of threads to be used for the FFTW interface
         bestErr = 1e30 #initialize error
 
         #initialize arrays for error metrics
