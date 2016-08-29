@@ -104,7 +104,16 @@ h3 {
 	border-bottom: 1px dotted #d7e13d;
 }
 
-
+.h2_left {
+	margin-left:10px;
+	font-size: 24px;
+	font-weight: bold;
+	background-color: black;
+	color: #ffffff;
+	text-align: left;
+	text-decoration:underline;
+/* 	float: left */
+}
 .h3_left {
 	margin-left:10px;
 	font-size: 20px;
@@ -112,7 +121,7 @@ h3 {
 	background-color: black;
 	color: #ffffff;
 	text-align: left;
-	text-decoration:underline;
+	text-decoration:/* underline */;
 /* 	float: left */
 }
 .h5_left {

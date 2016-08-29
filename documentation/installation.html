@@ -43,16 +43,44 @@
 
 
   <h1>  Installation </h1>
-  	<div class="h3_left"> Installing GENFIRE from Binaries </div>
+  	<div class="h2_left"> Installing GENFIRE from Binaries </div>
   	<p> 
 		The easiest way to use GENFIRE is to <a href="tutorial.html">download</a> the appropriate precompiled binary for
-		your operating system. These consist of just a single executable file that contains all of the code.
+		your operating system. These consist of just a single executable file that contains all of the code. No additional
+		steps are needed.
 		There are 64-bit versions for Mac OS X 10.11, Windows 10, and Ubuntu 10.04. It's possible 
 		that the binaries may work on other versions of these operating systems, but as these 
 		are the three that I use at the time of writing this document so they are the three that
 		have been tested.<br>
 	</p>
-	<div class="h3_left"> Installing GENFIRE as a Python package </div>
+		
+	<div class="h2_left"> Installing GENFIRE as a Python package </div><br>
+	<div class="h3_left"> (Optional) Get FFTW </div>
+		<p> GENFIRE makes use of pyFFTW, which wraps the FFTW library. I have tested a number of
+		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one.
+		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
+		the FFTW libraries</a>. If you run into trouble installing this you can skip this step 
+		and GENFIRE will fall back on NumPy's FFT.<br>
+		When compiling FFTW from source on Mac/Linux for pyFFTW I found it necessary to use both
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable-threads --enable-shared --enable-float<br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> as well as </p>
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable threads --enable-shared --enable-long-double<br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p>This is because pyFFTW looks for both the single and double precision versions of FFTW, so you have to compile it twice</p>
+		</p>
+			<div class="h3_left"> Get the Source Code </div>
+
 	<p>
 		To install GENFIRE as a python package, first get the source code from the 
 		<a href="tutorial.html">git repository</a>. Either download the code as a compressed file
@@ -94,7 +122,7 @@
 			<div class="code_box">
 			<div class="code">
 			$ pip install --upgrade pip<br>
-			$ pip install -r requirements.txt
+			$ sudo pip install -r requirements.txt
 			</div>
 			</div>
 			
@@ -115,7 +143,7 @@
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ python setup.py install
+			$ sudo python setup.py install
 			</div>
 			</div>
 		<p>
@@ -138,7 +166,7 @@
 		
 		<br><br><div class="h5_left"> Linux (Ubuntu 14.04) </div>
 		<p>
-			Navigate to the source code directory</p>
+			Navigate to the source code directory. You should be in the same folder as requirements.txt and setup.py</p>
 			<div class="code_box">
 			<div class="code">
 			$ cd /path/to/GENFIRE
@@ -149,7 +177,7 @@
 			<div class="code_box">
 			<div class="code">
 			$ pip install --upgrade pip<br>
-			$ pip install -r requirements.txt
+			$ sudo pip install -r requirements.txt
 			</div>
 			</div>
 			<p>
@@ -167,7 +195,7 @@
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ python setup.py install
+			$ sudo python setup.py install
 			</div>
 			</div>
 		<p>
