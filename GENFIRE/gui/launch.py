@@ -20,8 +20,11 @@ import VolumeSlicer
 import os
 import sys
 from GENFIRE.reconstruct import ReconstructionParameters
-from GENFIRE.gui.utility import toString
-import GENFIRE_qrc
+from GENFIRE.gui.utility import toString, toQString
+if sys.version_info >= (3,0):
+	import GENFIRE_qrc_py3
+else:
+	import GENFIRE_qrc
 from GENFIRE.utility import fftn, fftn_fftshift,rfftn, \
     rfftn_fftshift,ifftn, ifftn_fftshift, irfftn, irfftn_fftshift
 
@@ -46,15 +49,15 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.GENFIRE_ReconstructionParameters = ReconstructionParameters()
 
         ## Initialize file paths in text boxes
-        self.ui.lineEdit_results.setText(QtCore.QString(os.path.join(os.getcwd(),'results.mrc')))
+        self.ui.lineEdit_results.setText(toQString(os.path.join(os.getcwd(),'results.mrc')))
 
-        self.ui.lineEdit_support.setText(QtCore.QString(os.getcwd()))
+        self.ui.lineEdit_support.setText(toQString(os.getcwd()))
 
-        self.ui.lineEdit_pj.setText(QtCore.QString(os.getcwd()))
+        self.ui.lineEdit_pj.setText(toQString(os.getcwd()))
 
-        self.ui.lineEdit_io.setText(QtCore.QString(os.getcwd()))
+        self.ui.lineEdit_io.setText(toQString(os.getcwd()))
 
-        self.ui.lineEdit_angle.setText(QtCore.QString(os.getcwd()))
+        self.ui.lineEdit_angle.setText(toQString(os.getcwd()))
 
 
         ## Push Buttons -- connect each to their main function and check if the reconstruction parameters are good each
@@ -95,15 +98,15 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_results.textChanged.connect(self.GENFIRE_ReconstructionParameters.setResultsFilename)
         self.ui.lineEdit_results.textChanged.connect(self.checkParameters)
 
-        self.ui.lineEdit_numIterations.setText(QtCore.QString("100"))
+        self.ui.lineEdit_numIterations.setText(toQString("100"))
         self.ui.lineEdit_numIterations.textChanged.connect(self.GENFIRE_ReconstructionParameters.setNumberOfIterations)
         self.ui.lineEdit_numIterations.textChanged.connect(self.checkParameters)
 
-        self.ui.lineEdit_oversamplingRatio.setText(QtCore.QString("3"))
+        self.ui.lineEdit_oversamplingRatio.setText(toQString("3"))
         self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.GENFIRE_ReconstructionParameters.setOversamplingRatio)
         self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.checkParameters)
 
-        self.ui.lineEdit_interpolationCutoffDistance.setText(QtCore.QString("0.7"))
+        self.ui.lineEdit_interpolationCutoffDistance.setText(toQString("0.7"))
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.GENFIRE_ReconstructionParameters.setInterpolationCutoffDistance)
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.checkParameters)
 
@@ -150,11 +153,11 @@ class GenfireMainWindow(QtGui.QMainWindow):
         import os
         base, file = os.path.split(toString(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename))
 
-        self.ui.lineEdit_angle.setText(QtCore.QString(str(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename)))
+        self.ui.lineEdit_angle.setText(toQString(str(self.GENFIRE_ProjectionCalculator.calculationParameters.outputAngleFilename)))
         self.ui.lineEdit_angle.textChanged.emit(self.ui.lineEdit_angle.text())
-        self.ui.lineEdit_pj.setText(QtCore.QString(str(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename)))
+        self.ui.lineEdit_pj.setText(toQString(str(self.GENFIRE_ProjectionCalculator.calculationParameters.outputFilename)))
         self.ui.lineEdit_pj.textChanged.emit(self.ui.lineEdit_pj.text())
-        self.ui.lineEdit_results.setText(QtCore.QString(str(base + "/results.mrc")))
+        self.ui.lineEdit_results.setText(toQString(str(base + "/results.mrc")))
         self.ui.lineEdit_results.textChanged.emit(self.ui.lineEdit_results.text())
 
     def launchVolumeSlicer(self):
@@ -198,26 +201,26 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         if filename:
             self.GENFIRE_ReconstructionParameters.setProjectionFilename(filename)
-            self.ui.lineEdit_pj.setText(QtCore.QString(filename))
+            self.ui.lineEdit_pj.setText(toQString(filename))
 
     def selectAngleFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support",filter="Euler Angles (*.txt *.mat);; MATLAB files (*.mat);;text files (*.txt);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setAngleFilename(filename)
-            self.ui.lineEdit_angle.setText(QtCore.QString(filename))
+            self.ui.lineEdit_angle.setText(toQString(filename))
 
     def selectSupportFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setSupportFilename(filename)
-            self.ui.lineEdit_support.setText(QtCore.QString(filename))
+            self.ui.lineEdit_support.setText(toQString(filename))
             self.ui.checkBox_default_support.setChecked(False)
 
     def selectInitialObjectFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Initial Object", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setInitialObjectFilename(filename)
-            self.ui.lineEdit_io.setText(QtCore.QString(filename))
+            self.ui.lineEdit_io.setText(toQString(filename))
 
     #Define constraint enforcement mode
     def selectResolutionExtensionSuppressionState(self):
@@ -420,7 +423,10 @@ def main():
     GF_window.show()
 
     # Redirect standard output to the GUI
-    from Queue import Queue
+    if sys.version_info >= (3,0):
+        from multiprocessing import Queue
+    else:
+        from Queue import Queue
     global process_finished
     global GF_logger
     global GF_error_logger
