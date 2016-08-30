@@ -6,5 +6,4 @@ Pillow
 pytz
 python-dateutil
 six
-pyFFTW
 
