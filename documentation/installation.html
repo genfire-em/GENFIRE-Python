@@ -55,9 +55,9 @@
 	</p>
 		
 	<div class="h2_left"> Installing GENFIRE as a Python package </div><br>
-	<div class="h3_left"> (Optional) Get FFTW </div>
-		<p> GENFIRE makes use of pyFFTW, which wraps the FFTW library. I have tested a number of
-		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one.
+	<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
+		<p> GENFIRE can make use of pyFFTW, which wraps the FFTW library. I have tested a number of
+		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
 		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
 		the FFTW libraries</a>. If you run into trouble installing this you can skip this step 
 		and GENFIRE will fall back on NumPy's FFT.<br>
@@ -77,8 +77,17 @@
 			$ sudo make install
 			</div>
 		</div>
-		<p>This is because pyFFTW looks for both the single and double precision versions of FFTW, so you have to compile it twice</p>
+		<p>This is because pyFFTW looks for both the single and double precision versions of FFTW, so you have to compile it twice.<br>
+		Once you have compiled FFTW, the final step is to install pyFFTW with pip</p>
+		
+			<div class="code_box">
+			<div class="code">
+			$ pip install pyfftw
+			</div>
+		</div>
+
 		</p>
+		
 			<div class="h3_left"> Get the Source Code </div>
 
 	<p>
@@ -99,7 +108,7 @@
 		Python is preinstalled on Mac OS X, but it is generally a bad idea to alter the system
 		python in /usr/bin as some programs depend on it. I would highly recommend using the
 		package manager homebrew to create a python environment for you. The following
-		commands will install homebrew and python
+		commands will install homebrew and python2 (you can add --with-python3 to all of the brew install commands if you want to install python3 as well)
 		</p>
 		</p>
 			<div class="code_box">
@@ -222,7 +231,8 @@
 		<p>
 		For python on Windows 10 I would recommend using <a href="https://www.continuum.io/downloads">
 		Anaconda from Continuum Analytics</a>. It's a distribution of python that contains
-		most of the packages used by GENFIRE all wrapped into a simple-to-use installer.
+		most of the packages used by GENFIRE all wrapped into a simple-to-use installer. You can 
+		use python 2 or 3.<br>
 		Once you have python setup, open up a cmd prompt and navigate to the source directory.
 		That's the same folder as requirements.txt and setup.py
 		</p>

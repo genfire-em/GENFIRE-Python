@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'GENFIRE/gui/GENFIRE_MainWindow.ui'
+# Form implementation generated from reading ui file 'GENFIRE_MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #

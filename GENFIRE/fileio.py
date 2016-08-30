@@ -120,7 +120,7 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
 
     if datatype != arr.dtype:
         arr = arr.astype(datatype)
-    int_header = np.zeros(56,dtype='int32')
+    int_header = np.zeros(56,dtype='int32') #must be 4-byte ints
 
     if (datatype == 'u1'):
         data_flag = 0
@@ -141,7 +141,7 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
     char_header = str(' '*800)
     with open(filename,'wb') as fid:
         fid.write(int_header.tobytes())
-        fid.write(char_header)
+        fid.write(char_header.encode('UTF-8'))
         fid.write(arr.tobytes(order=order))
 
 

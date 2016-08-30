@@ -12,7 +12,6 @@ Copyright 2015-2016. All rights reserved.
 
 
 from __future__ import division
-import numpy as np
 import matplotlib
 matplotlib.use("Qt4Agg")
 import matplotlib.pyplot as plt
@@ -21,8 +20,7 @@ import scipy.io
 import time
 import GENFIRE
 from multiprocessing import Pool
-from GENFIRE.utility import fftn, fftn_fftshift,rfftn, \
-    rfftn_fftshift,ifftn, ifftn_fftshift, irfftn, irfftn_fftshift
+from GENFIRE.utility import *
 
 PI = np.pi
 if __name__ != "__main__":
@@ -655,11 +653,7 @@ class ReconstructionParameters():
         return self.resolutionExtensionSuppressionState
 
     def setNumberOfIterations(self,numIterations):
-        numIterations = numIterations.toInt()
-        if numIterations[1]:
-            numIterations = numIterations[0]
-            if numIterations > 0:
-                self.numIterations = numIterations
+        self.numIterations = numIterations
 
     def getNumberOfIterations(self):
         return self.numIterations
@@ -679,13 +673,13 @@ class ReconstructionParameters():
         return self.displayFigure
 
     def setOversamplingRatio(self, oversamplingRatio):
-        self.oversamplingRatio = oversamplingRatio.toInt()[0]
+        self.oversamplingRatio = int(oversamplingRatio)
 
     def getOversamplingRatio(self):
         return self.oversamplingRatio
 
     def setInterpolationCutoffDistance(self, interpolationCutoffDistance):
-        self.interpolationCutoffDistance = interpolationCutoffDistance.toFloat()[0]
+        self.interpolationCutoffDistance = float(interpolationCutoffDistance)
 
     def getInterpolationCutoffDistance(self):
         return self.interpolationCutoffDistance

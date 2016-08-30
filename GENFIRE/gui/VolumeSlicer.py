@@ -10,7 +10,7 @@ University of California, Los Angeles
 Copyright 2015-2016. All rights reserved.
 """
 
-import VolumeSlicer_MainWindow
+from GENFIRE.gui import VolumeSlicer_MainWindow
 from PyQt4 import QtCore, QtGui
 import matplotlib
 matplotlib.use("Qt4Agg")
@@ -19,6 +19,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import numpy as np
 from functools import partial
+from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
 
 
 class VolumeSlicer(QtGui.QMainWindow):
@@ -132,7 +133,7 @@ class VolumeSlicer(QtGui.QMainWindow):
             self.lockColormap = False
 
     def setSliderFromText(self, slider, text):
-        slider.setValue(text.toInt()[0])
+        slider.setValue(toInt(text))
 
     def setTextFromSlider(self, lineedit, value):
-        lineedit.setText(QtCore.QString(str(value)))
+        lineedit.setText(toQString(value))

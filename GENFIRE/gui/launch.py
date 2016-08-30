@@ -14,19 +14,16 @@ Copyright 2015-2016. All rights reserved.
 from PyQt4 import QtCore, QtGui
 import matplotlib
 matplotlib.use("Qt4Agg")
-import GENFIRE_MainWindow
-import ProjectionCalculator
-import VolumeSlicer
+from GENFIRE.gui import ProjectionCalculator, VolumeSlicer, GENFIRE_MainWindow
 import os
 import sys
 from GENFIRE.reconstruct import ReconstructionParameters
-from GENFIRE.gui.utility import toString, toQString
 if sys.version_info >= (3,0):
-	import GENFIRE_qrc_py3
+	from GENFIRE.gui import GENFIRE_qrc_py3
 else:
-	import GENFIRE_qrc
-from GENFIRE.utility import fftn, fftn_fftshift,rfftn, \
-    rfftn_fftshift,ifftn, ifftn_fftshift, irfftn, irfftn_fftshift
+	from GENFIRE.gui import GENFIRE_qrc
+from GENFIRE.utility import *
+from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
 
 class GenfireMainWindow(QtGui.QMainWindow):
     stop_threads = QtCore.pyqtSignal()
@@ -99,7 +96,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.lineEdit_results.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_numIterations.setText(toQString("100"))
-        self.ui.lineEdit_numIterations.textChanged.connect(self.GENFIRE_ReconstructionParameters.setNumberOfIterations)
+        self.ui.lineEdit_numIterations.textChanged.connect(self.setNumberOfIterations)
         self.ui.lineEdit_numIterations.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_oversamplingRatio.setText(toQString("3"))
@@ -135,6 +132,9 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         self.ui.action_Volume_Slicer.triggered.connect(self.launchVolumeSlicer)
 
+    def setNumberOfIterations(self, value):
+        number_of_iterations = toInt(value)
+        self.GENFIRE_ReconstructionParameters.setNumberOfIterations(number_of_iterations)
     def calculateRfree(self):
         if self.ui.checkBox_rfree.isChecked() == True:
             self.GENFIRE_ReconstructionParameters.calculateRfree = True

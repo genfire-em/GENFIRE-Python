@@ -14,19 +14,22 @@ from PyQt4 import QtCore, QtGui
 import sys
 if sys.version_info >=(3,0):
     def toString(string):
-        str(string)
-else:
+        return str(string)
+    def toQString(string):
+        return str(string)
+    def toFloat(string):
+        return float(string)
+    def toInt(value):
+        return int(value)
+else: #python 2
+    import PyQt4.QtCore
     def toString(string):
         if isinstance(string,QtCore.QString):
             string = unicode(string.toUtf8(),encoding='UTF-8')
         return str(string)
-
-
-import sys
-if sys.version_info >=(3,0):
-    def toQString(string):
-        return str(string)
-else:
-    import PyQt4.QtCore
     def toQString(string):
         return PyQt4.QtCore.QString(string)
+    def toFloat(string):
+        return string.toFloat()[0]
+    def toInt(value):
+        return value.toInt()[0]
