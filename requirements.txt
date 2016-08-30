@@ -1,0 +1,10 @@
+numpy
+matplotlib
+scipy
+cycler
+Pillow
+pytz
+python-dateutil
+six
+pyFFTW
+
