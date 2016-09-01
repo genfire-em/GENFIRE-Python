@@ -114,6 +114,18 @@ h3 {
 	text-decoration:underline;
 /* 	float: left */
 }
+.h2_center {
+	margin-left:10px;
+	font-size: 42px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-weight: bold;
+	background-color: black;
+	color: #ffffff;
+	text-align: center;
+	text-decoration:underline;
+/* 	float: left */
+}
 .h3_left {
 	margin-left:10px;
 	font-size: 20px;

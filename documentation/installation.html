@@ -43,67 +43,17 @@
 
 
   <h1>  Installation </h1>
-  	<div class="h2_left"> Installing GENFIRE from Binaries </div>
-  	<p> 
-		The easiest way to use GENFIRE is to <a href="tutorial.html">download</a> the appropriate precompiled binary for
-		your operating system. These consist of just a single executable file that contains all of the code. No additional
-		steps are needed.
-		There are 64-bit versions for Mac OS X 10.11, Windows 10, and Ubuntu 10.04. It's possible 
-		that the binaries may work on other versions of these operating systems, but as these 
-		are the three that I use at the time of writing this document so they are the three that
-		have been tested.<br>
-	</p>
-		
-	<div class="h2_left"> Installing GENFIRE as a Python package </div><br>
-	<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
-		<p> GENFIRE can make use of pyFFTW, which wraps the FFTW library. I have tested a number of
-		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
-		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
-		the FFTW libraries</a>. If you run into trouble installing this you can skip this step 
-		and GENFIRE will fall back on NumPy's FFT.<br>
-		When compiling FFTW from source on Mac/Linux for pyFFTW I found it necessary to use both
-			<div class="code_box">
-			<div class="code">
-			$ ./configure --enable-threads --enable-shared --enable-float<br>
-			$ make<br>
-			$ sudo make install
-			</div>
-		</div>
-		<p> as well as </p>
-			<div class="code_box">
-			<div class="code">
-			$ ./configure --enable threads --enable-shared --enable-long-double<br>
-			$ make<br>
-			$ sudo make install
-			</div>
-		</div>
-		<p>This is because pyFFTW looks for both the single and double precision versions of FFTW, so you have to compile it twice.<br>
-		Once you have compiled FFTW, the final step is to install pyFFTW with pip</p>
-		
-			<div class="code_box">
-			<div class="code">
-			$ pip install pyfftw
-			</div>
-		</div>
-
-		</p>
-		
 			<div class="h3_left"> Get the Source Code </div>
 
 	<p>
-		To install GENFIRE as a python package, first get the source code from the 
-		<a href="tutorial.html">git repository</a>. Either download the code as a compressed file
-		or clone the repository with
+		To install GENFIRE as a python package, first 
+		<a href="tutorial.html">download the source code</a>. Then follow the procedure for 
+		your operating system.
 	</p>
-		<div class="code_box">
-			<div class="code">
-			$ git clone "some address that I need to change"
-			</div>
-		</div>
-	<p>
-		From here the instructions depend on your OS<br><br>
-  	</p>
-		<div class="h5_left"> Mac OS X </div>
+
+	
+		<div class="h2_center"> Mac OS X </div>
+
 		<p>
 		Python is preinstalled on Mac OS X, but it is generally a bad idea to alter the system
 		python in /usr/bin as some programs depend on it. I would highly recommend using the
@@ -173,7 +123,46 @@
 			</div>
 			</div>
 		
-		<br><br><div class="h5_left"> Linux (Ubuntu 14.04) </div>
+		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
+		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
+		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
+		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
+		the FFTW libraries</a>. Download the source code, decompress it, and navigate into the unpacked directory
+		from your terminal. PyFFTW needs FFTW to be compiled for all precision types, so you have to compile it three times.
+		Use the following commands
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable-threads --enable-shared <br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> as well as </p>
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable threads --enable-shared --enable-float<br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> and finally </p>
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable threads --enable-shared --enable-long-double<br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> Now, install pyFFTW with pip and you're done</p>
+		
+			<div class="code_box">
+			<div class="code">
+			$ pip install pyfftw
+			</div>
+		</div>
+		
+		
+		<br><br><div class="h2_center"> Linux (Ubuntu 14.04) </div>
 		<p>
 			Navigate to the source code directory. That's the same folder as requirements.txt and setup.py</p>
 			<div class="code_box">
@@ -224,10 +213,46 @@
 			$ import GENFIRE
 			</div>
 			</div>
-			
+		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
+		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
+		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
+		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
+		the FFTW libraries</a>. Download the source code, decompress it, and navigate into the unpacked directory
+		from your terminal. PyFFTW needs FFTW to be compiled for all precision types, so you have to compile it three times.
+		Use the following commands
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable-threads --enable-shared <br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> as well as </p>
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable threads --enable-shared --enable-float<br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> and finally </p>
+			<div class="code_box">
+			<div class="code">
+			$ ./configure --enable threads --enable-shared --enable-long-double<br>
+			$ make<br>
+			$ sudo make install
+			</div>
+		</div>
+		<p> Now, install pyFFTW with pip and you're done</p>
+		
+			<div class="code_box">
+			<div class="code">
+			$ pip install pyfftw
+			</div>
+		</div>
 			
 		
-		<br><br><div class="h5_left"> Windows 10 </div>
+		<br><br><div class="h2_center"> Windows 10 </div>
 		<p>
 		For python on Windows 10 I would recommend using <a href="https://www.continuum.io/downloads">
 		Anaconda from Continuum Analytics</a>. It's a distribution of python that contains
@@ -239,7 +264,6 @@
 			<div class="code_box">
 			<div class="code">
 			$ chdir C:\path\to\GENFIRE <br>
-			$ import GENFIRE
 			</div>
 			</div>
 			<p>
@@ -251,9 +275,8 @@
 			</div>
 			</div>
 			<p>
-			You will also need <a href="https://www.riverbankcomputing.com/software/sip/download">sip</a>
-			and <a href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a>.
-			Download the binary installer for your version of Windows.
+			You will also need <a href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a>.
+			Download the appropriate binary installer for your version of Windows and Python.
 			</p>
 			<p>
 			Once you have installed the dependencies, install GENFIRE with</p>
@@ -293,6 +316,17 @@
 			</div>
 			</div>
 			<p>
+			
+		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
+		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
+		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
+		On Windows, pyFFTW can be installed simply with		
+			<div class="code_box">
+			<div class="code">
+			$ C:\path\to\Anaconda\Scripts\pip install pyfftw
+			</div>
+		</div>
+			
 		<p>
 		<br><br><div class="h5_left"> Installation Troubleshooting </div>
 		<p>
