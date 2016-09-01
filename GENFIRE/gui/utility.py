@@ -26,10 +26,16 @@ else: #python 2
     def toString(string):
         if isinstance(string,QtCore.QString):
             string = unicode(string.toUtf8(),encoding='UTF-8')
-        return str(string)
+        return string
     def toQString(string):
-        return PyQt4.QtCore.QString(string)
-    def toFloat(string):
-        return string.toFloat()[0]
+        return PyQt4.QtCore.QString(str(string))
+    def toFloat(value):
+        if isinstance(value,QtCore.QString):
+            return value.toFloat()[0]
+        else:
+            return float(value)
     def toInt(value):
-        return value.toInt()[0]
+        if isinstance(value,QtCore.QString):
+            return value.toInt()[0]
+        else:
+            return int(value)

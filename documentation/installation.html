@@ -114,14 +114,16 @@
 			</div>
 			</div>
 		<p>
-		You can also use GENFIRE from python
-		</p>
+			You can also use the code as any other python package. Here's an example of launching the gui from within python
+			</p>
 			<div class="code_box">
 			<div class="code">
 			$ python<br>
-			$ import GENFIRE
+			$ import GENFIRE<br>
+			$ GENFIRE.gui.launch.main()
 			</div>
 			</div>
+			<p>
 		
 		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
 		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
@@ -205,14 +207,16 @@
 			</div>
 			</div>
 		<p>
-		You can also use GENFIRE from python
-		</p>
+			You can also use the code as any other python package. Here's an example of launching the gui from within python
+			</p>
 			<div class="code_box">
 			<div class="code">
 			$ python<br>
-			$ import GENFIRE
+			$ import GENFIRE<br>
+			$ GENFIRE.gui.launch.main()
 			</div>
 			</div>
+			<p>
 		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
 		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
 		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
@@ -261,58 +265,30 @@
 		Once you have python setup, open up a cmd prompt and navigate to the source directory.
 		That's the same folder as requirements.txt and setup.py
 		</p>
-			<div class="code_box">
-			<div class="code">
-			$ chdir C:\path\to\GENFIRE <br>
-			</div>
-			</div>
+	
 			<p>
-			Install (most of the) dependencies using pip</p>
-			<div class="code_box">
-			<div class="code">
-			$ C:\path\to\Anaconda\Scripts\pip install --upgrade pip<br>
-			$ C:\path\to\Anaconda\Scripts\pip install -r requirements.txt
-			</div>
-			</div>
-			<p>
-			You will also need <a href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a>.
-			Download the appropriate binary installer for your version of Windows and Python.
-			</p>
-			<p>
-			Once you have installed the dependencies, install GENFIRE with</p>
+			Now install GENFIRE with</p>
 			<div class="code_box">
 			<div class="code">
 			$ C:\path\to\Anaconda\python setup.py install<br>
 			</div>
 			</div>
 			<p>
-			If everything worked you can now use GENFIRE from a python console.
+			If everything worked you can now launch the gui.
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ python<br>
-			$ import GENFIRE
+			$ C:\path\to\Anaconda\python GENFIRE\gui\launch.py
 			</div>
 			</div>
 
-			In principle you should also be able to run GENFIRE from the terminal with
+			You can also use the code as any other python package. Here's an example of launching the gui from within python
 			</p>
 			<div class="code_box">
 			<div class="code">
-			$ genfire
-			</div>
-			</div>
-			<p>
-			however, this type of bash executable doesn't appear to work the same is it does for Mac/Linux.
-			Although my intentions were pure, at this point I must admit I am not a Windows user. If
-			any of you who are much wiser than I know a solution, feel free to email me.
-			</p>
-			<p>
-			Instead, you can just run the gui as a python script
-			</p>
-			<div class="code_box">
-			<div class="code">
-			$ C:\path\to\Anaconda\python \path\to\GENFIRE\GENFIRE\gui\launch.py
+			$ python<br>
+			$ import GENFIRE<br>
+			$ GENFIRE.gui.launch.main()
 			</div>
 			</div>
 			<p>
