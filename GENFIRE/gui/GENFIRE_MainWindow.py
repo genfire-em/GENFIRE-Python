@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'GENFIRE_MainWindow.ui'
+# Form implementation generated from reading ui file 'GENFIRE/gui/GENFIRE_MainWindow.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -25,13 +25,19 @@ except AttributeError:
 class Ui_GENFIRE_MainWindow(object):
     def setupUi(self, GENFIRE_MainWindow):
         GENFIRE_MainWindow.setObjectName(_fromUtf8("GENFIRE_MainWindow"))
-        GENFIRE_MainWindow.resize(819, 1024)
+        GENFIRE_MainWindow.setEnabled(True)
+        GENFIRE_MainWindow.resize(807, 876)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(GENFIRE_MainWindow.sizePolicy().hasHeightForWidth())
+        GENFIRE_MainWindow.setSizePolicy(sizePolicy)
         self.centralWidget = QtGui.QWidget(GENFIRE_MainWindow)
         self.centralWidget.setObjectName(_fromUtf8("centralWidget"))
-        self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralWidget)
-        self.verticalLayout_4.setMargin(11)
-        self.verticalLayout_4.setSpacing(6)
-        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.gridLayout_4 = QtGui.QGridLayout(self.centralWidget)
+        self.gridLayout_4.setMargin(11)
+        self.gridLayout_4.setSpacing(6)
+        self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setMargin(11)
         self.horizontalLayout_3.setSpacing(6)
@@ -39,7 +45,7 @@ class Ui_GENFIRE_MainWindow(object):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
         self.nameWidget = QtGui.QWidget(self.centralWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.nameWidget.sizePolicy().hasHeightForWidth())
@@ -50,7 +56,7 @@ class Ui_GENFIRE_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.nameWidget)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_3)
+        self.gridLayout_4.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setMargin(11)
         self.verticalLayout_3.setSpacing(6)
@@ -205,7 +211,7 @@ class Ui_GENFIRE_MainWindow(object):
         self.gridLayout_2.addWidget(self.checkBox_rfree, 3, 3, 1, 1)
         self.horizontalLayout_2.addLayout(self.gridLayout_2)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
-        self.verticalLayout_4.addLayout(self.verticalLayout_3)
+        self.gridLayout_4.addLayout(self.verticalLayout_3, 1, 0, 1, 1)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setMargin(11)
         self.horizontalLayout_4.setSpacing(6)
@@ -219,7 +225,7 @@ class Ui_GENFIRE_MainWindow(object):
         self.btn_reconstruct.setMinimumSize(QtCore.QSize(775, 0))
         self.btn_reconstruct.setObjectName(_fromUtf8("btn_reconstruct"))
         self.horizontalLayout_4.addWidget(self.btn_reconstruct)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
+        self.gridLayout_4.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setMargin(11)
         self.verticalLayout_2.setSpacing(6)
@@ -228,7 +234,7 @@ class Ui_GENFIRE_MainWindow(object):
         self.log.setMinimumSize(QtCore.QSize(100, 0))
         self.log.setObjectName(_fromUtf8("log"))
         self.verticalLayout_2.addWidget(self.log)
-        self.verticalLayout_4.addLayout(self.verticalLayout_2)
+        self.gridLayout_4.addLayout(self.verticalLayout_2, 3, 0, 1, 1)
         GENFIRE_MainWindow.setCentralWidget(self.centralWidget)
         self.mainToolBar = QtGui.QToolBar(GENFIRE_MainWindow)
         self.mainToolBar.setObjectName(_fromUtf8("mainToolBar"))
@@ -237,7 +243,7 @@ class Ui_GENFIRE_MainWindow(object):
         self.statusBar.setObjectName(_fromUtf8("statusBar"))
         GENFIRE_MainWindow.setStatusBar(self.statusBar)
         self.menuBar = QtGui.QMenuBar(GENFIRE_MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 819, 22))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 807, 22))
         self.menuBar.setObjectName(_fromUtf8("menuBar"))
         self.menuTools = QtGui.QMenu(self.menuBar)
         self.menuTools.setObjectName(_fromUtf8("menuTools"))

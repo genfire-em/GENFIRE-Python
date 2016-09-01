@@ -72,7 +72,7 @@
 			Once that's done, navigate to the top source code directory. That's the same
 			folder as requirements.txt and setup.py</p>
 			<div class="code_box">
-			<div class="code">
+			<div class="code"> 
 			$ cd /path/to/GENFIRE
 			</div>
 			</div>
@@ -87,8 +87,7 @@
 			
 		</p>
 		<p>
-		You will also need sip and PyQt4, which unfortunately cannot be installed with pip. They're easy 
-		to install using homebrew.
+		You will also need sip and PyQt4:
 		</p>
 			<div class="code_box">
 			<div class="code">
@@ -155,14 +154,24 @@
 			$ sudo make install
 			</div>
 		</div>
-		<p> Now, install pyFFTW with pip and you're done</p>
+		<p> Now, install pyFFTW with pip and and test that it worked</p>
 		
 			<div class="code_box">
 			<div class="code">
-			$ pip install pyfftw
+			$ pip install pyfftw<br>
+			$ python -c "import pyfftw"
 			</div>
 		</div>
-		
+		<p>If you don't receive an error, then it was successful. If you get an error along the lines of
+		"ImportError: libfftw3l.so cannot open shared object file" then you need to set your DYLD_LIBRARY_PATH
+		environmental variable so that pyFFTW can find the libraries</p>
+		<div class="code_box">
+			<div class="code">
+			$ export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH<br>
+			</div>
+		</div>
+		<p>If the fftw .so files are somewhere other than /usr/local/lib, then you should replace that part appropriately.
+		To make this change permanent add the above line to the end of your ~/.bash_profile</p>
 		
 		<br><br><div class="h2_center"> Linux (Ubuntu 14.04) </div>
 		<p>
@@ -247,14 +256,24 @@
 			$ sudo make install
 			</div>
 		</div>
-		<p> Now, install pyFFTW with pip and you're done</p>
+		<p> Now, install pyFFTW with pip and and test that it worked</p>
 		
 			<div class="code_box">
 			<div class="code">
-			$ pip install pyfftw
+			$ pip install pyfftw<br>
+			$ python -c "import pyfftw"
 			</div>
 		</div>
-			
+		<p>If you don't receive an error, then it was successful. If you get an error along the lines of
+		"ImportError: libfftw3l.so cannot open shared object file" then you need to set your LD_LIBRARY_PATH
+		environmental variable so that pyFFTW can find the libraries</p>
+		<div class="code_box">
+			<div class="code">
+			$ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH<br>
+			</div>
+		</div>
+		<p>If the fftw .so files are somewhere other than /usr/local/lib, then you should replace that part appropriately.
+		To make this change permanent add the above line to the end of your ~/.bashrc</p>
 		
 		<br><br><div class="h2_center"> Windows 10 </div>
 		<p>
