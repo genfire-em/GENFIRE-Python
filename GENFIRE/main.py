@@ -136,7 +136,7 @@ def main(reconstruction_parameters):
         R_freeInd_complexY = []
         R_freeInd_complexZ = []
         R_freeVals_complex = []
-        shell_thickness_pixels = 3 # pixel thickness of an individual shell of Rfree points
+        shell_thickness_pixels = 1 # pixel thickness of an individual shell of Rfree points
         numberOfBins = int(round(dims[0]/2/shell_thickness_pixels)) # number of frequency bins. Rfree will be tracked within each shell separately
         percentValuesForRfree = 0.05 # percentage of measured points to withhold
         spatialFrequencyForRfree = np.linspace(0,1,numberOfBins+1)
