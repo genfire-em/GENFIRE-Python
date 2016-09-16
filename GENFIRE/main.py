@@ -75,6 +75,9 @@ def main(reconstruction_parameters):
     resolutionExtensionSuppressionState     = reconstruction_parameters.resolutionExtensionSuppressionState
     calculateRFree                          = reconstruction_parameters.calculateRfree
     useDefaultSupport                       = reconstruction_parameters.useDefaultSupport
+    use_positivity                          = reconstruction_parameters.constraint_positivity
+    use_support                             = reconstruction_parameters.constraint_support
+
     if reconstruction_parameters.isInitialObjectDefined:
             filename_initialObject          = reconstruction_parameters.initialObjectFilename
     else:
@@ -181,7 +184,7 @@ def main(reconstruction_parameters):
         print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
         constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
 
-    reconstructionOutputs = GENFIRE.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure)
+    reconstructionOutputs = GENFIRE.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support)
 
     # reclaim original array size. ncBig is center of oversampled array, and n2 is the half-width of original array
     ncBig = paddedDim//2

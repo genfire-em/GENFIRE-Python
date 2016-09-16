@@ -24,7 +24,7 @@ from GENFIRE.utility import *
 
 PI = np.pi
 if __name__ != "__main__":
-    def reconstruct(numIterations, initialObject, support, measuredK, constraintIndicators, constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure):
+    def reconstruct(numIterations, initialObject, support, measuredK, constraintIndicators, constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity=True, use_support=True):
         """
          * reconstruct *
 
@@ -94,8 +94,10 @@ if __name__ != "__main__":
                 bestErr = 1e30 #reset error
                 currentCutoffNum+=1#update constraint set number
 
-            initialObject[initialObject<0] = 0 #enforce positivity
-            initialObject = initialObject * support #enforce support
+            if use_positivity:
+                initialObject[initialObject<0] = 0 #enforce positivity
+            if use_support:
+                initialObject = initialObject * support #enforce support
 
             #take FFT of current reconstruction
             k = rfftn(initialObject)
@@ -575,6 +577,8 @@ class ReconstructionParameters():
         self.useDefaultSupport = True
         self.calculateRfree = True
         self.initialObjectFilename = None
+        self.constraint_positivity = True
+        self.constraint_support    = True
 
     def checkParameters(self): #verify file extensions are supported
         import os

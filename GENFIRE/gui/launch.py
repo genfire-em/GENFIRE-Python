@@ -128,9 +128,15 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.checkBox_default_support.toggled.connect(self.toggleUseDefaultSupport)
         self.ui.checkBox_default_support.setChecked(True)
 
+        self.ui.checkBox_support_constraint.setChecked(True)
+        self.ui.checkBox_positivity_constraint.setChecked(True)
+        self.ui.checkBox_support_constraint.toggled.connect(self.toggleSupportConstraint)
+        self.ui.checkBox_positivity_constraint.toggled.connect(self.togglePositivityConstraint)
+
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
         self.ui.action_Volume_Slicer.triggered.connect(self.launchVolumeSlicer)
+
 
     def setNumberOfIterations(self, value):
         number_of_iterations = toInt(value)
@@ -176,6 +182,18 @@ class GenfireMainWindow(QtGui.QMainWindow):
         else:
              self.ui.lineEdit_io.setStyleSheet("background-color: white")
              self.ui.lineEdit_io.setEnabled(True)
+
+    def toggleSupportConstraint(self):
+        if self.ui.checkBox_support_constraint.isChecked():
+            self.GENFIRE_ReconstructionParameters.constraint_support = True
+        else:
+            self.GENFIRE_ReconstructionParameters.constraint_support = False
+
+    def togglePositivityConstraint(self):
+        if self.ui.checkBox_positivity_constraint.isChecked():
+            self.GENFIRE_ReconstructionParameters.constraint_positivity = True
+        else:
+            self.GENFIRE_ReconstructionParameters.constraint_positivity = False
 
     def toggleUseDefaultSupport(self):
         if self.ui.checkBox_default_support.isChecked():
