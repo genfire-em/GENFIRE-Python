@@ -340,28 +340,41 @@ if __name__ != "__main__":
         minInvThresh = 0.00001
         num_projections = np.shape(projections)[2]
         normVECs = np.zeros((num_projections,3))
-        rotMATs = np.zeros((3,3,num_projections))
-        phis = angles[:, 0] * PI/180
-        thetas = angles[:, 1] * PI/180
-        psis = angles[:, 2] * PI/180
+        rotMATs  = np.zeros((3,3,num_projections))
+        phis     = angles[:, 0] * PI/180
+        thetas   = angles[:, 1] * PI/180
+        psis     = angles[:, 2] * PI/180
         init_normvec = np.array([0, 0, 1],dtype=float)
         for ang_num in range(num_projections):
-            phi = phis[ang_num]
+            phi   = phis[ang_num]
             theta = thetas[ang_num]
-            psi = psis[ang_num]
-            R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) ,np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
+            psi   = psis[ang_num]
+            R     = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) ,np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
             [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
             [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
             rotMATs[:, :, ang_num] = R.T
             normVECs[ang_num, :] = np.dot(R.T, init_normvec.T)
-        k1 = np.arange(-1*(n1//2), 1, 1, dtype=float)
-        k2 = np.arange(-1 * n2//2, n2//2 + 1, 1, dtype=float)
-        k3 = np.arange(-1 * n1//2, n1//2 + 1, 1, dtype=float)
+        k1               = np.arange(-1*(n1//2), 1, 1, dtype=float)
+        k1_full          = np.arange(-1*(n1//2), n1//2 + 1, 1, dtype=float)
+        k2               = np.arange(-1 * n2//2, n2//2 + 1, 1, dtype=float)
+        k3               = np.arange(-1 * n1//2, n1//2 + 1, 1, dtype=float)
         (null, K1, null) = np.meshgrid(k2, k1, k3)
-        FS =
-        CW = 
-        from scipy.io import loadmat, savemat
-        savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"K1":K1})
+        FS               = np.zeros_like(K1)
+        Numpt            = np.zeros_like(K1)
+        invSumTotWeight  = np.zeros_like(K1)
+        # CW = np.zeros_like(K1)
+        [K20, K10] = np.meshgrid(k2,k1)
+
+        for proj_num in range(num_projections):
+            curr_proj = projections[:, :, proj_num]
+            [K2, K1, K3] = np.meshgrid(k2,k1,k3)
+            D = pointToPlaneDistance(np.vstack((K1.flatten(order="F"), K2.flatten(order="F"), K3.flatten(order="F"))).T, normVECs[proj_num,:])
+            Dind = np.where(D < interpolationCutoffDistance)
+            CP = pointToPlaneClosest(np.vstack((K1.flatten(order="F")[[Dind]], K2.flatten(order="F")[[Dind]], K3.flatten(order="F")[[Dind]])).T, normVECs[proj_num,:].T,np.zeros(np.size(Dind),dtype=float))
+            CP_plane = np.dot(np.linalg.inv(rotMATs[:, :, proj_num]), CP.T)
+            from scipy.io import loadmat, savemat
+            savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"CP_plane":CP_plane})
+
 
         # savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"rotMATs":rotMATs,"normVECs":normVECs})
         pass
