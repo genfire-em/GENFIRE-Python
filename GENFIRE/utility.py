@@ -397,3 +397,58 @@ def generateKspaceIndices(obj):
     kx, ky, kz = np.meshgrid(vec1,vec0,vec2)
     Kindices = np.sqrt(kx**2 + ky**2 + kz**2)
     return Kindices
+
+def pointToPlaneDistance(points, norm_vec):
+    """
+    * pointToPlaneDistance *
+
+    compute distance from point to a plane with normal vector norm_vec passing through origin
+
+    :param points: num_points x 3 array of (x,y,z) points
+    :param norm_vec: (a,b,c) normal vector defining the plane ax + by + cz = 0
+    :return: numpy array containing distance to plane
+
+    Author: Yongsoo Yang
+    Transcribed from MATLAB by Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+    """
+    from numpy.linalg import norm
+    norm_vec = norm_vec / norm(norm_vec)
+    if np.ndim(points)>1:
+        num_rows = np.shape(points)[0]
+        distances = np.empty(num_rows,dtype=float)
+        for row_num in range(num_rows):
+            distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
+        return distances
+    return np.abs(np.dot(points,norm_vec))
+
+def pointToPlaneClosest(points, norm_vec, distances):
+    """
+    * pointToPlaneClosest *
+
+    compute the closest point in the plane defined by normal vector norm_vec to each
+    point in points
+
+    :param points: num_points x 3 array of (x,y,z) points
+    :param norm_vec: (a,b,c) normal vector defining the plane ax + by + cz = 0
+    :param distances: magnitude of distance to plane (see pointToPlaneDistance)
+    :return:  numpy array containing the coordinates of the closest points
+
+    Author: Yongsoo Yang
+    Transcribed from MATLAB by Alan (AJ) Pryor, Jr.
+    Jianwei (John) Miao Coherent Imaging Group
+    University of California, Los Angeles
+    Copyright 2015-2016. All rights reserved.
+    """
+    from numpy.linalg import norm
+    if np.ndim(points)>1:
+        num_rows = np.shape(points)[0]
+        closest_points = np.empty((num_rows,3),dtype=float)
+        for row_num in range(num_rows):
+            closest_points[row_num,:] = points[row_num, :] + (distances[row_num]
+                                        - np.dot(points[row_num, :], norm_vec)) * norm_vec / np.dot(norm_vec,norm_vec)
+        return closest_points
+    return points + (distances- np.dot(points, norm_vec)) * norm_vec
+

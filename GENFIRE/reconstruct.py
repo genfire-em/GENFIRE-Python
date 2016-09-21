@@ -333,6 +333,38 @@ if __name__ != "__main__":
 
 
 
+    def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance):
+        from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
+        # (n1_ori, n2_ori) = (np.shape(projections)[0],np.shape(projections)[1])
+        (n1, n2) = (np.shape(projections)[0],np.shape(projections)[1])
+        minInvThresh = 0.00001
+        num_projections = np.shape(projections)[2]
+        normVECs = np.zeros((num_projections,3))
+        rotMATs = np.zeros((3,3,num_projections))
+        phis = angles[:, 0] * PI/180
+        thetas = angles[:, 1] * PI/180
+        psis = angles[:, 2] * PI/180
+        init_normvec = np.array([0, 0, 1],dtype=float)
+        for ang_num in range(num_projections):
+            phi = phis[ang_num]
+            theta = thetas[ang_num]
+            psi = psis[ang_num]
+            R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) ,np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
+            [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
+            [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
+            rotMATs[:, :, ang_num] = R.T
+            normVECs[ang_num, :] = np.dot(R.T, init_normvec.T)
+        k1 = np.arange(-1*(n1//2), 1, 1, dtype=float)
+        k2 = np.arange(-1 * n2//2, n2//2 + 1, 1, dtype=float)
+        k3 = np.arange(-1 * n1//2, n1//2 + 1, 1, dtype=float)
+        (null, K1, null) = np.meshgrid(k2, k1, k3)
+        FS =
+        CW = 
+        from scipy.io import loadmat, savemat
+        savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"K1":K1})
+
+        # savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"rotMATs":rotMATs,"normVECs":normVECs})
+        pass
 
     def readMAT(filename):
         """
