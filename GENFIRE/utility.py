@@ -106,9 +106,9 @@ def hermitianSymmetrize(volume):
 
 
     else: # otherwise, save yourself the trouble of copying the matrix over. See previous comments for line-by-line
-        numberOfValues = (volume != 0).astype(int)
-        volume += np.conjugate(volume[::-1, ::-1, ::-1])
-        numberOfValues += numberOfValues[::-1, ::-1, ::-1]
+        numberOfValues = (volume != 0).astype(float)
+        volume = volume + np.conjugate(volume[::-1, ::-1, ::-1])
+        numberOfValues = numberOfValues + numberOfValues[::-1, ::-1, ::-1]
         volume[numberOfValues != 0] /= numberOfValues[numberOfValues != 0]
         volume[np.isnan(volume)] = 0
         return volume
@@ -415,14 +415,30 @@ def pointToPlaneDistance(points, norm_vec):
     Copyright 2015-2016. All rights reserved.
     """
     from numpy.linalg import norm
+    print("plane distance\n")
+    print(np.shape(points))
+    print(np.shape(norm_vec))
+    print(points.dtype)
+    print(norm_vec.dtype)
     norm_vec = norm_vec / norm(norm_vec)
     if np.ndim(points)>1:
+        print ("broadcasting")
         num_rows = np.shape(points)[0]
-        distances = np.empty(num_rows,dtype=float)
-        for row_num in range(num_rows):
-            distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
+        distances = np.sum(points*norm_vec,axis=1)
+        # distances = np.empty(num_rows,dtype=float)
+        # for row_num in range(num_rows):
+        #     distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
         return distances
     return np.abs(np.dot(points,norm_vec))
+    # from numpy.linalg import norm
+    # norm_vec = norm_vec / norm(norm_vec)
+    # if np.ndim(points)>1:
+    #     num_rows = np.shape(points)[0]
+    #     distances = np.empty(num_rows,dtype=float)
+    #     for row_num in range(num_rows):
+    #         distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
+    #     return distances
+    # return np.abs(np.dot(points,norm_vec))
 
 def pointToPlaneClosest(points, norm_vec, distances):
     """

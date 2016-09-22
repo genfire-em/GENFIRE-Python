@@ -335,7 +335,6 @@ if __name__ != "__main__":
 
     def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance):
         from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
-        # (n1_ori, n2_ori) = (np.shape(projections)[0],np.shape(projections)[1])
         (n1, n2) = (np.shape(projections)[0],np.shape(projections)[1])
         minInvThresh = 0.00001
         num_projections = np.shape(projections)[2]
@@ -359,25 +358,65 @@ if __name__ != "__main__":
         k2               = np.arange(-1 * n2//2, n2//2 + 1, 1, dtype=float)
         k3               = np.arange(-1 * n1//2, n1//2 + 1, 1, dtype=float)
         (null, K1, null) = np.meshgrid(k2, k1, k3)
-        FS               = np.zeros_like(K1)
+        FS               = np.zeros_like(K1, dtype=complex)
         Numpt            = np.zeros_like(K1)
-        invSumTotWeight  = np.zeros_like(K1)
-        # CW = np.zeros_like(K1)
-        [K20, K10] = np.meshgrid(k2,k1)
+        invSumTotWeight  = np.zeros_like(K1, dtype=float)
+        [K20, K10] = np.meshgrid(k2[:-1],k1_full[:-1])
+        K20 = K20.flatten()
+        K10 = K10.flatten()
+        try:
+            for proj_num in range(num_projections):
+                curr_proj = projections[:, :, proj_num].flatten()
+                [K2, K1, K3] = np.meshgrid(k2,k1,k3)
+                D = pointToPlaneDistance(np.vstack((K1.flatten(order="F"), K2.flatten(order="F"), K3.flatten(order="F"))).T, normVECs[proj_num,:])
+                Dind = np.array(np.where(D < interpolationCutoffDistance))
+                CP = pointToPlaneClosest(np.vstack((K1.flatten(order="F")[[Dind]], K2.flatten(order="F")[[Dind]], K3.flatten(order="F")[[Dind]])).T, normVECs[proj_num,:].T,np.zeros(np.size(Dind),dtype=float))
+                CP_plane = np.dot(np.linalg.inv(rotMATs[:, :, proj_num]), CP.T)
 
-        for proj_num in range(num_projections):
-            curr_proj = projections[:, :, proj_num]
-            [K2, K1, K3] = np.meshgrid(k2,k1,k3)
-            D = pointToPlaneDistance(np.vstack((K1.flatten(order="F"), K2.flatten(order="F"), K3.flatten(order="F"))).T, normVECs[proj_num,:])
-            Dind = np.where(D < interpolationCutoffDistance)
-            CP = pointToPlaneClosest(np.vstack((K1.flatten(order="F")[[Dind]], K2.flatten(order="F")[[Dind]], K3.flatten(order="F")[[Dind]])).T, normVECs[proj_num,:].T,np.zeros(np.size(Dind),dtype=float))
-            CP_plane = np.dot(np.linalg.inv(rotMATs[:, :, proj_num]), CP.T)
-            from scipy.io import loadmat, savemat
-            savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"CP_plane":CP_plane})
+                Gind = Dind[0,(abs(CP_plane[0,:]) <= n1/2) & (abs(CP_plane[1,:]) <= n2/2)]
+                G_CP_plane = CP_plane[:,( abs(CP_plane[0,:]) <= n1/2 )& (abs(CP_plane[1,:]) <= n2/2) ]
+                nonzero_ind = np.where(curr_proj!=0)
+                X = np.zeros((np.shape(G_CP_plane)[1], 1), dtype=float)
+                Y = np.zeros((np.shape(G_CP_plane)[1], 1), dtype=float)
+                X[:, 0] = G_CP_plane[0, :]
+                Y[:, 0] = G_CP_plane[1, :]
+                Fpoints = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * X / n1 + K20[nonzero_ind] * Y / n2  ) ) ,axis=0)
+                distances = D[Gind]
+                distances[ distances < minInvThresh ] = minInvThresh
+                currTotWeight = 1 / distances
+                Gind = np.unravel_index(Gind, np.shape(FS), order="F")
+                FS[Gind] = FS[Gind] * invSumTotWeight[Gind] + currTotWeight * Fpoints
+                invSumTotWeight[Gind] = invSumTotWeight[Gind] + currTotWeight
+                FS[Gind] = FS[Gind] / invSumTotWeight[Gind]
+                Numpt[Gind] = Numpt[Gind] + 1
+        except:
+            for proj_num in range(num_projections):
+                curr_proj = projections[:, :, proj_num].flatten()
+                [K2, K1, K3] = np.meshgrid(k2,k1,k3)
+                D = pointToPlaneDistance(np.vstack((K1.flatten(order="F"), K2.flatten(order="F"), K3.flatten(order="F"))).T, normVECs[proj_num,:])
+                Dind = np.array(np.where(D < interpolationCutoffDistance))
+                CP = pointToPlaneClosest(np.vstack((K1.flatten(order="F")[[Dind]], K2.flatten(order="F")[[Dind]], K3.flatten(order="F")[[Dind]])).T, normVECs[proj_num,:].T,np.zeros(np.size(Dind),dtype=float))
+                CP_plane = np.dot(np.linalg.inv(rotMATs[:, :, proj_num]), CP.T)
 
+                Gind = Dind[0,(abs(CP_plane[0,:]) <= n1/2) & (abs(CP_plane[1,:]) <= n2/2)]
+                G_CP_plane = CP_plane[:,( abs(CP_plane[0,:]) <= n1/2 )& (abs(CP_plane[1,:]) <= n2/2) ]
+                Fpoints = np.zeros(np.shape(G_CP_plane)[1], dtype=complex)
 
-        # savemat("/Users/ajpryor/Downloads/GENFIRE_griddings_20160824/debug.mat",{"rotMATs":rotMATs,"normVECs":normVECs})
-        pass
+                nonzero_ind = np.where(curr_proj!=0)
+                for i in range(np.shape(G_CP_plane)[1]):
+                    Fpoints[i] = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * G_CP_plane[0, i] / n1 + K20[nonzero_ind] * G_CP_plane[1, i] / n2  ) ) )
+                distances = D[Gind]
+                distances[ distances < minInvThresh ] = minInvThresh
+                currTotWeight = 1 / distances
+                Gind = np.unravel_index(Gind, np.shape(FS), order="F")
+                FS[Gind] = FS[Gind] * invSumTotWeight[Gind] + currTotWeight * Fpoints
+                invSumTotWeight[Gind] = invSumTotWeight[Gind] + currTotWeight
+                FS[Gind] = FS[Gind] / invSumTotWeight[Gind]
+                Numpt[Gind] = Numpt[Gind] + 1
+        # measuredK = np.zeros((n1,n2,n1), dtype=complex)
+        measuredK = np.zeros((n1+1,n2+1,n1+1), dtype=complex)
+        measuredK[:n1//2 + 1, :, :] = FS[:, :, :]
+        return GENFIRE.utility.hermitianSymmetrize(measuredK)[:-1,:-1,:-1]
 
     def readMAT(filename):
         """
