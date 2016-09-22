@@ -339,6 +339,66 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
 
     # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
     return np.real(ifftn_fftshift(projection))
+
+
+def calculateProjection_DFT(model, phi, theta, psi):
+    """
+    * calculateProjection_interp *
+
+    Calculate a projection of a 3D volume using the Discrete Fourier Transform (DFT)
+
+    :param model: numpy array holding the model
+    :param phi: euler angle 1
+    :param theta: euler angle 2
+    :param psi: euler angle 3
+    :return: projection
+    """
+
+    # projection = None
+    dims = np.shape(model)
+    Xcenter = round(dims[0]//2)
+    Ycenter = round(dims[1]//2)
+    Zcenter = round(dims[2]//2)
+
+    # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
+    phi *= PI/180
+    theta *= PI/180
+    psi *= PI/180
+
+    R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) , np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
+    [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
+    [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
+
+    R = R.T
+
+    # build coordinates of 3D FFT
+    # kx, ky, kz = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), np.arange(1,dims[2]-Zcenter))
+
+    kx = np.arange(0, dims[0])-Xcenter
+    ky = np.arange(0, dims[1])-Ycenter
+    kz = np.arange(0, dims[2])-Zcenter
+
+    # construct interpolator function that does the actual computation
+    interpolator = RegularGridInterpolator((kx, ky, kz), model, bounds_error=False, fill_value=0)
+
+    # build coordinates of the slice we want to calculate
+    kx_slice, ky_slice, kz_slice = np.meshgrid((np.arange(0, dims[0])-Xcenter), (np.arange(0, dims[1])-Ycenter), 0)
+
+    # rotate coordinates
+    rotKCoords = np.zeros([3, np.size(kx_slice)])
+    rotKCoords[0, :] = np.reshape(kx_slice, [1, np.size(kx_slice)])
+    rotKCoords[1, :] = np.reshape(ky_slice, [1, np.size(ky_slice)])
+    rotKCoords[2, :] = np.reshape(kz_slice, [1, np.size(kz_slice)])
+    rotKCoords = np.dot(R, rotKCoords)
+
+    projection = interpolator(rotKCoords.T)
+    projection = np.reshape(projection, [dims[0], dims[1]], order='F')
+
+
+    # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
+    return np.real(ifftn_fftshift(projection))
+
+
 def generateKspaceIndices(obj):
     """
     * generateKspaceIndices *
@@ -419,9 +479,9 @@ def pointToPlaneDistance(points, norm_vec):
     if np.ndim(points)>1:
         num_rows = np.shape(points)[0]
         distances = np.abs(np.sum(points*norm_vec,axis=1))
-        # distances = np.empty(num_rows,dtype=float)
-        # for row_num in range(num_rows):
-        #     distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
+#         distances = np.empty(num_rows,dtype=float)
+#       for row_num in range(num_rows):
+#             distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
         return distances
     return np.abs(np.dot(points,norm_vec))
     # from numpy.linalg import norm
@@ -454,8 +514,8 @@ def pointToPlaneClosest(points, norm_vec, distances):
     """
     from numpy.linalg import norm
     if np.ndim(points)>1:
-        num_rows = np.shape(points)[0]
-        closest_points = np.empty((num_rows,3),dtype=float)
+    #        num_rows = np.shape(points)[0]
+    #        closest_points = np.empty((num_rows,3),dtype=float)
 
         closest_points = points + ( (distances - np.sum(points * norm_vec)) * np.reshape(norm_vec,(3,1)) / np.dot(norm_vec,norm_vec) ).T
         # for row_num in range(num_rows):

@@ -118,6 +118,9 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
         self.ui.radioButton_extension.toggled.connect(self.selectResolutionExtensionSuppressionState)
 
+        self.ui.radioButton_FFT.setChecked(True)
+        self.ui.radioButton_DFT.toggled.connect(self.setGriddingMethod)
+        self.ui.radioButton_FFT.toggled.connect(self.setGriddingMethod)
 
         ## Check Boxes
         self.ui.checkBox_rfree.setChecked(True)
@@ -141,6 +144,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
     def setNumberOfIterations(self, value):
         number_of_iterations = toInt(value)
         self.GENFIRE_ReconstructionParameters.setNumberOfIterations(number_of_iterations)
+
     def calculateRfree(self):
         if self.ui.checkBox_rfree.isChecked() == True:
             self.GENFIRE_ReconstructionParameters.calculateRfree = True
@@ -154,6 +158,12 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.GENFIRE_ProjectionCalculator.emit_message_signal.connect(self.receive_msg)
         self.GENFIRE_ProjectionCalculator.update_filenames_signal.connect(self.updateFilenames)
         self.GENFIRE_ProjectionCalculator.show()
+
+    def setGriddingMethod(self):
+        if self.ui.radioButton_DFT.isChecked():
+            self.GENFIRE_ReconstructionParameters.griddingMethod = "DFT"
+        else:
+            self.GENFIRE_ReconstructionParameters.griddingMethod = "FFT"
 
     def updateFilenames(self):
         import os

@@ -333,6 +333,8 @@ if __name__ != "__main__":
 
 
     def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance):
+        print ("Assembling Fourier grid.")
+        tic = time.time()
         from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
         (n1, n2) = (np.shape(projections)[0],np.shape(projections)[1])
         minInvThresh = 0.00001
@@ -407,8 +409,15 @@ if __name__ != "__main__":
                 nonzero_ind = np.where(curr_proj!=0)
                 # for i,v in enumerate(G_CP_plane.T):
                 #     Fpoints[i] = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * v[0] / n1 + K20[nonzero_ind] * v[1] / n2  ) ) )
+
+
+                K10_t = K10[nonzero_ind]
+                K20_t = K20[nonzero_ind]
+                curr_proj = curr_proj[nonzero_ind]
+
                 for i in range(np.shape(G_CP_plane)[1]):
-                    Fpoints[i] = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * G_CP_plane[0, i] / n1 + K20[nonzero_ind] * G_CP_plane[1, i] / n2  ) ) )
+                    Fpoints[i] = np.sum( curr_proj * np.exp( -1j*2*PI * (K10_t * G_CP_plane[0, i] / n1 + K20_t * G_CP_plane[1, i] / n2  ) ) )
+                    # Fpoints[i] = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * G_CP_plane[0, i] / n1 + K20[nonzero_ind] * G_CP_plane[1, i] / n2  ) ) )
                 distances = D[Gind]
                 distances[ distances < minInvThresh ] = minInvThresh
                 currTotWeight = 1 / distances
@@ -420,6 +429,8 @@ if __name__ != "__main__":
         # measuredK = np.zeros((n1,n2,n1), dtype=complex)
         measuredK = np.zeros((n1+1,n2+1,n1+1), dtype=complex)
         measuredK[:n1//2 + 1, :, :] = FS[:, :, :]
+        print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
+
         return GENFIRE.utility.hermitianSymmetrize(measuredK)[:-1,:-1,:-1]
 
     def readMAT(filename):
@@ -652,21 +663,22 @@ class ReconstructionParameters():
     _supportedFiletypes = ['.tif', '.mrc', '.mat', '.npy']
     _supportedAngleFiletypes = ['.txt', '.mat', '.npy']
     def __init__(self):
-        self.projectionFilename = ""
-        self.angleFilename = ""
-        self.supportFilename = ""
+        self.projectionFilename                  = ""
+        self.angleFilename                       = ""
+        self.supportFilename                     = ""
         self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
-        self.numIterations = 100
-        self.displayFigure = DisplayFigure()
-        self.oversamplingRatio = 3
-        self.interpolationCutoffDistance = 0.7
-        self.isInitialObjectDefined = False
-        self.resultsFilename = os.path.join(os.getcwd(), 'results.mrc')
-        self.useDefaultSupport = True
-        self.calculateRfree = True
-        self.initialObjectFilename = None
-        self.constraint_positivity = True
-        self.constraint_support    = True
+        self.numIterations                       = 100
+        self.displayFigure                       = DisplayFigure()
+        self.oversamplingRatio                   = 3
+        self.interpolationCutoffDistance         = 0.7
+        self.isInitialObjectDefined              = False
+        self.resultsFilename                     = os.path.join(os.getcwd(), 'results.mrc')
+        self.useDefaultSupport                   = True
+        self.calculateRfree                      = True
+        self.initialObjectFilename               = None
+        self.constraint_positivity               = True
+        self.constraint_support                  = True
+        self.griddingMethod                      = "FFT"
 
     def checkParameters(self): #verify file extensions are supported
         import os

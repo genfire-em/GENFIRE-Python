@@ -77,6 +77,7 @@ def main(reconstruction_parameters):
     useDefaultSupport                       = reconstruction_parameters.useDefaultSupport
     use_positivity                          = reconstruction_parameters.constraint_positivity
     use_support                             = reconstruction_parameters.constraint_support
+    gridding_method                         = reconstruction_parameters.griddingMethod
 
     if reconstruction_parameters.isInitialObjectDefined:
             filename_initialObject          = reconstruction_parameters.initialObjectFilename
@@ -122,7 +123,13 @@ def main(reconstruction_parameters):
         del tmp
 
     # grid the projections
-    measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance)
+    if gridding_method == "DFT":
+        measuredK = GENFIRE.reconstruct.fillInFourierGrid_DFT(projections, angles, interpolationCutoffDistance)
+    else:
+        measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance)
+
+
+
     # the grid is assembled with the origin at the geometric center of the array, but for efficiency in the
     # iterative algorithm the origin is shifted to array position [0,0,0] to avoid unnecessary fftshift calls
     measuredK = np.fft.ifftshift(measuredK)
