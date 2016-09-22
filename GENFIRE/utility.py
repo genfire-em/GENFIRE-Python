@@ -415,16 +415,10 @@ def pointToPlaneDistance(points, norm_vec):
     Copyright 2015-2016. All rights reserved.
     """
     from numpy.linalg import norm
-    print("plane distance\n")
-    print(np.shape(points))
-    print(np.shape(norm_vec))
-    print(points.dtype)
-    print(norm_vec.dtype)
     norm_vec = norm_vec / norm(norm_vec)
     if np.ndim(points)>1:
-        print ("broadcasting")
         num_rows = np.shape(points)[0]
-        distances = np.sum(points*norm_vec,axis=1)
+        distances = np.abs(np.sum(points*norm_vec,axis=1))
         # distances = np.empty(num_rows,dtype=float)
         # for row_num in range(num_rows):
         #     distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
@@ -462,9 +456,11 @@ def pointToPlaneClosest(points, norm_vec, distances):
     if np.ndim(points)>1:
         num_rows = np.shape(points)[0]
         closest_points = np.empty((num_rows,3),dtype=float)
-        for row_num in range(num_rows):
-            closest_points[row_num,:] = points[row_num, :] + (distances[row_num]
-                                        - np.dot(points[row_num, :], norm_vec)) * norm_vec / np.dot(norm_vec,norm_vec)
+
+        closest_points = points + ( (distances - np.sum(points * norm_vec)) * np.reshape(norm_vec,(3,1)) / np.dot(norm_vec,norm_vec) ).T
+        # for row_num in range(num_rows):
+        #     closest_points[row_num,:] = points[row_num, :] + (distances[row_num]
+        #                                 - np.dot(points[row_num, :], norm_vec)) * norm_vec / np.dot(norm_vec,norm_vec)
         return closest_points
     return points + (distances- np.dot(points, norm_vec)) * norm_vec
 

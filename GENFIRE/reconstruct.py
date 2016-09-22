@@ -332,7 +332,6 @@ if __name__ != "__main__":
 
 
 
-
     def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance):
         from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
         (n1, n2) = (np.shape(projections)[0],np.shape(projections)[1])
@@ -365,6 +364,8 @@ if __name__ != "__main__":
         K20 = K20.flatten()
         K10 = K10.flatten()
         try:
+            artifical_error = 1/0 # This loop uses broadcasting, which can use more memory, so there is a try/catch as a failsafe. However
+            # the simple loop seems to be faster, so for the moment I have just introduced an error artificially as a lazy way of leaving both implementations
             for proj_num in range(num_projections):
                 curr_proj = projections[:, :, proj_num].flatten()
                 [K2, K1, K3] = np.meshgrid(k2,k1,k3)
@@ -380,7 +381,8 @@ if __name__ != "__main__":
                 Y = np.zeros((np.shape(G_CP_plane)[1], 1), dtype=float)
                 X[:, 0] = G_CP_plane[0, :]
                 Y[:, 0] = G_CP_plane[1, :]
-                Fpoints = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * X / n1 + K20[nonzero_ind] * Y / n2  ) ) ,axis=0)
+
+                Fpoints = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * X / n1 + K20[nonzero_ind] * Y / n2  ) ) ,axis=1)
                 distances = D[Gind]
                 distances[ distances < minInvThresh ] = minInvThresh
                 currTotWeight = 1 / distances
@@ -403,6 +405,8 @@ if __name__ != "__main__":
                 Fpoints = np.zeros(np.shape(G_CP_plane)[1], dtype=complex)
 
                 nonzero_ind = np.where(curr_proj!=0)
+                # for i,v in enumerate(G_CP_plane.T):
+                #     Fpoints[i] = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * v[0] / n1 + K20[nonzero_ind] * v[1] / n2  ) ) )
                 for i in range(np.shape(G_CP_plane)[1]):
                     Fpoints[i] = np.sum( curr_proj[nonzero_ind] * np.exp( -1j*2*PI * (K10[nonzero_ind] * G_CP_plane[0, i] / n1 + K20[nonzero_ind] * G_CP_plane[1, i] / n2  ) ) )
                 distances = D[Gind]
