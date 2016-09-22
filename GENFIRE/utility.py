@@ -341,7 +341,7 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
     return np.real(ifftn_fftshift(projection))
 
 
-def calculateProjection_DFT(model, phi, theta, psi):
+def calculateProjection_DFT(model, phi, theta, psi, out_dimx, out_dimy):
     """
     * calculateProjection_interp *
 
@@ -351,6 +351,8 @@ def calculateProjection_DFT(model, phi, theta, psi):
     :param phi: euler angle 1
     :param theta: euler angle 2
     :param psi: euler angle 3
+    :param out_dimx: output projection size in x
+    :param out_dimy: output projection size in y
     :return: projection
     """
 
@@ -359,6 +361,9 @@ def calculateProjection_DFT(model, phi, theta, psi):
     Xcenter = round(dims[0]//2)
     Ycenter = round(dims[1]//2)
     Zcenter = round(dims[2]//2)
+
+    KXcenter = round(out_dimx//2)
+    KYcenter = round(out_dimy//2)
 
     # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
     phi *= PI/180
@@ -374,26 +379,45 @@ def calculateProjection_DFT(model, phi, theta, psi):
     # build coordinates of 3D FFT
     # kx, ky, kz = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), np.arange(1,dims[2]-Zcenter))
 
-    kx = np.arange(0, dims[0])-Xcenter
-    ky = np.arange(0, dims[1])-Ycenter
-    kz = np.arange(0, dims[2])-Zcenter
+    X = np.arange(0, dims[0])-Xcenter
+    Y = np.arange(0, dims[1])-Ycenter
+    Z = np.arange(0, dims[2])-Zcenter
+    X, Y, Z = np.meshgrid(X,Y,Z)
+    Y = Y.astype(float)
+    X = X.astype(float)
+    Z = Z.astype(float)
 
-    # construct interpolator function that does the actual computation
-    interpolator = RegularGridInterpolator((kx, ky, kz), model, bounds_error=False, fill_value=0)
+    KX = np.arange(0, out_dimx)-KXcenter
+    KY = np.arange(0, out_dimy)-KYcenter
+    KY, KX, KZ = np.meshgrid(KY, KX, 0)
+    KY = KY.astype(float)
+    KX = KX.astype(float)
+    KZ = KZ.astype(float)
 
     # build coordinates of the slice we want to calculate
-    kx_slice, ky_slice, kz_slice = np.meshgrid((np.arange(0, dims[0])-Xcenter), (np.arange(0, dims[1])-Ycenter), 0)
+    # kx_slice, ky_slice, kz_slice = np.meshgrid((np.arange(0, dims[0])-Xcenter), (np.arange(0, dims[1])-Ycenter), 0)
 
     # rotate coordinates
-    rotKCoords = np.zeros([3, np.size(kx_slice)])
-    rotKCoords[0, :] = np.reshape(kx_slice, [1, np.size(kx_slice)])
-    rotKCoords[1, :] = np.reshape(ky_slice, [1, np.size(ky_slice)])
-    rotKCoords[2, :] = np.reshape(kz_slice, [1, np.size(kz_slice)])
+    rotKCoords = np.zeros([3, np.size(KX)])
+    rotKCoords[0, :] = np.reshape(KX, [1, np.size(KX)])
+    rotKCoords[1, :] = np.reshape(KY, [1, np.size(KY)])
+    rotKCoords[2, :] = np.reshape(KZ, [1, np.size(KZ)])
     rotKCoords = np.dot(R, rotKCoords)
 
-    projection = interpolator(rotKCoords.T)
-    projection = np.reshape(projection, [dims[0], dims[1]], order='F')
+    rotKX = rotKCoords[0, :]
+    rotKY = rotKCoords[1, :]
+    rotKZ = rotKCoords[2, :]
 
+    projection = np.zeros(out_dimx*out_dimy,dtype=complex)
+    ind = np.where(model!=0)
+    model = model[ind]
+    X = X[ind]
+    Y = Y[ind]
+    Z = Z[ind]
+    for i in range(np.size(projection)):
+        projection[i] = np.sum( model * np.exp( -2*PI*1j * \
+                          ( rotKX[i]*X/out_dimx + rotKY[i]*Y/out_dimy + rotKZ[i]*Z/out_dimx ) ) )
+    projection = np.reshape(projection, (out_dimx, out_dimy), order='F')
 
     # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
     return np.real(ifftn_fftshift(projection))

@@ -121,26 +121,44 @@ class ProjectionCalculator(QtGui.QMainWindow):
                 psi = angles[:, 2]
                 filename = self.calculationParameters.outputFilename +'.npy'
                 projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(phi)),dtype=float)
-                if self.calculationParameters.interpolator is None:
-                    self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
-                for projNum in range(0,np.size(phi)):
-                    pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model))
-                    projections[:, :, projNum] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
-                # projections[ projections<0 ] = 0
+                if self.calculationParameters.calculationMethod == "FFT":
+                    if self.calculationParameters.interpolator is None:
+                        self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
+                    for projNum in range(0,np.size(phi)):
+                        pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model))
+                        projections[:, :, projNum] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
+                else:
+                    self.calculationParameters.model = ifftn_fftshift(self.calculationParameters.model) # should handle this case better
+                    for projNum in range(0,np.size(phi)):
+                        pj = GENFIRE.utility.calculateProjection_DFT(self.calculationParameters.model,phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model)[0],np.shape(self.calculationParameters.model)[1])
+                        projections[:, :, projNum] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
+                    # projections[ projections<0 ] = 0
                 GENFIRE.fileio.writeVolume(filename, projections)
             else:
-                if self.calculationParameters.interpolator is None:
-                    self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
-                phi = self.calculationParameters.phi
-                psi = self.calculationParameters.psi
-                theta = np.arange(self.calculationParameters.thetaStart, \
-                                  self.calculationParameters.thetaStop + 1e-10, \
-                                  self.calculationParameters.thetaStep)
-                projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(theta)),dtype=float)
-                for i, current_theta in enumerate(theta):
+                if self.calculationParameters.calculationMethod == "FFT":
+                    if self.calculationParameters.interpolator is None:
+                        self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
+                    phi = self.calculationParameters.phi
+                    psi = self.calculationParameters.psi
+                    theta = np.arange(self.calculationParameters.thetaStart, \
+                                      self.calculationParameters.thetaStop + 1e-10, \
+                                      self.calculationParameters.thetaStep)
+                    projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(theta)),dtype=float)
+                    for i, current_theta in enumerate(theta):
 
-                    pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi, current_theta, psi, np.shape(self.calculationParameters.model))
-                    projections[:, :, i] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
+                        pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi, current_theta, psi, np.shape(self.calculationParameters.model))
+                        projections[:, :, i] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
+                else:
+                    phi = self.calculationParameters.phi
+                    psi = self.calculationParameters.psi
+                    theta = np.arange(self.calculationParameters.thetaStart, \
+                                      self.calculationParameters.thetaStop + 1e-10, \
+                                      self.calculationParameters.thetaStep)
+                    projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(theta)),dtype=float)
+                    self.calculationParameters.model = ifftn_fftshift(self.calculationParameters.model) # should handle this case better
+                    for projNum in range(0,np.size(phi)):
+                        pj = GENFIRE.utility.calculateProjection_DFT(self.calculationParameters.model,phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model)[0],np.shape(self.calculationParameters.model)[1])
+                        projections[:, :, projNum] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
                 filename = self.calculationParameters.outputFilename
                 filename = toString(filename)
                 # projections[ projections<0 ] = 0
@@ -342,6 +360,7 @@ class ProjectionCalculationParameters:
         self.thetaStep                  = 3.0
         self.thetaStop                  = 180.0
         self.psi                        = 0.0
+        self.calculationMethod          = "FFT"
 
 class CalculateProjectionSeries_popup(QtGui.QDialog):
     def __init__(self, calculation_parameters = ProjectionCalculationParameters()):
@@ -351,6 +370,7 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui = CalculateProjectionSeries_Dialog.Ui_CalculateProjectionSeries_Dialog()
         self.ui.setupUi(self)
         self.setModal(True)
+        self.ui.radioButton_FFT.setChecked(True)
 
         import os
         from functools import partial
@@ -373,11 +393,13 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.checkBox_saveAngles.toggled.connect(self.toggleSaveAngles)
         self.ui.buttonBox.button(QtGui.QDialogButtonBox.Ok).setText("Calculate Projections")
         self.ui.buttonBox.accepted.connect(partial(self.setStatus, 1))
-
+        self.ui.radioButton_FFT.toggled.connect(self.setCalculationMethod)
+        self.ui.radioButton_DFT.toggled.connect(self.setCalculationMethod)
         self.status = 0
 
     def setStatus(self,status):
         self.status = status
+
     def setAngleFilename_fromLineEdit(self):
         filename = self.ui.lineEdit_angleFile.text()
         if os.path.isfile(toString(filename)):
@@ -385,6 +407,14 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
             self.calculationParameters.angleFileProvided = True
             self.ui.lineEdit_angleFile.setText(toQString(filename))
             self.disableAngleWidgets()
+
+    def setCalculationMethod(self):
+        if self.ui.radioButton_FFT.isChecked():
+            self.ui.radioButton_DFT.setChecked(False)
+            self.calculationParameters.calculationMethod = "FFT"
+        else:
+            self.ui.radioButton_FFT.setChecked(False)
+            self.calculationParameters.calculationMethod = "DFT"
 
     def selectAngleFile(self):
         filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Angles",filter="txt files (*.txt);;All Files (*)")

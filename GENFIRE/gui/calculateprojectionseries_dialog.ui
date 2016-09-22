@@ -296,11 +296,49 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_saveAngles">
-         <property name="text">
-          <string>Save Angles</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QCheckBox" name="checkBox_saveAngles">
+           <property name="text">
+            <string>Save Angles</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Calculation Method</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_FFT">
+           <property name="text">
+            <string>FFT</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_DFT">
+           <property name="text">
+            <string>DFT</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
