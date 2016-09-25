@@ -134,6 +134,7 @@ def main(reconstruction_parameters):
     # iterative algorithm the origin is shifted to array position [0,0,0] to avoid unnecessary fftshift calls
     measuredK = np.fft.ifftshift(measuredK)
 
+    GENFIRE.fileio.writeVolume('/Users/ajpryor/Documents/MATLAB/GENFIRE/v1.6/data/debug.mat',measuredK)
     # create a map of the spatial frequency to be used to control resolution extension/suppression behavior
     K_indices = GENFIRE.utility.generateKspaceIndices(support)
     K_indices = np.fft.fftshift(K_indices)

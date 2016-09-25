@@ -61,7 +61,8 @@ if __name__ != "__main__":
         #get dimensions of object
         dims = np.shape(support)
         if R_freeInd_complex:
-            Rfree_complex = np.zeros((np.shape(R_freeInd_complex)[2], numIterations))
+            Rfree_complex_bybin = np.zeros((np.shape(R_freeInd_complex)[2], numIterations),dtype=float)
+            Rfree_complex_total = np.zeros(numIterations,dtype=float)
 
         if displayFigure.DisplayFigureON: #setup some indices for plotting.
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays
@@ -74,7 +75,7 @@ if __name__ != "__main__":
 
         #setup output dict
         if R_freeInd_complex:
-            outputs = {'reconstruction':initialObject,'errK':errK,'R_free':Rfree_complex}
+            outputs = {'reconstruction':initialObject,'errK':errK,'R_free_bybin':Rfree_complex_bybin, "R_free_total":Rfree_complex_total}
         else:
             outputs = {'reconstruction':initialObject,'errK':errK}
 
@@ -113,6 +114,8 @@ if __name__ != "__main__":
 
             #calculate Rfree for each spatial frequency shell if necessary
             if R_freeInd_complex:
+                total_Rfree_error      = 0
+                total_Rfree_error_norm = 0
                 for shellNum in range(0, np.shape(R_freeInd_complex)[2]):
 
                     tmpIndX = R_freeInd_complex[0][0][shellNum]
@@ -120,8 +123,12 @@ if __name__ != "__main__":
                     tmpIndZ = R_freeInd_complex[2][0][shellNum]
 
                     tmpVals = R_freeVals_complex[shellNum]
-                    Rfree_complex[shellNum, iterationNum-1] = np.sum(abs(k[tmpIndX, tmpIndY, tmpIndZ] - tmpVals)) / np.sum(abs(tmpVals))
-
+                    Rfree_numerator                         = np.sum(abs(k[tmpIndX, tmpIndY, tmpIndZ] - tmpVals))
+                    Rfree_denominator                       = np.sum(abs(tmpVals))
+                    total_Rfree_error                      += Rfree_numerator
+                    total_Rfree_error_norm                 += Rfree_denominator
+                    Rfree_complex_bybin[shellNum, iterationNum-1] = Rfree_numerator / Rfree_denominator
+                Rfree_complex_total[iterationNum-1] = total_Rfree_error / total_Rfree_error_norm
             #replace Fourier components with ones from measured data from the current set of constraints
             k[constraintInd_complex] = measuredK[constraintInd_complex]
             initialObject = irfftn(k)
@@ -129,31 +136,32 @@ if __name__ != "__main__":
             #update display
             if displayFigure.DisplayFigureON:
                 if iterationNum % displayFigure.displayFrequency == 0:
-
+                    print("n_half_x = ", n_half_x)
+                    print("half_window_y = ", half_window_y)
                     plt.figure(1000)
                     plt.subplot(233)
-                    plt.imshow(np.squeeze(irfftn_fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
                     plt.title("central YZ slice")
 
                     plt.subplot(232)
-                    plt.imshow(np.squeeze(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
                     plt.title("central XZ slice")
 
                     plt.subplot(231)
                     plt.title("central XY slice")
-                    plt.imshow(np.squeeze(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
+                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
 
                     plt.subplot(236)
                     plt.title("YZ projection")
-                    plt.imshow(np.squeeze(np.sum(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
+                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
 
                     plt.subplot(235)
                     plt.title("XZ projection")
-                    plt.imshow(np.squeeze(np.sum(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
+                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
 
                     plt.subplot(234)
                     plt.title("XY projection")
-                    plt.imshow(np.squeeze(np.sum(irfftn_fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
+                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
                     plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
                     plt.draw()
 
@@ -170,7 +178,7 @@ if __name__ != "__main__":
                         plt.figure(3)
                         mngr = plt.get_current_fig_manager()
                         mngr.window.setGeometry(450,25,400, 400)
-                        plt.plot(range(0,numIterations),np.mean(Rfree_complex,axis=0))
+                        plt.plot(range(0,numIterations),Rfree_complex_total)
                         plt.title("Mean R-free Value vs Iteration Number")
                         plt.xlabel("Iteration Num")
                         plt.ylabel('Mean R-free')
@@ -180,8 +188,8 @@ if __name__ != "__main__":
                         mngr = plt.get_current_fig_manager()
                         mngr.window.setGeometry(450,450,400, 400)
                         plt.hold(False)
-                        X = np.linspace(0,1,np.shape(Rfree_complex)[0])
-                        plt.plot(X, Rfree_complex[:,iterationNum-1])
+                        X = np.linspace(0,1,np.shape(Rfree_complex_bybin)[0])
+                        plt.plot(X, Rfree_complex_bybin[:,iterationNum-1])
                         plt.hold(False)
                         plt.title("Current Rfree Value vs Spatial Frequency")
                         plt.xlabel("Spatial Frequency (% of Nyquist)")
@@ -193,7 +201,8 @@ if __name__ != "__main__":
 
         outputs['errK'] = errK
         if R_freeInd_complex:
-            outputs['R_free'] = Rfree_complex
+            outputs['R_free_bybin'] = Rfree_complex_bybin
+            outputs['R_free_total'] = Rfree_complex_total
         outputs['reconstruction'] = np.fft.fftshift(outputs['reconstruction'])
         print("Reconstruction finished in {0:0.1f} seconds".format(time.time()-t0))
         return outputs
@@ -274,8 +283,8 @@ if __name__ != "__main__":
         masterVals = []
         masterDistances = []
         masterConfidenceWeights = []
-        shiftMax = int(round(interpolationCutoffDistance))
-
+        # shiftMax = int(round(interpolationCutoffDistance))
+        shiftMax = 0;
         for Yshift in range(-shiftMax, shiftMax+1):
             for Xshift in range(-shiftMax, shiftMax+1):
                 for Zshift in range(-shiftMax, shiftMax+1):
