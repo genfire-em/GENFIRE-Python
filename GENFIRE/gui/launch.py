@@ -339,27 +339,28 @@ class GenfireMainWindow(QtGui.QMainWindow):
                 plt.xlabel("Iteration Num")
                 plt.ylabel("Reciprocal Error")
                 # plt.setp(plt.gcf(),)
-            Rfree_filename = output_base + '_Rfree.txt'
-
-            if os.path.isfile(Rfree_filename):
-                Rfree = np.loadtxt(Rfree_filename)
-                numIterations = np.shape(Rfree)[1]
+            Rfree_total_filename = output_base + '_Rfree_total.txt'
+            Rfree_bybin_filename = output_base + '_Rfree_bybin.txt'
+            if os.path.isfile(Rfree_total_filename):
+                Rfree_total = np.loadtxt(Rfree_total_filename)
+                numIterations = np.shape(Rfree_total)[0]
                 plt.figure()
                 plt.title("R-free vs Iteration Number")
                 mngr = plt.get_current_fig_manager()
                 mngr.window.setGeometry(700,350,550, 250)
-                plt.plot(range(0,numIterations),np.mean(Rfree,axis=0))
+                plt.plot(range(0,numIterations),Rfree_total)
                 plt.title("Mean R-free Value vs Iteration Number")
                 plt.xlabel("Iteration Num")
                 plt.ylabel('Mean R-free')
 
-
+            if os.path.isfile(Rfree_bybin_filename):
+                Rfree_bybin = np.loadtxt(Rfree_bybin_filename)
                 plt.figure()
                 mngr = plt.get_current_fig_manager()
                 mngr.window.setGeometry(700,650,550, 250)
                 plt.hold(False)
-                X = np.linspace(0,1,np.shape(Rfree)[0])
-                plt.plot(X, Rfree[:,-1])
+                X = np.linspace(0,1,np.shape(Rfree_bybin)[0])
+                plt.plot(X, Rfree_bybin[:,-1])
                 plt.hold(False)
                 plt.title("Final Rfree Value vs Spatial Frequency")
                 plt.xlabel("Spatial Frequency (% of Nyquist)")

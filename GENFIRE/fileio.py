@@ -352,8 +352,9 @@ def saveResults(reconstruction_outputs, filename):
     fn, ext = os.path.splitext(filename)
     writeVolume(filename, reconstruction_outputs['reconstruction'])
     np.savetxt(fn+'_errK.txt',reconstruction_outputs['errK'])
-    if 'R_free' in reconstruction_outputs.keys():
-        np.savetxt(fn+'_Rfree.txt',reconstruction_outputs['R_free'])
+    if 'R_free_total' in reconstruction_outputs.keys():
+        np.savetxt(fn+'_Rfree_total.txt',reconstruction_outputs['R_free_total'])
+        np.savetxt(fn+'_Rfree_bybin.txt',reconstruction_outputs['R_free_bybin'])
 
 def writeVolume(filename, data, order="C"):
     """

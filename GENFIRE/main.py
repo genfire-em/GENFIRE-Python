@@ -96,7 +96,7 @@ def main(reconstruction_parameters):
     if useDefaultSupport or filename_support == "":
         support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
     else:
-        support = GENFIRE.fileio.readVolume(filename_support)
+        support = (GENFIRE.fileio.readVolume(filename_support) != 0).astype(bool)
 
     displayFigure.reconstructionDisplayWindowSize = np.shape(support) # this is used to show the central region of reconstruction
 
@@ -134,7 +134,6 @@ def main(reconstruction_parameters):
     # iterative algorithm the origin is shifted to array position [0,0,0] to avoid unnecessary fftshift calls
     measuredK = np.fft.ifftshift(measuredK)
 
-    GENFIRE.fileio.writeVolume('/Users/ajpryor/Documents/MATLAB/GENFIRE/v1.6/data/debug.mat',measuredK)
     # create a map of the spatial frequency to be used to control resolution extension/suppression behavior
     K_indices = GENFIRE.utility.generateKspaceIndices(support)
     K_indices = np.fft.fftshift(K_indices)

@@ -319,6 +319,7 @@ if __name__ != "__main__":
 
         masterVals = masterVals[masterInd <= halfwayCutoff]
         masterDistances = masterDistances[masterInd <= halfwayCutoff]
+        masterDistances [masterDistances != 0 ]  = 1 / masterDistances[masterDistances != 0 ]
         masterConfidenceWeights = masterConfidenceWeights[masterInd <= halfwayCutoff]
         masterInd = masterInd[masterInd <= halfwayCutoff]
 
