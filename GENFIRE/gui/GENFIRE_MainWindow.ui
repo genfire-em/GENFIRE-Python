@@ -33,9 +33,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-101</y>
+         <y>0</y>
          <width>799</width>
-         <height>958</height>
+         <height>928</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -236,13 +236,6 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="3" column="3">
-               <widget class="QCheckBox" name="checkBox_rfree">
-                <property name="text">
-                 <string>Calculate Rfree</string>
-                </property>
-               </widget>
-              </item>
               <item row="4" column="2">
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
@@ -345,13 +338,6 @@
                 </property>
                </spacer>
               </item>
-              <item row="5" column="3">
-               <widget class="QPushButton" name="btn_displayResults">
-                <property name="text">
-                 <string>Summarize Results</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="3">
                <layout class="QVBoxLayout" name="verticalLayout_5">
                 <item>
@@ -414,6 +400,20 @@
                <widget class="Line" name="line_6">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="3">
+               <widget class="QPushButton" name="btn_displayResults">
+                <property name="text">
+                 <string>Summarize Results</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="3">
+               <widget class="QCheckBox" name="checkBox_rfree">
+                <property name="text">
+                 <string>Calculate Rfree</string>
                 </property>
                </widget>
               </item>
