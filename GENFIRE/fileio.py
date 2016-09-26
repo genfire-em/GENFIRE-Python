@@ -325,11 +325,8 @@ def loadAngles(filename):
     elif ext== ".npy":
         return np.load(filename)
     elif ext==".mat":
-        import scipy.io
-        data = scipy.io.loadmat(filename)
-        if "angles" not in data.keys():
-            raise LookupError("No variable called 'angles' found in \"{}\"!".format(filename))
-        return np.array(data['angles'],dtype=float)
+        from GENFIRE.fileio import readVolume
+        return readVolume(filename)
     else:
         raise IOError("Unsupported file extension \"{}\" for Euler angles".format(ext))
 

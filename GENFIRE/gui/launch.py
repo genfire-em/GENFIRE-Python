@@ -135,6 +135,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
         self.ui.checkBox_positivity_constraint.setChecked(True)
         self.ui.checkBox_support_constraint.toggled.connect(self.toggleSupportConstraint)
         self.ui.checkBox_positivity_constraint.toggled.connect(self.togglePositivityConstraint)
+        self.ui.checkBox_multiGridding.toggled.connect(self.toggleMultiGridding)
+        self.ui.checkBox_resCircle.toggled.connect(self.toggleResCircle)
 
         self.ui.action_Create_Support.triggered.connect(self.launchProjectionCalculator)
 
@@ -183,6 +185,18 @@ class GenfireMainWindow(QtGui.QMainWindow):
         volume = GENFIRE.fileio.readVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
+
+    def toggleResCircle(self):
+        if self.ui.checkBox_resCircle.isChecked():
+            self.GENFIRE_ReconstructionParameters.enforceResolutionCircle = True
+        else:
+            self.GENFIRE_ReconstructionParameters.enforceResolutionCircle = False
+
+    def toggleMultiGridding(self):
+        if self.ui.checkBox_multiGridding.isChecked():
+            self.GENFIRE_ReconstructionParameters.permitMultipleGridding = True
+        else:
+            self.GENFIRE_ReconstructionParameters.permitMultipleGridding = False
 
     def toggleSelectIO(self):
         if self.ui.lineEdit_io.isEnabled():

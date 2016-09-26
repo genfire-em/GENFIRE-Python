@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>762</width>
-    <height>368</height>
+    <height>382</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -316,27 +316,6 @@
             </size>
            </property>
           </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Calculation Method</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_FFT">
-           <property name="text">
-            <string>FFT</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_DFT">
-           <property name="text">
-            <string>DFT</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </item>

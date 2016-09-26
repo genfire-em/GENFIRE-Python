@@ -78,6 +78,8 @@ def main(reconstruction_parameters):
     use_positivity                          = reconstruction_parameters.constraint_positivity
     use_support                             = reconstruction_parameters.constraint_support
     gridding_method                         = reconstruction_parameters.griddingMethod
+    enforceResolutionCircle                 = reconstruction_parameters.enforceResolutionCircle
+    permitMultipleGridding                  = reconstruction_parameters.permitMultipleGridding
 
     if reconstruction_parameters.isInitialObjectDefined:
             filename_initialObject          = reconstruction_parameters.initialObjectFilename
@@ -124,9 +126,9 @@ def main(reconstruction_parameters):
 
     # grid the projections
     if gridding_method == "DFT":
-        measuredK = GENFIRE.reconstruct.fillInFourierGrid_DFT(projections, angles, interpolationCutoffDistance)
+        measuredK = GENFIRE.reconstruct.fillInFourierGrid_DFT(projections, angles, interpolationCutoffDistance, enforceResolutionCircle, permitMultipleGridding)
     else:
-        measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance)
+        measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance, enforceResolutionCircle, permitMultipleGridding)
 
 
 

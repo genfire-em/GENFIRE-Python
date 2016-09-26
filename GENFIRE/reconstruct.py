@@ -208,7 +208,7 @@ if __name__ != "__main__":
         return outputs
 
 
-    def fillInFourierGrid(projections,angles,interpolationCutoffDistance):
+    def fillInFourierGrid(projections,angles,interpolationCutoffDistance, enforce_resolution_circle=True, permitMultipleGridding=True):
         """
         * fillInFourierGrid *
 
@@ -283,8 +283,10 @@ if __name__ != "__main__":
         masterVals = []
         masterDistances = []
         masterConfidenceWeights = []
-        # shiftMax = int(round(interpolationCutoffDistance))
-        shiftMax = 0;
+        if permitMultipleGridding:
+            shiftMax = int(round(interpolationCutoffDistance))
+        else:
+            shiftMax = 0;
         for Yshift in range(-shiftMax, shiftMax+1):
             for Xshift in range(-shiftMax, shiftMax+1):
                 for Zshift in range(-shiftMax, shiftMax+1):
@@ -336,13 +338,18 @@ if __name__ != "__main__":
         measuredK = np.reshape(measuredK,[dim1,dim1,dim1],order='F')
 
         measuredK[np.isnan(measuredK)] = 0
+
+        if enforce_resolution_circle:
+            Q = GENFIRE.utility.generateKspaceIndices(measuredK)
+            measuredK[Q>1] = 0
         measuredK = GENFIRE.utility.hermitianSymmetrize(measuredK)
+
         print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
         return measuredK
 
 
 
-    def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance):
+    def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance, enforce_resolution_circle):
         print ("Assembling Fourier grid.")
         tic = time.time()
         from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
@@ -440,6 +447,10 @@ if __name__ != "__main__":
         measuredK = np.zeros((n1+1,n2+1,n1+1), dtype=complex)
         measuredK[:n1//2 + 1, :, :] = FS[:, :, :]
         print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
+
+        if enforce_resolution_circle:
+            Q = GENFIRE.utility.generateKspaceIndices(measuredK)
+            measuredK[Q>1] = 0
 
         return GENFIRE.utility.hermitianSymmetrize(measuredK)[:-1,:-1,:-1]
 
@@ -689,6 +700,8 @@ class ReconstructionParameters():
         self.constraint_positivity               = True
         self.constraint_support                  = True
         self.griddingMethod                      = "FFT"
+        self.enforceResolutionCircle             = True
+        self.permitMultipleGridding              = True
 
     def checkParameters(self): #verify file extensions are supported
         import os
