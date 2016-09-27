@@ -239,8 +239,8 @@ if __name__ != "__main__":
         measuredY = np.zeros([dim1*dim2,numProjections])
         measuredZ = np.zeros([dim1*dim2,numProjections])
         kMeasured = np.zeros([dim1,dim1,numProjections], dtype=complex)
-        confidenceWeights = np.zeros([dim1,dim1,numProjections])
-        ky,kx = np.meshgrid(np.arange(-n2,n2,1),np.arange(-n2,n2,1))
+        # confidenceWeights = np.zeros([dim1,dim1,numProjections])
+        ky,kx = np.meshgrid(np.arange(-n2,n2,1,dtype=float),np.arange(-n2,n2,1,dtype=float))
         Q = np.sqrt(ky**2+kx**2)/n2
         kx = np.reshape(kx, [1, dim1*dim2], 'F')
         ky = np.reshape(ky, [1, dim1*dim2], 'F')
@@ -254,14 +254,14 @@ if __name__ != "__main__":
             [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
             R = R.T
 
-            Kcoordinates = np.zeros([3, dim1*dim2])
+            Kcoordinates = np.zeros([3, dim1*dim2],dtype=float)
             Kcoordinates[0, :] = kx
             Kcoordinates[1, :] = ky
             Kcoordinates[2, :] = kz
 
 
             rotkCoords = np.dot(R, Kcoordinates)
-            confidenceWeights[:, :, projNum] = np.ones_like(Q) #this implementation does not support individual projection weighting, so just set all weights to 1
+            # confidenceWeights[:, :, projNum] = np.ones_like(Q) #this implementation does not support individual projection weighting, so just set all weights to 1
             measuredX[:, projNum] = rotkCoords[0, :]
             measuredY[:, projNum] = rotkCoords[1, :]
             measuredZ[:, projNum] = rotkCoords[2, :]
@@ -271,22 +271,22 @@ if __name__ != "__main__":
         measuredY = np.reshape(measuredY,[1, np.size(kMeasured)], 'F')
         measuredZ = np.reshape(measuredZ,[1, np.size(kMeasured)], 'F')
         kMeasured = np.reshape(kMeasured,[1, np.size(kMeasured)], 'F')
-        confidenceWeights = np.reshape(confidenceWeights,[1, np.size(kMeasured)], 'F')
+        # confidenceWeights = np.reshape(confidenceWeights,[1, np.size(kMeasured)], 'F')
         notFlaggedIndices = kMeasured != -999
         measuredX = measuredX[notFlaggedIndices]
         measuredY = measuredY[notFlaggedIndices]
         measuredZ = measuredZ[notFlaggedIndices]
         kMeasured = kMeasured[notFlaggedIndices]
-        confidenceWeights = confidenceWeights[notFlaggedIndices]
+        # confidenceWeights = confidenceWeights[notFlaggedIndices]
 
         masterInd = []
         masterVals = []
         masterDistances = []
-        masterConfidenceWeights = []
+        # masterConfidenceWeights = []
         if permitMultipleGridding:
             shiftMax = int(round(interpolationCutoffDistance))
         else:
-            shiftMax = 0;
+            shiftMax = 0
         for Yshift in range(-shiftMax, shiftMax+1):
             for Xshift in range(-shiftMax, shiftMax+1):
                 for Zshift in range(-shiftMax, shiftMax+1):
@@ -295,39 +295,38 @@ if __name__ != "__main__":
                     tmpY = np.round(measuredY) + Yshift
                     tmpZ = np.round(measuredZ) + Zshift
 
-
                     tmpVals = kMeasured
-                    tmpConfidenceWeights = confidenceWeights
-                    distances = np.sqrt(abs(measuredX-tmpX)**2 + abs(measuredY-tmpY)**2 + abs(measuredZ-tmpZ)**2)
+                    # tmpConfidenceWeights = confidenceWeights
+                    distances = np.abs(measuredX-tmpX)**2 + np.abs(measuredY-tmpY)**2 + np.abs(measuredZ-tmpZ)**2
                     tmpX+=nc
                     tmpY+=nc
                     tmpZ+=nc
 
-                    goodInd = (np.logical_not((tmpX > (dim1-1)) | (tmpX < 0) | (tmpY > (dim1-1)) | (tmpY < 0) | (tmpZ > (dim1-1)) | (tmpZ < 0))) & (distances <= interpolationCutoffDistance)
+                    goodInd = (np.logical_not((tmpX > (dim1-1)) | (tmpX < 0) | (tmpY > (dim1-1)) | (tmpY < 0) | (tmpZ > (dim1-1)) | (tmpZ < 0))) & (distances <= (interpolationCutoffDistance**2))
 
                     masterInd=np.append(masterInd, np.ravel_multi_index((tmpX[goodInd].astype(np.int64), tmpY[goodInd].astype(np.int64), tmpZ[goodInd].astype(np.int64)),[dim1, dim1, dim1], order='F'))
                     masterVals=np.append(masterVals, tmpVals[goodInd])
                     masterDistances=np.append(masterDistances, distances[goodInd])
-                    masterConfidenceWeights=np.append(masterConfidenceWeights, tmpConfidenceWeights[goodInd])
-
+                    # masterConfidenceWeights=np.append(masterConfidenceWeights, tmpConfidenceWeights[goodInd])
 
         masterInd = np.array(masterInd).astype(np.int64)
         masterVals = np.array(masterVals)
         masterDistances = np.array(masterDistances)
-        masterConfidenceWeights = np.array(masterConfidenceWeights)
+        # masterConfidenceWeights = np.array(masterConfidenceWeights)
 
         halfwayCutoff = ((dim1+1)**3)//2+1
 
 
         masterVals = masterVals[masterInd <= halfwayCutoff]
         masterDistances = masterDistances[masterInd <= halfwayCutoff]
+        masterDistances = masterDistances +  1e-5
         masterDistances [masterDistances != 0 ]  = 1 / masterDistances[masterDistances != 0 ]
-        masterConfidenceWeights = masterConfidenceWeights[masterInd <= halfwayCutoff]
+        # masterConfidenceWeights = masterConfidenceWeights[masterInd <= halfwayCutoff]
         masterInd = masterInd[masterInd <= halfwayCutoff]
 
         measuredK = np.zeros([dim1**3], dtype=complex)
 
-        masterDistances += 1e-20
+
 
         vals_real = np.bincount(masterInd, weights=(masterDistances * np.real(masterVals)))
         vals_cx = np.bincount(masterInd, weights=(masterDistances * np.imag(masterVals)))
