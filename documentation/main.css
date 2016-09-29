@@ -1,5 +1,5 @@
 #bounding_box {
-width:1000px;
+width:85%;
 padding = 14px 40px;
 text-align:justify
 overflow-x: hidden;
@@ -56,6 +56,14 @@ margin-right:155px;
 padding: 0px;
 text-align:justify;
 }
+
+ul{
+margin: 10px;
+margin-right:155px;
+padding: 15px;
+text-align:justify;
+}
+
 .code_box{
 width:1000;
 }
@@ -155,7 +163,8 @@ h4 {
 #Main_Header {
 background: #EEEEEE;
 height: 150px;
-/* overflow:auto; */
+width:100%;
+overflow:auto;
 }
 
 #welcome {

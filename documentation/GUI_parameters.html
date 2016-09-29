@@ -55,7 +55,7 @@
 		"Select Initial Object File" - Choose filename containing the initial model.
 		"Results Filename" - Filename for the output volume. Must be a valid filetype. Error curves
 		are saved as .txt files with the same base filename as the results.
-		"Resolution Extension/Suppression" - Choose the style of constraint enforcement.
+		"Resolution Extension/Suppression" - Choose the style of constraint enforcement.</p>
 			<ul>
 	 			<li> On - Enforce only lowest resolution information on initial iterations, extending slowly until all information
 				is enforced by the middle iterations, and then reverse the process. This is more robust to noise.</li>
@@ -63,16 +63,17 @@
 	 			<li> Extension Only - Enforce only lowest resolution information on initial iterations, extending slowly until all information
 				is enforced by the final iterations. </li>
  			</ul>
-	 	"Number of Iterations" - Number of GENFIRE iterations to use
+	 <p>
+	 	"Number of Iterations" - Number of GENFIRE iterations to use<br>
 	 	"Oversampling Ratio" - Final oversampling ratio to use when gridding the projections. Larger oversampling ratios
-	 	will produce more accurate griddings at the cost of larger array size. Ideally use at least 3.
+	 	will produce more accurate griddings at the cost of larger array size. Ideally use at least 3.<br>
 	 	"Interpolation Cutoff Distance (pixels)" - Size of the interpolation kernel used for gridding. Small radii
 	 	will result in an assembled grid with fewer values, but more accurate ones. Conversely, larger values for this
 	    parameter will be more accepting of datapoints, but at the cost of accuracy. The default 0.7 was found to be
-	 	ideal based on simulations.
+	 	ideal based on simulations.<br>
 	 	"Summarize Results" - Display a summary of reconstruction results. Choose a volume file, and projections and central
 	 	slices along the three principal directions will appear. Error curves will be plotted if the corresponding files exist.
-	 	"Launch Reconstruction" - Begin the reconstruction, if the parameters are valid.
+	 	"Launch Reconstruction" - Begin the reconstruction, if the parameters are valid.<br>
   	</p>
 	 <div class="h3_left"> Projection Calculator </div>
 	 <p>
