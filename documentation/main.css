@@ -160,11 +160,11 @@ height: 150px;
 
 #welcome {
 float:left;
-height: 150px;
-width:450px;
+height: 100%;
+width:45%;
 color:black;
 font-family: 'Brush Script MT', cursive;
-font-size:120px;
+font-size:12vw;
 
 text-align:center;
 vertical-align:middle;
@@ -172,7 +172,7 @@ vertical-align:middle;
 }
 
 #GENFIRE_logo{
-right:45px;
+right:35%;
 height: 150px;
 overflow:auto;
 }
