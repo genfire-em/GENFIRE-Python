@@ -126,9 +126,9 @@ def main(reconstruction_parameters):
 
     # grid the projections
     if gridding_method == "DFT":
-        measuredK = GENFIRE.reconstruct.fillInFourierGrid_DFT(projections, angles, interpolationCutoffDistance, enforceResolutionCircle, permitMultipleGridding)
+        measuredK = GENFIRE.reconstruct.fillInFourierGrid_DFT(projections, angles, interpolationCutoffDistance, enforceResolutionCircle)
     else:
-        measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance, enforceResolutionCircle)
+        measuredK = GENFIRE.reconstruct.fillInFourierGrid(projections, angles, interpolationCutoffDistance, enforceResolutionCircle, permitMultipleGridding)
 
     # the grid is assembled with the origin at the geometric center of the array, but for efficiency in the
     # iterative algorithm the origin is shifted to array position [0,0,0] to avoid unnecessary fftshift calls
