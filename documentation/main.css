@@ -169,12 +169,13 @@ overflow:auto;
 
 #welcome {
 float:left;
-height: 100%;
-width:45%;
+height: 50%;
+width:55%;
 color:black;
 font-family: 'Brush Script MT', cursive;
-font-size:12vw;
-
+font-size:9vw;
+display:block;
+white-space:nowrap;
 text-align:center;
 vertical-align:middle;
 
