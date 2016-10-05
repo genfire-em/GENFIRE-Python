@@ -1,8 +1,8 @@
 #bounding_box {
 width:85%;
 padding = 14px 40px;
-text-align:justify
-overflow-x: hidden;
+text-align:justify;
+overflow-x: scroll;
 }
 h1 {
 	margin: 10px;
@@ -30,10 +30,11 @@ body {
 	padding: 0;
 	line-height: 1.5em;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
+	font-size: 16px;
 	color: #AAAAAA;
 	background: #080808;
     background: black;
+    overflow-x: scroll;
 
 }
 		
@@ -65,10 +66,10 @@ text-align:justify;
 }
 
 .code_box{
-width:1000;
+width: 85%;
+text-align: justify;
 }
 .code { 
-width:75%;
 height:150%;
 /* margin-left:500px; */
 margin-top:100px;
@@ -79,7 +80,9 @@ margin: 25px 25px 25px 25px;
 /* margin:0 auto; */
 padding: 15;
 text-align:justify;
-
+width:1000px;
+    box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+    inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
 
 
@@ -170,10 +173,10 @@ overflow:auto;
 #welcome {
 float:left;
 height: 50%;
-width:55%;
+width:40%;
 color:black;
-font-family: 'Brush Script MT', cursive;
-font-size:9vw;
+/*font-family: 'Brush Script MT', cursive;*/
+font-size:7vw;
 display:block;
 white-space:nowrap;
 text-align:center;
@@ -185,23 +188,28 @@ vertical-align:middle;
 right:35%;
 height: 150px;
 overflow:auto;
+height: auto;
 }
 
 
 #Sidebar {
  	position: fixed;
-    width: 250px;
-    height: 335px;
+    width: 280px;
+    height: 500px;
     background-color: #888888; 
-    font-size: 12px;
+    font-size: 16px;
     overflow-y: scroll;
     top: 0; 
     bottom: 0;
     right: 0;
+    box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+    inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
 #Sidebar .h2_sidebar{
 font-size: 16px;
 color: #FFFFFF;
+box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
 
 #Sidebar .h1_sidebar{
@@ -210,42 +218,74 @@ font-weight: bold;
 color: #222222;
 text-align: center;
 margin-bottom:15px;
+box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
 
 #Sidebar .h2_sidebar{
 font-size: 16px;
 color: #FFFFFF;
+box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
 
 
 #Sidebar_lowered {
-	margin-top: 150px;
+  margin-top:150px;
  	position: fixed;
-    width: 250px;
-    height: 335px;
+    width: 280px;
+    height: 500px;
     background-color: #888888; 
-    font-size: 12px;
+    font-size: 16px;
     overflow-y: scroll;
     top: 0; 
     bottom: 0;
     right: 0;
-}
-#Sidebar_lowered .h1_sidebar{
-font-size: 20px;
-font-weight: bold;
-color: #FFFFFF;
-text-align: center;
-margin-bottom:15px;
-text-decoration:underline;
+    box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+    inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
 #Sidebar_lowered .h2_sidebar{
 font-size: 16px;
 color: #FFFFFF;
-color: #222222;
-
+box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
 }
+
+#Sidebar_lowered .h1_sidebar{
+font-size: 20px;
+font-weight: bold;
+color: #222222;
+text-align: center;
+margin-bottom:15px;
+box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
+}
+
+#Sidebar_lowered .h2_sidebar{
+font-size: 16px;
+color: #FFFFFF;
+box-shadow: inset 0 -2px 2px rgba(0,0,0,0.5), /*bottom internal shadow*/
+inset 0 2px 2px rgba(255,255,255,1); /*top internal highlight*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .side_link{
-font-size: 12px;
+font-size: 16px;
 margin-left: 15px;
 color:white;
 }
