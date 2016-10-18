@@ -12,6 +12,9 @@ Copyright 2015-2016. All rights reserved.
 
 from PyQt4 import QtCore, QtGui
 import sys
+
+# strings are very different objects in Python 2 and 3, so a little modification of these
+# helper functions is necessary dependent on the version
 if sys.version_info >=(3,0):
     def toString(string):
         return str(string)

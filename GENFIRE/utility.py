@@ -18,6 +18,8 @@ PI = np.pi
 
 try:
     import pyfftw
+
+    #These are just wrappers around various flavors of the FFT
     def rfftn(arr, threads=6):
         return pyfftw.interfaces.numpy_fft.rfftn(arr,overwrite_input=True,threads=threads)
     def irfftn(arr, threads=6):
@@ -220,25 +222,23 @@ def calculateProjection_interp(modelK, phi, theta, psi):
     :return: projection
     """
 
-    # projection = None
+    # get dimensions
     dims = np.shape(modelK)
     Xcenter = round(dims[0]//2)
     Ycenter = round(dims[1]//2)
     Zcenter = round(dims[2]//2)
 
-    # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
+    # convert angles to radians
     phi *= PI/180
     theta *= PI/180
     psi *= PI/180
 
+    # construct rotation matrix
     R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) , np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
     [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
     [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
 
     R = R.T
-
-    # build coordinates of 3D FFT
-    # kx, ky, kz = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), np.arange(1,dims[2]-Zcenter))
 
     kx = np.arange(0, dims[0])-Xcenter
     ky = np.arange(0, dims[1])-Ycenter
@@ -257,11 +257,10 @@ def calculateProjection_interp(modelK, phi, theta, psi):
     rotKCoords[2, :] = np.reshape(kz_slice, [1, np.size(kz_slice)])
     rotKCoords = np.dot(R, rotKCoords)
 
+    # calculate projection
     projection = interpolator(rotKCoords.T)
     projection = np.reshape(projection, [dims[0], dims[1]], order='F')
 
-
-    # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
     return np.real(ifftn_fftshift(projection))
 
 def getProjectionInterpolator(modelK):
@@ -279,6 +278,8 @@ def getProjectionInterpolator(modelK):
     :param obj: Matrix of size to be mapped
     :return: 3D indices for each voxel in the volume
     """
+
+    # get dimensions
     dims = np.shape(modelK)
     Xcenter = round(dims[0]//2)
     Ycenter = round(dims[1]//2)
@@ -308,7 +309,8 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved.
     """
-    # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
+
+    # convert to radians
     phi *= PI/180
     theta *= PI/180
     psi *= PI/180
@@ -317,6 +319,7 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
     Ycenter = round(dims[1]//2)
     Zcenter = round(dims[2]//2)
 
+    # construct rotation matrix
     R = np.array([[np.cos(psi)*np.cos(theta)*np.cos(phi)-np.sin(psi)*np.sin(phi) , np.cos(psi)*np.cos(theta)*np.sin(phi)+np.sin(psi)*np.cos(phi)   ,    -np.cos(psi)*np.sin(theta)],
     [-np.sin(psi)*np.cos(theta)*np.cos(phi)-np.cos(psi)*np.sin(phi), -np.sin(psi)*np.cos(theta)*np.sin(phi)+np.cos(psi)*np.cos(phi) ,   np.sin(psi)*np.sin(theta) ],
     [np.sin(theta)*np.cos(phi)                               , np.sin(theta)*np.sin(phi)                                ,              np.cos(theta)]])
@@ -333,11 +336,10 @@ def calculateProjection_interp_fromInterpolator(interpolator, phi, theta, psi, d
     rotKCoords[2, :] = np.reshape(kz_slice, [1, np.size(kz_slice)])
     rotKCoords = np.dot(R, rotKCoords)
 
+    # calculate projection
     projection = interpolator(rotKCoords.T)
     projection = np.reshape(projection, [dims[0], dims[1]], order='F')
 
-
-    # return np.real(pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(projection))))
     return np.real(ifftn_fftshift(projection))
 
 
@@ -356,7 +358,7 @@ def calculateProjection_DFT(model, phi, theta, psi, out_dimx, out_dimy):
     :return: projection
     """
 
-    # projection = None
+    # get dimensions
     dims = np.shape(model)
     Xcenter = round(dims[0]//2)
     Ycenter = round(dims[1]//2)
@@ -365,7 +367,7 @@ def calculateProjection_DFT(model, phi, theta, psi, out_dimx, out_dimy):
     KXcenter = round(out_dimx//2)
     KYcenter = round(out_dimy//2)
 
-    # X, Y, Z = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), 0)
+    # convert to radians
     phi *= PI/180
     theta *= PI/180
     psi *= PI/180
@@ -377,7 +379,6 @@ def calculateProjection_DFT(model, phi, theta, psi, out_dimx, out_dimy):
     R = R.T
 
     # build coordinates of 3D FFT
-    # kx, ky, kz = np.meshgrid(np.arange(1,dims[0]-Xcenter), np.arange(1,dims[1]-Ycenter), np.arange(1,dims[2]-Zcenter))
 
     X = np.arange(0, dims[0])-Xcenter
     Y = np.arange(0, dims[1])-Ycenter
@@ -409,12 +410,12 @@ def calculateProjection_DFT(model, phi, theta, psi, out_dimx, out_dimy):
     rotKZ = rotKCoords[2, :]
 
     projection = np.zeros(out_dimx*out_dimy,dtype=complex)
-    ind = np.where(model!=0)
+    ind = np.where(model!=0) # only consider nonzero indices for speed
     model = model[ind]
     X = X[ind]
     Y = Y[ind]
     Z = Z[ind]
-    for i in range(np.size(projection)):
+    for i in range(np.size(projection)): # compute DFT
         projection[i] = np.sum( model * np.exp( -2*PI*1j * \
                           ( rotKX[i]*X/out_dimx + rotKY[i]*Y/out_dimy + rotKZ[i]*Z/out_dimx ) ) )
     projection = np.reshape(projection, (out_dimx, out_dimy), order='F')
@@ -501,22 +502,9 @@ def pointToPlaneDistance(points, norm_vec):
     from numpy.linalg import norm
     norm_vec = norm_vec / norm(norm_vec)
     if np.ndim(points)>1:
-        num_rows = np.shape(points)[0]
         distances = np.abs(np.sum(points*norm_vec,axis=1))
-#         distances = np.empty(num_rows,dtype=float)
-#       for row_num in range(num_rows):
-#             distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
         return distances
     return np.abs(np.dot(points,norm_vec))
-    # from numpy.linalg import norm
-    # norm_vec = norm_vec / norm(norm_vec)
-    # if np.ndim(points)>1:
-    #     num_rows = np.shape(points)[0]
-    #     distances = np.empty(num_rows,dtype=float)
-    #     for row_num in range(num_rows):
-    #         distances[row_num] = np.abs(np.dot(points[row_num,:],norm_vec))
-    #     return distances
-    # return np.abs(np.dot(points,norm_vec))
 
 def pointToPlaneClosest(points, norm_vec, distances):
     """
@@ -531,20 +519,13 @@ def pointToPlaneClosest(points, norm_vec, distances):
     :return:  numpy array containing the coordinates of the closest points
 
     Author: Yongsoo Yang
-    Transcribed from MATLAB by Alan (AJ) Pryor, Jr.
+    Transcribed from MATLAB codes by Alan (AJ) Pryor, Jr.
     Jianwei (John) Miao Coherent Imaging Group
     University of California, Los Angeles
     Copyright 2015-2016. All rights reserved.
     """
-    from numpy.linalg import norm
-    if np.ndim(points)>1:
-    #        num_rows = np.shape(points)[0]
-    #        closest_points = np.empty((num_rows,3),dtype=float)
-
+    if np.ndim(points)>1: # use NumPy broadcasting for speed
         closest_points = points + ( (distances - np.sum(points * norm_vec)) * np.reshape(norm_vec,(3,1)) / np.dot(norm_vec,norm_vec) ).T
-        # for row_num in range(num_rows):
-        #     closest_points[row_num,:] = points[row_num, :] + (distances[row_num]
-        #                                 - np.dot(points[row_num, :], norm_vec)) * norm_vec / np.dot(norm_vec,norm_vec)
         return closest_points
     return points + (distances- np.dot(points, norm_vec)) * norm_vec
 

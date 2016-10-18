@@ -212,11 +212,12 @@ if __name__ != "__main__":
         """
         * fillInFourierGrid *
 
-        Primary function for converting a set of 2D projection images into a 3D Fourier grid
+        FFT gridding function for converting a set of 2D projection images into a 3D Fourier grid
 
         :param projections: N x N x num_projections NumPy array containing the projections
         :param angles: 3 x num_projections NumPy array of Euler angles phi,theta, psi
         :param interpolationCutoffDistance: Radius of interpolation kernel. Only values within this radius of a grid point are considered
+        :param enforce_resolution_circle: boolean; whether or not to truncate reciprocal space to Nyquist frequency
         :return: the assembled Fourier grid
 
         Author: Alan (AJ) Pryor, Jr.
@@ -246,6 +247,8 @@ if __name__ != "__main__":
         ky = np.reshape(ky, [1, dim1*dim2], 'F')
         kz = np.zeros([1, dim1*dim1])
         for projNum in range(0, numProjections):
+
+            # convert angles to radians and construct the rotation matrix
             phi = angles[projNum, 0] * PI/180
             theta = angles[projNum, 1] * PI/180
             psi = angles[projNum, 2] * PI/180
@@ -261,28 +264,27 @@ if __name__ != "__main__":
 
 
             rotkCoords = np.dot(R, Kcoordinates)
-            # confidenceWeights[:, :, projNum] = np.ones_like(Q) #this implementation does not support individual projection weighting, so just set all weights to 1
             measuredX[:, projNum] = rotkCoords[0, :]
             measuredY[:, projNum] = rotkCoords[1, :]
             measuredZ[:, projNum] = rotkCoords[2, :]
             kMeasured[:, :, projNum] = fftn_fftshift(projections[:, :, projNum])
 
+        # reorganize the coordinates and discard any flagged values
         measuredX = np.reshape(measuredX,[1, np.size(kMeasured)], 'F')
         measuredY = np.reshape(measuredY,[1, np.size(kMeasured)], 'F')
         measuredZ = np.reshape(measuredZ,[1, np.size(kMeasured)], 'F')
         kMeasured = np.reshape(kMeasured,[1, np.size(kMeasured)], 'F')
-        # confidenceWeights = np.reshape(confidenceWeights,[1, np.size(kMeasured)], 'F')
         notFlaggedIndices = kMeasured != -999
         measuredX = measuredX[notFlaggedIndices]
         measuredY = measuredY[notFlaggedIndices]
         measuredZ = measuredZ[notFlaggedIndices]
         kMeasured = kMeasured[notFlaggedIndices]
-        # confidenceWeights = confidenceWeights[notFlaggedIndices]
 
         masterInd = []
         masterVals = []
         masterDistances = []
-        # masterConfidenceWeights = []
+
+        # check whether we need to consider multiple grid points
         if permitMultipleGridding:
             shiftMax = int(round(interpolationCutoffDistance))
         else:
@@ -307,27 +309,23 @@ if __name__ != "__main__":
                     masterInd=np.append(masterInd, np.ravel_multi_index((tmpX[goodInd].astype(np.int64), tmpY[goodInd].astype(np.int64), tmpZ[goodInd].astype(np.int64)),[dim1, dim1, dim1], order='F'))
                     masterVals=np.append(masterVals, tmpVals[goodInd])
                     masterDistances=np.append(masterDistances, distances[goodInd])
-                    # masterConfidenceWeights=np.append(masterConfidenceWeights, tmpConfidenceWeights[goodInd])
+
 
         masterInd = np.array(masterInd).astype(np.int64)
         masterVals = np.array(masterVals)
         masterDistances = np.array(masterDistances)
-        # masterConfidenceWeights = np.array(masterConfidenceWeights)
 
+        #  only assemble half of the grid and then fill the remainder by Hermitian symmetry
         halfwayCutoff = ((dim1+1)**3)//2+1
-
-
         masterVals = masterVals[masterInd <= halfwayCutoff]
         masterDistances = masterDistances[masterInd <= halfwayCutoff]
         masterDistances = masterDistances +  1e-5
         masterDistances [masterDistances != 0 ]  = 1 / masterDistances[masterDistances != 0 ]
-        # masterConfidenceWeights = masterConfidenceWeights[masterInd <= halfwayCutoff]
         masterInd = masterInd[masterInd <= halfwayCutoff]
 
         measuredK = np.zeros([dim1**3], dtype=complex)
 
-
-
+        # accumulate the sums
         vals_real = np.bincount(masterInd, weights=(masterDistances * np.real(masterVals)))
         vals_cx = np.bincount(masterInd, weights=(masterDistances * np.imag(masterVals)))
         vals = vals_real + 1j * vals_cx
@@ -341,6 +339,8 @@ if __name__ != "__main__":
         if enforce_resolution_circle:
             Q = GENFIRE.utility.generateKspaceIndices(measuredK)
             measuredK[Q>1] = 0
+
+        # apply Hermitian symmetry
         measuredK = GENFIRE.utility.hermitianSymmetrize(measuredK)
 
         print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
@@ -349,6 +349,26 @@ if __name__ != "__main__":
 
 
     def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance, enforce_resolution_circle):
+        """
+        * fillInFourierGrid_DFT *
+
+        DFT gridding function for converting a set of 2D projection images into a 3D Fourier grid
+
+        :param projections: N x N x num_projections NumPy array containing the projections
+        :param angles: 3 x num_projections NumPy array of Euler angles phi,theta, psi
+        :param interpolationCutoffDistance: Radius of interpolation kernel. Only values within this radius of a grid point are considered
+        :param enforce_resolution_circle: boolean; whether or not to truncate reciprocal space to Nyquist frequency
+        :return: the assembled Fourier grid
+
+
+        Author: Yongsoo Yang
+        Transcribed from MATLAB codes by Alan (AJ) Pryor, Jr.
+        Jianwei (John) Miao Coherent Imaging Group
+        University of California, Los Angeles
+        Copyright 2015-2016. All rights reserved.
+        """
+
+
         print ("Assembling Fourier grid.")
         tic = time.time()
         from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
@@ -471,7 +491,7 @@ if __name__ != "__main__":
         try: #try to open the projections as a stack
             projections = scipy.io.loadmat(filename)
             projections = np.array(projections[projections.keys()[0]])
-        except: ## -- figure out where error is thrown
+        except: ##
              #check if the projections are in individual files
             flag = True
             filename_base, file_extension = os.path.splitext(filename)

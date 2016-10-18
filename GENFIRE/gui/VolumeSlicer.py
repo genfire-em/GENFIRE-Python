@@ -27,15 +27,18 @@ class VolumeSlicer(QtGui.QMainWindow):
         super(VolumeSlicer, self).__init__()
         self.volume = volume
         self.ui = VolumeSlicer_MainWindow.Ui_VolumeSlicer()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self) # build interface
+
         self.ui.checkBox_lockcmap.toggled.connect(self.toggleLockCmap)
         self.lockColormap = False
         self.ui.checkBox_lockcmap.setChecked(False)
 
+        # figures for plotting
         self.fig1 = plt.figure()
         self.fig2 = plt.figure()
         self.fig3 = plt.figure()
 
+        # canvases link the Qt widgets with the matplotlib figures
         self.canvas1 = FigureCanvas(self.fig1)
         self.canvas2 = FigureCanvas(self.fig2)
         self.canvas3 = FigureCanvas(self.fig3)
@@ -63,6 +66,7 @@ class VolumeSlicer(QtGui.QMainWindow):
         ncx,  ncy,  ncz  = dimx//2., dimy//2, dimz//2
         ncx,  ncy,  ncz  = int(ncx), int(ncy), int(ncz)
 
+        # use of partial allows binding functions to arguments to prevent having to avoid extra parameter forwarding
         self.ui.scrlbr_fig1.valueChanged.connect(partial(self.setTextFromSlider,self.ui.lineEdit_scrlbr1))
         self.ui.scrlbr_fig2.valueChanged.connect(partial(self.setTextFromSlider,self.ui.lineEdit_scrlbr2))
         self.ui.scrlbr_fig3.valueChanged.connect(partial(self.setTextFromSlider,self.ui.lineEdit_scrlbr3))

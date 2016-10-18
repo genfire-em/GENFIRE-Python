@@ -31,7 +31,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(ProjectionCalculator, self).__init__()
         self.ui = ProjectionCalculator_MainWindow.Ui_ProjectionCalculator()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self) # buid the interface
         self.parent = parent
         self.calculationParameters = ProjectionCalculationParameters()
 
@@ -57,6 +57,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.ui.verticalSlider_psi.setMaximum(3600)
         self.ui.verticalSlider_psi.valueChanged.connect(self.setPsiLineEditValue)
 
+        ## Line edits
         self.ui.lineEdit_phi.setText(toQString('0'))
         self.ui.lineEdit_theta.setText(toQString('0'))
         self.ui.lineEdit_psi.setText(toQString('0'))
@@ -69,6 +70,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.calculateProjections_Dialog.ui.buttonBox.accepted.connect(self.readyToCalculateProjections)
         self.ui.btn_go.setEnabled(False)
 
+        # Create figures for embedded plotting
         self.figure = plt.figure(3)
         self.figure.clf() # clear figure in case it was rendered somewhere else previously
         self.canvas = FigureCanvas(self.figure)
