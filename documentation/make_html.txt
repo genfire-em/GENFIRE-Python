@@ -4,5 +4,4 @@ mv ./src_html/index.html .
 mv ./src_html/installation.html .
 mv ./src_html/GUI_parameters.html .
 mv ./src_html/tutorial.html .
-mv ./src_html/main.css .
 scp main.css ./src_html/main.css
