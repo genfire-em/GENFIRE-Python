@@ -710,7 +710,7 @@ class ReconstructionParameters():
         self.numIterations                       = 100
         self.displayFigure                       = DisplayFigure()
         self.oversamplingRatio                   = 3
-        self.interpolationCutoffDistance         = 0.7
+        self.interpolationCutoffDistance         = 0.5
         self.isInitialObjectDefined              = False
         self.resultsFilename                     = os.path.join(os.getcwd(), 'results.mrc')
         self.useDefaultSupport                   = True
