@@ -58,13 +58,13 @@
 		Python is preinstalled on Mac OS X, but it is generally a bad idea to alter the system
 		python in /usr/bin as some programs depend on it. I would highly recommend using the
 		package manager homebrew to create a python environment for you. The following
-		commands will install homebrew and python2 (you can add --with-python3 to all of the brew install commands if you want to install python3 as well)
+		commands will install homebrew and python3
 		</p>
 		</p>
 			<div class="code_box">
 			<div class="code">
 			$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"<br>
-			$ brew install python
+			$ brew install python3
 			</div>
 			</div>
 		<p>
@@ -77,17 +77,17 @@
 			</div>
 			</div>
 			<p>
-			Install (most of the) dependencies using pip</p>
+			Install (most of the) dependencies using pip3, you may need to prepend the command with sudo depending on your system</p>
 			<div class="code_box">
 			<div class="code">
 			$ pip install --upgrade pip<br>
-			$ sudo pip install -r requirements.txt
+			$ pip3 install -r requirements.txt
 			</div>
 			</div>
 			
 		</p>
 		<p>
-		You will also need sip and PyQt4:
+		You will also need sip and PyQt5:
 		</p>
 			<div class="code_box">
 			<div class="code">
@@ -97,11 +97,11 @@
 			</div>
 		<p>
 		You should now have all the dependencies necessary to run GENFIRE. To install it, make
-		sure you are in the directory with setup.py and enter
+		sure you are in the directory with setup.py and enter the follow. Again, you may need sudo
 		</p>
 			<div class="code_box">
 			<div class="code">
-			$ sudo python setup.py install
+			$ python3 setup.py install
 			</div>
 			</div>
 		<p>
@@ -117,7 +117,7 @@
 			</p>
 			<div class="code_box">
 			<div class="code">
-			$ python<br>
+			$ python3<br>
 			$ import GENFIRE<br>
 			$ GENFIRE.gui.launch.main()
 			</div>
@@ -127,6 +127,13 @@
 		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
 		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
 		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
+		</p>
+
+		<p>
+		<i>The following are details for installing FFTW from source, but recently pip has begun to support the package, so you should first try the easy way with 
+		"pip install pyfftw"</i>
+		</p>
+		<p>
 		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
 		the FFTW libraries</a>. Download the source code, decompress it, and navigate into the unpacked directory
 		from your terminal. PyFFTW needs FFTW to be compiled for all precision types, so you have to compile it three times.
@@ -229,6 +236,13 @@
 		<div class="h3_left"> (Optional) Turbo-charge GENFIRE with FFTW </div>
 		<p> GENFIRE can make use of <a href="https://pypi.python.org/pypi/pyFFTW">pyFFTW</a>, which wraps the FFTW library. I have tested a number of
 		FFT routines including those in NumPy, SciPy, and pyFFTW, and found this to be the fastest one by a factor of 2-3.
+		</p>
+	         <p>
+	            <i>The following are details for installing FFTW from source, but recently pip has begun to support the package,
+	             so you should first try the easy way with "pip install pyfftw"
+	             </i>
+			</p>
+		<p>
 		In order for GENFIRE to use pyFFTW you must <a href="http://www.fftw.org/download.html"> install
 		the FFTW libraries</a>. Download the source code, decompress it, and navigate into the unpacked directory
 		from your terminal. PyFFTW needs FFTW to be compiled for all precision types, so you have to compile it three times.
