@@ -11,9 +11,9 @@ Copyright 2015-2016. All rights reserved.
 """
 
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib
-matplotlib.use("Qt4Agg")
+matplotlib.use("Qt5Agg")
 from GENFIRE.gui import ProjectionCalculator, VolumeSlicer, GENFIRE_MainWindow
 import os
 import sys
@@ -25,7 +25,7 @@ else:
 from GENFIRE.utility import *
 from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
 
-class GenfireMainWindow(QtGui.QMainWindow):
+class GenfireMainWindow(QtWidgets.QMainWindow):
     stop_threads = QtCore.pyqtSignal()
     def closeEvent(self, QCloseEvent):
         self.stop_threads.emit()
@@ -180,7 +180,7 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     def launchVolumeSlicer(self):
         import GENFIRE.fileio
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
         filename = toString(filename)
         volume = GENFIRE.fileio.readVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
@@ -239,27 +239,27 @@ class GenfireMainWindow(QtGui.QMainWindow):
 
     #Functions for selecting input files using QFileDialog
     def selectProjectionFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Projections",filter="Projection Stacks (*.mrc *.mat *.tif *.npy);; MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Projections",filter="Projection Stacks (*.mrc *.mat *.tif *.npy);; MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;All Files (*)")
 
         if filename:
             self.GENFIRE_ReconstructionParameters.setProjectionFilename(filename)
             self.ui.lineEdit_pj.setText(toQString(filename))
 
     def selectAngleFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support",filter="Euler Angles (*.txt *.mat);; MATLAB files (*.mat);;text files (*.txt);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Support",filter="Euler Angles (*.txt *.mat);; MATLAB files (*.mat);;text files (*.txt);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setAngleFilename(filename)
             self.ui.lineEdit_angle.setText(toQString(filename))
 
     def selectSupportFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Support", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Support", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setSupportFilename(filename)
             self.ui.lineEdit_support.setText(toQString(filename))
             self.ui.checkBox_default_support.setChecked(False)
 
     def selectInitialObjectFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Initial Object", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Initial Object", filter="Volume Files (*.mrc *.mat *.npy);; MATLAB files (*.mat);;MRC (*.mrc);;All Files (*)")
         if filename:
             self.GENFIRE_ReconstructionParameters.setInitialObjectFilename(filename)
             self.ui.lineEdit_io.setText(toQString(filename))
@@ -292,9 +292,8 @@ class GenfireMainWindow(QtGui.QMainWindow):
         import GENFIRE.main
         t = Thread(target=partial(GENFIRE.main.main, self.GENFIRE_ReconstructionParameters))
         t.start()
-
     def displayResults(self):
-        outputfilename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select Reconstruction",filter="Volume files (*.mrc *.mat *.npy)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
+        outputfilename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select Reconstruction",filter="Volume files (*.mrc *.mat *.npy)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
         outputfilename = toString(outputfilename)
         if outputfilename:
             import numpy as np
@@ -455,7 +454,7 @@ class GenfireLogger(QtCore.QObject):
 def main():
 
     # Startup the application
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     # app.setStyle('plastique')
     app.setStyle('mac')
 

@@ -11,18 +11,18 @@ Copyright 2015-2016. All rights reserved.
 """
 
 from GENFIRE.gui import VolumeSlicer_MainWindow
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib
-matplotlib.use("Qt4Agg")
+matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import numpy as np
 from functools import partial
 from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
 
 
-class VolumeSlicer(QtGui.QMainWindow):
+class VolumeSlicer(QtWidgets.QMainWindow):
     def __init__(self, volume):
         super(VolumeSlicer, self).__init__()
         self.volume = volume
@@ -47,9 +47,9 @@ class VolumeSlicer(QtGui.QMainWindow):
         self.slice2 = self.fig2.add_subplot(111)
         self.slice3 = self.fig3.add_subplot(111)
 
-        self.slice1.hold(False)
-        self.slice2.hold(False)
-        self.slice3.hold(False)
+        # self.slice1.hold(False)
+        # self.slice2.hold(False)
+        # self.slice3.hold(False)
 
         self.navigationToolbar1 = NavigationToolbar(self.canvas1, self)
         self.navigationToolbar2 = NavigationToolbar(self.canvas2, self)

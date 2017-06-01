@@ -13,7 +13,7 @@ Copyright 2015-2016. All rights reserved.
 
 from __future__ import division
 import matplotlib
-matplotlib.use("Qt4Agg")
+matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 import os
 import scipy.io

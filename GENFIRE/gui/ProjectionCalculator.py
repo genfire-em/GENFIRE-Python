@@ -13,18 +13,18 @@ Copyright 2015-2016. All rights reserved.
 
 from __future__ import print_function
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from GENFIRE.gui import ProjectionCalculator_MainWindow
 from GENFIRE.gui import CalculateProjectionSeries_Dialog
 from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
 from GENFIRE.utility import *
 import GENFIRE
-class ProjectionCalculator(QtGui.QMainWindow):
+class ProjectionCalculator(QtWidgets.QMainWindow):
     model_loading_signal = QtCore.pyqtSignal()
     update_filenames_signal = QtCore.pyqtSignal()
     emit_message_signal = QtCore.pyqtSignal(str)
@@ -80,7 +80,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.ax = self.figure.add_subplot(111)
         self.ax.axes.get_xaxis().set_visible(False)
         self.ax.axes.get_yaxis().set_visible(False)
-        self.ax.hold(False)
+        # self.ax.hold(False)
 
         self.ui.btn_clearModel.clicked.connect(self.clearModel)
 
@@ -201,7 +201,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.ax = self.figure.add_subplot(111)
         self.ax.axes.get_xaxis().set_visible(False)
         self.ax.axes.get_yaxis().set_visible(False)
-        self.ax.hold(False)
+        # self.ax.hold(False)
 
     def setPhiSliderValue(self):
         value = toFloat(self.ui.lineEdit_phi.text())
@@ -256,7 +256,7 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.calculationParameters.psiStep = toFloat(psiStep)
 
     def selectOutputDirectory(self):
-        dirname = QtGui.QFileDialog.getExistingDirectory(QtGui.QFileDialog(), "Select File Containing Angles",options=QtGui.QFileDialog.ShowDirsOnly)
+        dirname = QtWidgets.QFileDialog.getExistingDirectory(QtWidgets.QFileDialog(), "Select File Containing Angles",options=QtWidgets.QFileDialog.ShowDirsOnly)
         if dirname:
             self.calculationParameters.outputFilename =  dirname
             # self.ui.lineEdit_outputFilename.setText(toQString(dirname))
@@ -273,14 +273,14 @@ class ProjectionCalculator(QtGui.QMainWindow):
         self.displayFigure()
 
     def selectModelFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Model",filter="Volume files (*.mrc *.mat *.npy);;MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;numpy (*.npy);;All Files (*)")
+        filename = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Model",filter="Volume files (*.mrc *.mat *.npy);;MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;numpy (*.npy);;All Files (*)")
         print(filename)
         if os.path.isfile(toString(filename)):
             self.ui.btn_go.setEnabled(True)
             self.setModelFilename(filename)
 
     def loadModel(self, filename):
-        self.calculationParameters.oversamplingRatio, ok = QtGui.QInputDialog.getInt(self, "Select Oversampling Ratio","Oversampling Ratio = ",value=3,min=1,max=10,step=1)
+        self.calculationParameters.oversamplingRatio, ok = QtWidgets.QInputDialog.getInt(self, "Select Oversampling Ratio","Oversampling Ratio = ",value=3,min=1,max=10,step=1)
         from threading import Thread
         t = Thread(target=lambda:print("Loading Model..."))
         t.start()
@@ -346,7 +346,7 @@ class ProjectionCalculationParameters:
         self.psi                        = 0.0
         self.calculationMethod          = "FFT"
 
-class CalculateProjectionSeries_popup(QtGui.QDialog):
+class CalculateProjectionSeries_popup(QtWidgets.QDialog):
     def __init__(self, calculation_parameters = ProjectionCalculationParameters()):
         super(CalculateProjectionSeries_popup, self).__init__()
         self.calculationParameters = calculation_parameters
@@ -374,7 +374,7 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
         self.ui.lineEdit_outputFilename.textEdited.connect(self.setOutputFilename)
         self.ui.checkBox_saveAngles.setChecked(True)
         self.ui.checkBox_saveAngles.toggled.connect(self.toggleSaveAngles)
-        self.ui.buttonBox.button(QtGui.QDialogButtonBox.Ok).setText("Calculate Projections")
+        self.ui.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText("Calculate Projections")
         self.ui.buttonBox.accepted.connect(partial(self.setStatus, 1))
 
         self.status = 0
@@ -399,7 +399,7 @@ class CalculateProjectionSeries_popup(QtGui.QDialog):
     #         self.calculationParameters.calculationMethod = "DFT"
 
     def selectAngleFile(self):
-        filename = QtGui.QFileDialog.getOpenFileName(QtGui.QFileDialog(), "Select File Containing Angles",filter="txt files (*.txt);;All Files (*)")
+        filename = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Angles",filter="txt files (*.txt);;All Files (*)")
         if filename:
             self.calculationParameters.angleFilename = filename
             self.calculationParameters.angleFileProvided = True
@@ -455,7 +455,7 @@ if __name__ == "__main__":
     import sys
 
     # Startup the application
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # app.setStyle('plastique')
     app.setStyle('mac')

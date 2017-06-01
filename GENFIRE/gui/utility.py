@@ -10,7 +10,7 @@ University of California, Los Angeles
 Copyright 2015-2016. All rights reserved.
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 import sys
 
 # strings are very different objects in Python 2 and 3, so a little modification of these
@@ -25,13 +25,13 @@ if sys.version_info >=(3,0):
     def toInt(value):
         return int(value)
 else: #python 2
-    import PyQt4.QtCore
+    import PyQt5.QtCore
     def toString(string):
         if isinstance(string,QtCore.QString):
             string = unicode(string.toUtf8(),encoding='UTF-8')
         return string
     def toQString(string):
-        return PyQt4.QtCore.QString(str(string))
+        return PyQt5.QtCore.QString(str(string))
     def toFloat(value):
         if isinstance(value,QtCore.QString):
             return value.toFloat()[0]
