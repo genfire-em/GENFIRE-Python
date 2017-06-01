@@ -256,7 +256,7 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         self.calculationParameters.psiStep = toFloat(psiStep)
 
     def selectOutputDirectory(self):
-        dirname = QtWidgets.QFileDialog.getExistingDirectory(QtWidgets.QFileDialog(), "Select File Containing Angles",options=QtWidgets.QFileDialog.ShowDirsOnly)
+        dirname, _ = QtWidgets.QFileDialog.getExistingDirectory(QtWidgets.QFileDialog(), "Select File Containing Angles",options=QtWidgets.QFileDialog.ShowDirsOnly)
         if dirname:
             self.calculationParameters.outputFilename =  dirname
             # self.ui.lineEdit_outputFilename.setText(toQString(dirname))
@@ -273,7 +273,7 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         self.displayFigure()
 
     def selectModelFile(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Model",filter="Volume files (*.mrc *.mat *.npy);;MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;numpy (*.npy);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Model",filter="Volume files (*.mrc *.mat *.npy);;MATLAB files (*.mat);;TIFF images (*.tif *.tiff);;MRC (*.mrc);;numpy (*.npy);;All Files (*)")
         print(filename)
         if os.path.isfile(toString(filename)):
             self.ui.btn_go.setEnabled(True)
@@ -399,7 +399,7 @@ class CalculateProjectionSeries_popup(QtWidgets.QDialog):
     #         self.calculationParameters.calculationMethod = "DFT"
 
     def selectAngleFile(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Angles",filter="txt files (*.txt);;All Files (*)")
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select File Containing Angles",filter="txt files (*.txt);;All Files (*)")
         if filename:
             self.calculationParameters.angleFilename = filename
             self.calculationParameters.angleFileProvided = True
