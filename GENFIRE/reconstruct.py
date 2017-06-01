@@ -104,7 +104,7 @@ if __name__ != "__main__":
             k = rfftn(initialObject)
 
             #compute error
-            errK[iterationNum-1] = np.sum(abs(k[errInd]-measuredK[errInd]))/np.sum(abs(measuredK[errInd]))#monitor error
+            errK[iterationNum-1] = np.sum(abs(np.abs(k[errInd])-np.abs(measuredK[errInd])))/np.sum(abs(measuredK[errInd]))#monitor error
             print("Iteration number: {0}           error = {1:0.5f}".format(iterationNum, errK[iterationNum-1]))
 
             #update best object if a better one has been found
@@ -122,8 +122,9 @@ if __name__ != "__main__":
                     tmpIndY = R_freeInd_complex[1][0][shellNum]
                     tmpIndZ = R_freeInd_complex[2][0][shellNum]
 
-                    tmpVals = R_freeVals_complex[shellNum]
-                    Rfree_numerator                         = np.sum(abs(k[tmpIndX, tmpIndY, tmpIndZ] - tmpVals))
+                    tmpVals = np.abs(R_freeVals_complex[shellNum])
+                    # Rfree_numerator                         = np.sum(abs(k[tmpIndX, tmpIndY, tmpIndZ] - tmpVals))
+                    Rfree_numerator                         = np.sum(abs(np.abs(k[tmpIndX, tmpIndY, tmpIndZ]) - tmpVals))
                     Rfree_denominator                       = np.sum(abs(tmpVals))
                     total_Rfree_error                      += Rfree_numerator
                     total_Rfree_error_norm                 += Rfree_denominator
