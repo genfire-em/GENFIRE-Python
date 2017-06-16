@@ -168,7 +168,6 @@ if __name__ != "__main__":
 
                     plt.figure(2)
                     plt.get_current_fig_manager().window.setGeometry(25,450,400, 400)
-                    plt.hold(False)
                     plt.plot(range(0,numIterations),errK)
                     plt.title("K-space Error vs Iteration Number")
                     plt.xlabel("Spatial Frequency (% of Nyquist)")
@@ -188,10 +187,8 @@ if __name__ != "__main__":
                         plt.figure(4)
                         mngr = plt.get_current_fig_manager()
                         mngr.window.setGeometry(450,450,400, 400)
-                        plt.hold(False)
                         X = np.linspace(0,1,np.shape(Rfree_complex_bybin)[0])
                         plt.plot(X, Rfree_complex_bybin[:,iterationNum-1])
-                        plt.hold(False)
                         plt.title("Current Rfree Value vs Spatial Frequency")
                         plt.xlabel("Spatial Frequency (% of Nyquist)")
                         plt.ylabel('Rfree')

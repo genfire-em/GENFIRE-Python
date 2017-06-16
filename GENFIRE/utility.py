@@ -1,5 +1,5 @@
 """
-* GENFIRE.utility *
+* genfire.utility *
 
 This module contains various useful functions that do not fit into another category
 

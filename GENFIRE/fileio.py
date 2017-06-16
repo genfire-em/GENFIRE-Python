@@ -1,5 +1,5 @@
 """
-* GENFIRE.fileio *
+* genfire.fileio *
 
 The primary file input/output module for GENFIRE.
 
@@ -325,7 +325,7 @@ def loadAngles(filename):
     elif ext== ".npy":
         return np.load(filename)
     elif ext==".mat":
-        from GENFIRE.fileio import readVolume
+        from genfire.fileio import readVolume
         return readVolume(filename)
     else:
         raise IOError("Unsupported file extension \"{}\" for Euler angles".format(ext))

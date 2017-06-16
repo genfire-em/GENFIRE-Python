@@ -1,5 +1,5 @@
 """
-* GENFIRE.gui.launch *
+* genfire.gui.launch *
 
 This is the script for launching the GENFIRE GUI
 
@@ -181,10 +181,11 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
     def launchVolumeSlicer(self):
         import genfire.fileio
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
-        filename = toString(filename)
-        volume = genfire.fileio.readVolume(filename)
-        self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
-        self.VolumeSlicer.show()
+        if filename:
+            filename = toString(filename)
+            volume = genfire.fileio.readVolume(filename)
+            self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
+            self.VolumeSlicer.show()
 
     def toggleResCircle(self):
         if self.ui.checkBox_resCircle.isChecked():
@@ -289,8 +290,8 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
         # Launch the reconstruction in a separate thread to prevent the GUI blocking while reconstructing
         from threading import Thread
         from functools import partial
-        import GENFIRE.main
-        t = Thread(target=partial(GENFIRE.main.main, self.GENFIRE_ReconstructionParameters))
+        import genfire.main
+        t = Thread(target=partial(genfire.main.main, self.GENFIRE_ReconstructionParameters))
         t.start()
     def displayResults(self):
         outputfilename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select Reconstruction",filter="Volume files (*.mrc *.mat *.npy)  ;; MATLAB files (*.mat);;text files (*.txt *.tiff);;MRC (*.mrc);;All Files (*)")
@@ -298,11 +299,11 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
         if outputfilename:
             import numpy as np
             import os
-            import GENFIRE.fileio
+            import genfire.fileio
             import matplotlib.pyplot as plt
             plt.close('all')
 
-            initialObject = GENFIRE.fileio.readVolume(outputfilename)
+            initialObject = genfire.fileio.readVolume(outputfilename)
             dims = np.shape(initialObject)
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays
             n_half_y = int(dims[1]/2)
@@ -371,10 +372,8 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
                 plt.figure()
                 mngr = plt.get_current_fig_manager()
                 mngr.window.setGeometry(700,650,550, 250)
-                plt.hold(False)
                 X = np.linspace(0,1,np.shape(Rfree_bybin)[0])
                 plt.plot(X, Rfree_bybin[:,-1])
-                plt.hold(False)
                 plt.title("Final Rfree Value vs Spatial Frequency")
                 plt.xlabel("Spatial Frequency (% of Nyquist)")
                 plt.ylabel('Rfree')

@@ -80,7 +80,6 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         self.ax = self.figure.add_subplot(111)
         self.ax.axes.get_xaxis().set_visible(False)
         self.ax.axes.get_yaxis().set_visible(False)
-        # self.ax.hold(False)
 
         self.ui.btn_clearModel.clicked.connect(self.clearModel)
 
@@ -103,14 +102,14 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
             self.calculationParameters.modelFilename = toString(self.calculationParameters.modelFilename)
             if not self.calculationParameters.modelLoadedFlag:
 
-                self.calculationParameters.model = GENFIRE.fileio.readVolume(self.calculationParameters.modelFilename)
+                self.calculationParameters.model = genfire.fileio.readVolume(self.calculationParameters.modelFilename)
                 self.calculationParameters.oversamplingRatio = self.calculationParameters.oversamplingRatio
                 self.calculationParameters.dims = np.shape(self.calculationParameters.model)
                 paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
                 padding = int((paddedDim-self.calculationParameters.dims[0])/2)
                 self.calculationParameters.model = np.pad(self.calculationParameters.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
                 self.calculationParameters.model = fftn_fftshift(self.calculationParameters.model)
-                self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
+                self.calculationParameters.interpolator = genfire.utility.getProjectionInterpolator(self.calculationParameters.model)
             self.calculationParameters.ncOut = np.shape(self.calculationParameters.model)[0]//2
 
 
@@ -124,15 +123,15 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
                 filename = self.calculationParameters.outputFilename +'.npy'
                 projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(phi)),dtype=float)
                 if self.calculationParameters.interpolator is None:
-                    self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
+                    self.calculationParameters.interpolator = genfire.utility.getProjectionInterpolator(self.calculationParameters.model)
                 for projNum in range(0,np.size(phi)):
-                    pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model))
+                    pj = genfire.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi[projNum], theta[projNum], psi[projNum], np.shape(self.calculationParameters.model))
                     projections[:, :, projNum] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
 
-                GENFIRE.fileio.writeVolume(filename, projections)
+                genfire.fileio.writeVolume(filename, projections)
             else:
                 if self.calculationParameters.interpolator is None:
-                    self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
+                    self.calculationParameters.interpolator = genfire.utility.getProjectionInterpolator(self.calculationParameters.model)
                 phi = self.calculationParameters.phi
                 psi = self.calculationParameters.psi
                 theta = np.arange(self.calculationParameters.thetaStart, \
@@ -141,12 +140,12 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
                 projections = np.zeros((self.calculationParameters.dims[0],self.calculationParameters.dims[1],np.size(theta)),dtype=float)
                 for i, current_theta in enumerate(theta):
 
-                    pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi, current_theta, psi, np.shape(self.calculationParameters.model))
+                    pj = genfire.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, phi, current_theta, psi, np.shape(self.calculationParameters.model))
                     projections[:, :, i] = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
                 filename = self.calculationParameters.outputFilename
                 filename = toString(filename)
                 # projections[ projections<0 ] = 0
-                GENFIRE.fileio.writeVolume(filename, projections)
+                genfire.fileio.writeVolume(filename, projections)
                 if self.calculationParameters.writeAnglesFlag:
                     output_filename_base, ext  = os.path.splitext(toString(self.calculationParameters.outputFilename))
                     output_angle_filename      = output_filename_base + "_euler_angles.txt"
@@ -174,7 +173,7 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
 
     def displayFigure(self):
         if self.calculationParameters.model is not None:
-            pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
+            pj = genfire.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
             pj = pj[self.calculationParameters.ncOut-int(int(self.calculationParameters.dims[0]/2)):self.calculationParameters.ncOut+int(int(self.calculationParameters.dims[0]/2)), self.calculationParameters.ncOut-int(int(self.calculationParameters.dims[1]/2)):self.calculationParameters.ncOut+int(int(self.calculationParameters.dims[1]/2))]
             pj[ pj<0 ] = 0
             self.showProjection(pj)
@@ -183,8 +182,8 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
 
     def updateFigure(self):
         if self.calculationParameters.interpolator is None:
-            self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
-        pj = GENFIRE.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
+            self.calculationParameters.interpolator = genfire.utility.getProjectionInterpolator(self.calculationParameters.model)
+        pj = genfire.utility.calculateProjection_interp_fromInterpolator(self.calculationParameters.interpolator, self.calculationParameters.phi, self.calculationParameters.theta, self.calculationParameters.psi, np.shape(self.calculationParameters.model))
         pj = pj[self.calculationParameters.ncOut-int(self.calculationParameters.dims[0]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[0]/2), self.calculationParameters.ncOut-int(self.calculationParameters.dims[1]/2):self.calculationParameters.ncOut+int(self.calculationParameters.dims[1]/2)]
         pj[ pj<0 ] = 0
         self.ax.imshow(pj)
@@ -201,7 +200,6 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         self.ax = self.figure.add_subplot(111)
         self.ax.axes.get_xaxis().set_visible(False)
         self.ax.axes.get_yaxis().set_visible(False)
-        # self.ax.hold(False)
 
     def setPhiSliderValue(self):
         value = toFloat(self.ui.lineEdit_phi.text())
@@ -285,14 +283,14 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         t = Thread(target=lambda:print("Loading Model..."))
         t.start()
         self.ui.btn_go.setEnabled(True)
-        self.calculationParameters.model = GENFIRE.fileio.readVolume(toString(filename))
+        self.calculationParameters.model = genfire.fileio.readVolume(toString(filename))
         self.calculationParameters.dims = np.shape(self.calculationParameters.model)
         self.calculationParameters.paddedDim = self.calculationParameters.dims[0] * self.calculationParameters.oversamplingRatio
         padding = int((self.calculationParameters.paddedDim-self.calculationParameters.dims[0])/2)
         self.calculationParameters.model = np.pad(self.calculationParameters.model,((padding,padding),(padding,padding),(padding,padding)),'constant')
         self.calculationParameters.model = fftn_fftshift(self.calculationParameters.model)
         self.calculationParameters.ncOut = int(np.shape(self.calculationParameters.model)[0]//2)
-        self.calculationParameters.interpolator = GENFIRE.utility.getProjectionInterpolator(self.calculationParameters.model)
+        self.calculationParameters.interpolator = genfire.utility.getProjectionInterpolator(self.calculationParameters.model)
         t.join()
 
     def setAngleFilename(self, filename):

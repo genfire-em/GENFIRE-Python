@@ -47,10 +47,6 @@ class VolumeSlicer(QtWidgets.QMainWindow):
         self.slice2 = self.fig2.add_subplot(111)
         self.slice3 = self.fig3.add_subplot(111)
 
-        # self.slice1.hold(False)
-        # self.slice2.hold(False)
-        # self.slice3.hold(False)
-
         self.navigationToolbar1 = NavigationToolbar(self.canvas1, self)
         self.navigationToolbar2 = NavigationToolbar(self.canvas2, self)
         self.navigationToolbar3 = NavigationToolbar(self.canvas3, self)
