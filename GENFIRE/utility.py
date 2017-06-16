@@ -38,7 +38,7 @@ try:
         return pyfftw.interfaces.numpy_fft.fftshift(pyfftw.interfaces.numpy_fft.ifftn(pyfftw.interfaces.numpy_fft.ifftshift(arr),overwrite_input=True,threads=threads))
 
 except ImportError:
-    print("No pyFFTW installation found. Installing pyFFTW will significantly improve the speed of GENFIRE. Consutl the documentation for more information. Continuing with NumPy FFT...")
+    print("No pyFFTW installation found. Installing pyFFTW will significantly improve the speed of GENFIRE. Consult the documentation for more information. Continuing with NumPy FFT...")
     import numpy as np
     def rfftn(arr):
         return np.fft.rfftn(arr)

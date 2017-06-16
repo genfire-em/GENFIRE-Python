@@ -5,7 +5,7 @@ import sys
 setup(
 	name 				= "genfire",
 	packages		    = find_packages(),
-	version 			= "1.0.0",
+	version 			= "1.0.01",
 	description 		= "GENeralized Fourier Iterative REconstruction",
 	author 				= "Alan (AJ) Pryor, Jr.",
     author_email 		= "apryor6@gmail.com",
