@@ -1,3 +1,3 @@
 #!/usr/bin/env python3
-import GENFIRE
-GENFIRE.gui.launch.main()
+import genfire as gf
+gf.gui.launch.main()

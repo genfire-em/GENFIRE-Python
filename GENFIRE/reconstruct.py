@@ -1,5 +1,5 @@
 """
-* GENFIRE.reconstruct *
+* genfire.reconstruct *
 
 This module contains the core of GENFIRE's functions for computing reconstructions
 
@@ -18,9 +18,9 @@ import matplotlib.pyplot as plt
 import os
 import scipy.io
 import time
-import GENFIRE
+import genfire
 from multiprocessing import Pool
-from GENFIRE.utility import *
+from genfire.utility import *
 
 PI = np.pi
 if __name__ != "__main__":
@@ -338,11 +338,11 @@ if __name__ != "__main__":
         measuredK[np.isnan(measuredK)] = 0
 
         if enforce_resolution_circle:
-            Q = GENFIRE.utility.generateKspaceIndices(measuredK)
+            Q = genfire.utility.generateKspaceIndices(measuredK)
             measuredK[Q>1] = 0
 
         # apply Hermitian symmetry
-        measuredK = GENFIRE.utility.hermitianSymmetrize(measuredK)
+        measuredK = genfire.utility.hermitianSymmetrize(measuredK)
 
         print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
         return measuredK
@@ -372,7 +372,7 @@ if __name__ != "__main__":
 
         print ("Assembling Fourier grid.")
         tic = time.time()
-        from GENFIRE.utility import pointToPlaneClosest, pointToPlaneDistance
+        from genfire.utility import pointToPlaneClosest, pointToPlaneDistance
         (n1, n2) = (np.shape(projections)[0],np.shape(projections)[1])
         minInvThresh = 0.00001
         num_projections = np.shape(projections)[2]
@@ -469,10 +469,10 @@ if __name__ != "__main__":
         print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
 
         if enforce_resolution_circle:
-            Q = GENFIRE.utility.generateKspaceIndices(measuredK)
+            Q = genfire.utility.generateKspaceIndices(measuredK)
             measuredK[Q>1] = 0
 
-        return GENFIRE.utility.hermitianSymmetrize(measuredK)[:-1,:-1,:-1]
+        return genfire.utility.hermitianSymmetrize(measuredK)[:-1,:-1,:-1]
 
     def readMAT(filename):
         """
@@ -691,8 +691,8 @@ if __name__ != "__main__":
 
 def toString(string):
     try:
-        import GENFIRE.gui.utility
-        return GENFIRE.gui.utility.toString(string)
+        import genfire.gui.utility
+        return genfire.gui.utility.toString(string)
     except ImportError:
         return str(string)
 

@@ -14,16 +14,16 @@ Copyright 2015-2016. All rights reserved.
 from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib
 matplotlib.use("Qt5Agg")
-from GENFIRE.gui import ProjectionCalculator, VolumeSlicer, GENFIRE_MainWindow
+from genfire.gui import ProjectionCalculator, VolumeSlicer, GENFIRE_MainWindow
 import os
 import sys
-from GENFIRE.reconstruct import ReconstructionParameters
+from genfire.reconstruct import ReconstructionParameters
 if sys.version_info >= (3,0):
-	from GENFIRE.gui import GENFIRE_qrc_py3
+	from genfire.gui import GENFIRE_qrc_py3
 else:
-	from GENFIRE.gui import GENFIRE_qrc
-from GENFIRE.utility import *
-from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
+	from genfire.gui import GENFIRE_qrc
+from genfire.utility import *
+from genfire.gui.utility import toString, toQString, toInt, toFloat
 
 class GenfireMainWindow(QtWidgets.QMainWindow):
     stop_threads = QtCore.pyqtSignal()
@@ -179,10 +179,10 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
         self.ui.lineEdit_results.textChanged.emit(self.ui.lineEdit_results.text())
 
     def launchVolumeSlicer(self):
-        import GENFIRE.fileio
+        import genfire.fileio
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QFileDialog(), "Select Volume",filter="Volume files (*.mat *.mrc *.npy);;All Files (*)")
         filename = toString(filename)
-        volume = GENFIRE.fileio.readVolume(filename)
+        volume = genfire.fileio.readVolume(filename)
         self.VolumeSlicer = VolumeSlicer.VolumeSlicer(volume)
         self.VolumeSlicer.show()
 

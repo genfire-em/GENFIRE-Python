@@ -12,10 +12,10 @@ Copyright 2015-2016. All rights reserved.
 
 from __future__ import division
 import numpy as np
-import GENFIRE
+import genfire
 import sys
 import os
-from GENFIRE.reconstruct import ReconstructionParameters
+from genfire.reconstruct import ReconstructionParameters
 
 
 def main_InteractivelySetParameters():
@@ -62,7 +62,7 @@ def main_InteractivelySetParameters():
     main(reconstruction_parameters)
 
 def main(reconstruction_parameters):
-    import GENFIRE.fileio
+    import genfire.fileio
 
     filename_projections                    = reconstruction_parameters.projectionFilename
     filename_angles                         = reconstruction_parameters.angleFilename

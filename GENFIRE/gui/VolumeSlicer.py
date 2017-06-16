@@ -1,5 +1,5 @@
 """
-* GENFIRE.gui.VolumeSlicer *
+* genfire.gui.VolumeSlicer *
 
 The volume slicer module
 
@@ -10,7 +10,7 @@ University of California, Los Angeles
 Copyright 2015-2016. All rights reserved.
 """
 
-from GENFIRE.gui import VolumeSlicer_MainWindow
+from genfire.gui import VolumeSlicer_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib
 matplotlib.use("Qt5Agg")
@@ -19,7 +19,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import numpy as np
 from functools import partial
-from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
+from genfire.gui.utility import toString, toQString, toInt, toFloat
 
 
 class VolumeSlicer(QtWidgets.QMainWindow):

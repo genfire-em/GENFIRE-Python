@@ -1,5 +1,5 @@
 """
-* GENFIRE.gui.ProjectionCalculator *
+* genfire.gui.ProjectionCalculator *
 
 The projection calculator module
 
@@ -19,11 +19,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from GENFIRE.gui import ProjectionCalculator_MainWindow
-from GENFIRE.gui import CalculateProjectionSeries_Dialog
-from GENFIRE.gui.utility import toString, toQString, toInt, toFloat
-from GENFIRE.utility import *
-import GENFIRE
+from genfire.gui import ProjectionCalculator_MainWindow
+from genfire.gui import CalculateProjectionSeries_Dialog
+from genfire.gui.utility import toString, toQString, toInt, toFloat
+from genfire.utility import *
+import genfire
 class ProjectionCalculator(QtWidgets.QMainWindow):
     model_loading_signal = QtCore.pyqtSignal()
     update_filenames_signal = QtCore.pyqtSignal()
