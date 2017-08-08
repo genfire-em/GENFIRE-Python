@@ -1,4 +1,5 @@
 GENFIRE.egg-info/
+.DS_Store
 build/
 dist/
 UNKNOWN.egg-info/
