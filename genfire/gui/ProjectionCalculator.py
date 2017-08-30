@@ -29,8 +29,8 @@ def validatedStringToFloat(string):
     try:
         val = toFloat(string)
     except ValueError:
-        return 1.0
-
+        return 0.0
+    return val
 
 def validateFloatFromLineEdit(self, line_edit):
     try:
