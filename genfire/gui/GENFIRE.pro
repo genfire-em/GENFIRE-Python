@@ -20,6 +20,7 @@ HEADERS  += GENFIRE_MainWindow.h
 FORMS    += GENFIRE_MainWindow.ui \
             ProjectionCalculator_MainWindow.ui \
             VolumeSlicer_MainWindow.ui \
-    CalculateProjectionSeries_Dialog.ui
+    CalculateProjectionSeries_Dialog.ui \
+    calculateprojectionseries_dialog.ui
 
 RESOURCES   += GENFIRE.qrc

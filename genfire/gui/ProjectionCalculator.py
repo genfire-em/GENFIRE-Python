@@ -24,6 +24,20 @@ from genfire.gui import CalculateProjectionSeries_Dialog
 from genfire.gui.utility import toString, toQString, toInt, toFloat
 from genfire.utility import *
 import genfire
+
+def validatedStringToFloat(string):
+    try:
+        val = toFloat(string)
+    except ValueError:
+        return 1.0
+
+
+def validateFloatFromLineEdit(self, line_edit):
+    try:
+        val = str(line_edit.text())
+    except ValueError:
+        line_edit.setText("1.0")
+
 class ProjectionCalculator(QtWidgets.QMainWindow):
     model_loading_signal = QtCore.pyqtSignal()
     update_filenames_signal = QtCore.pyqtSignal()
@@ -202,17 +216,17 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         self.ax.axes.get_yaxis().set_visible(False)
 
     def setPhiSliderValue(self):
-        value = toFloat(self.ui.lineEdit_phi.text())
+        value = validatedStringToFloat(self.ui.lineEdit_phi.text())
         value = int(value * 10)
         self.ui.verticalSlider_phi.setValue(value)
 
     def setThetaSliderValue(self):
-        value = toFloat(self.ui.lineEdit_theta.text())
+        value = validatedStringToFloat(self.ui.lineEdit_theta.text())
         value = int(value * 10)
         self.ui.verticalSlider_theta.setValue(value)
 
     def setPsiSliderValue(self):
-        value = toFloat(self.ui.lineEdit_psi.text())
+        value = validatedStringToFloat(self.ui.lineEdit_psi.text())
         value = int(value * 10)
         self.ui.verticalSlider_psi.setValue(value)
 
@@ -236,22 +250,22 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
         self.calculationParameters.numberOfProjections = toInt(number)
 
     def setPhiStart(self, phiStart):
-        self.calculationParameters.phiStart = toFloat(phiStart)
+        self.calculationParameters.phiStart = validatedStringToFloat(phiStart)
 
     def setThetaStart(self, thetaStart):
-        self.calculationParameters.thetaStart = toFloat(thetaStart)
+        self.calculationParameters.thetaStart = validatedStringToFloat(thetaStart)
 
     def setPsiStart(self, psiStart):
-        self.calculationParameters.psiStart = toFloat(psiStart)
+        self.calculationParameters.psiStart = validatedStringToFloat(psiStart)
 
     def setPhiStep(self, phiStep):
-        self.calculationParameters.phiStep = toFloat(phiStep)
+        self.calculationParameters.phiStep = validatedStringToFloat(phiStep)
 
     def setThetaStep(self, thetaStep):
-        self.calculationParameters.thetaStep = toFloat(thetaStep)
+        self.calculationParameters.thetaStep = validatedStringToFloat(thetaStep)
 
     def setPsiStep(self, psiStep):
-        self.calculationParameters.psiStep = toFloat(psiStep)
+        self.calculationParameters.psiStep = validatedStringToFloat(psiStep)
 
     def selectOutputDirectory(self):
         dirname, _ = QtWidgets.QFileDialog.getExistingDirectory(QtWidgets.QFileDialog(), "Select File Containing Angles",options=QtWidgets.QFileDialog.ShowDirsOnly)
@@ -369,13 +383,33 @@ class CalculateProjectionSeries_popup(QtWidgets.QDialog):
         self.ui.lineEdit_thetaStart.textEdited.connect(self.setThetaStart)
         self.ui.lineEdit_thetaStep.textEdited.connect(self.setThetaStep)
         self.ui.lineEdit_thetaStop.textEdited.connect(self.setThetaStop)
+
         self.ui.lineEdit_outputFilename.textEdited.connect(self.setOutputFilename)
         self.ui.checkBox_saveAngles.setChecked(True)
         self.ui.checkBox_saveAngles.toggled.connect(self.toggleSaveAngles)
         self.ui.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText("Calculate Projections")
         self.ui.buttonBox.accepted.connect(partial(self.setStatus, 1))
 
+        # validations
+        self.ui.lineEdit_phi.editingFinished.connect(
+            partial(self.validateFloatFromLineEdit, self.ui.lineEdit_phi))
+        self.ui.lineEdit_psi.editingFinished.connect(
+            partial(self.validateFloatFromLineEdit, self.ui.lineEdit_psi))
+        self.ui.lineEdit_thetaStart.editingFinished.connect(
+            partial(self.validateFloatFromLineEdit, self.ui.lineEdit_thetaStart))
+        self.ui.lineEdit_thetaStep.editingFinished.connect(
+            partial(self.validateFloatFromLineEdit, self.ui.lineEdit_thetaStep))
+        self.ui.lineEdit_thetaStop.editingFinished.connect(
+            partial(self.validateFloatFromLineEdit, self.ui.lineEdit_thetaStop))
+
         self.status = 0
+
+    def validateFloatFromLineEdit(self, line_edit):
+        print("validating!")
+        try:
+            val = toFloat(line_edit.text())
+        except ValueError:
+            line_edit.setText("1.0")
 
     def setStatus(self,status):
         self.status = status
@@ -425,23 +459,24 @@ class CalculateProjectionSeries_popup(QtWidgets.QDialog):
 
 
     def setPhi(self, angle):
-        self.calculationParameters.phi = toFloat(angle)
+        self.calculationParameters.phi = validatedStringToFloat(angle)
 
     def setPsi(self, angle):
-        self.calculationParameters.psi = toFloat(angle)
+        self.calculationParameters.psi = validatedStringToFloat(angle)
 
     def setThetaStart(self, value):
-        self.calculationParameters.thetaStart = toFloat(value)
+        self.calculationParameters.thetaStart = validatedStringToFloat(value)
 
     def setThetaStep(self, value):
-        self.calculationParameters.thetaStep = toFloat(value)
+        self.calculationParameters.thetaStep = validatedStringToFloat(value)
 
     def setThetaStop(self, value):
-        self.calculationParameters.thetaStop = toFloat(value)
+        self.calculationParameters.thetaStop = validatedStringToFloat(value)
 
     def setOutputFilename(self, filename):
         if filename:
             self.calculationParameters.outputFilename = filename
+
 
 class ProjectionCalculator_thread(QtCore.QThread):
     def __init__(self, parent):

@@ -8,7 +8,6 @@ genfire/utility.py
 genfire.egg-info/PKG-INFO
 genfire.egg-info/SOURCES.txt
 genfire.egg-info/dependency_links.txt
-genfire.egg-info/requires.txt
 genfire.egg-info/top_level.txt
 genfire/gui/CalculateProjectionSeries_Dialog.py
 genfire/gui/GENFIRE_MainWindow.py
