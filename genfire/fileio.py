@@ -136,8 +136,8 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
         data_flag = 6
     else:
         raise ValueError("No supported datatype found!\n")
-
     int_header[:4] = (dimx,dimy,dimz,data_flag)
+    int_header[10:13] = 1
     char_header = str(' '*800)
     with open(filename,'wb') as fid:
         fid.write(int_header.tobytes())
