@@ -120,7 +120,13 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
 
     if datatype != arr.dtype:
         arr = arr.astype(datatype)
-    int_header = np.zeros(56,dtype='int32') #must be 4-byte ints
+    # int_header = np.zeros(56,dtype='int32') #must be 4-byte ints
+    int_header1 = np.zeros(10,dtype='int32') #must be 4-byte ints
+    float_header1 = np.zeros(6,dtype='float32') #must be 4-byte ints
+    int_header2 = np.zeros(3,dtype='int32') #must be 4-byte ints
+    float_header2 = np.zeros(3,dtype='float32') #must be 4-byte ints
+    int_header3 = np.zeros(34,dtype='int32') #must be 4-byte ints
+
 
     if (datatype == 'u1'):
         data_flag = 0
@@ -136,11 +142,18 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
         data_flag = 6
     else:
         raise ValueError("No supported datatype found!\n")
-    int_header[:4] = (dimx,dimy,dimz,data_flag)
-    int_header[10:13] = 1
+    int_header1[:4] = (dimx,dimy,dimz,data_flag)
+    int_header1[7:10] = (dimx,dimy,dimz)
+    float_header1[:3] = 1
+    int_header2[:3] = (1, 2, 3)
+    float_header2[:3] = np.min(arr), np.max(arr), np.mean(arr)
     char_header = str(' '*800)
     with open(filename,'wb') as fid:
-        fid.write(int_header.tobytes())
+        fid.write(int_header1.tobytes())
+        fid.write(float_header1.tobytes())
+        fid.write(int_header2.tobytes())
+        fid.write(float_header2.tobytes())
+        fid.write(int_header3.tobytes())
         fid.write(char_header.encode('UTF-8'))
         fid.write(arr.tobytes(order=order))
 
