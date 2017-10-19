@@ -133,7 +133,11 @@ class VolumeSlicer(QtWidgets.QMainWindow):
             self.lockColormap = False
 
     def setSliderFromText(self, slider, text):
-        slider.setValue(toInt(text))
+        try:
+            val = toInt(text)
+        except:
+            val = 1
+        slider.setValue(val)
 
     def setTextFromSlider(self, lineedit, value):
         lineedit.setText(toQString(value))
