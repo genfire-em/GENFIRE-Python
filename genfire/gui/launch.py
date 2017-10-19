@@ -96,15 +96,15 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
         self.ui.lineEdit_results.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_numIterations.setText(toQString("100"))
-        self.ui.lineEdit_numIterations.textChanged.connect(self.setNumberOfIterations)
+        self.ui.lineEdit_numIterations.textChanged.connect(self.safeSetNumIterations)
         self.ui.lineEdit_numIterations.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_oversamplingRatio.setText(toQString("3"))
-        self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.GENFIRE_ReconstructionParameters.setOversamplingRatio)
+        self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.safeSetOversamplingRatio)
         self.ui.lineEdit_oversamplingRatio.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_interpolationCutoffDistance.setText(toQString("0.7"))
-        self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.GENFIRE_ReconstructionParameters.setInterpolationCutoffDistance)
+        self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.safeSetInterpDistance)
         self.ui.lineEdit_interpolationCutoffDistance.textChanged.connect(self.checkParameters)
 
         self.ui.lineEdit_io.setDisabled(True)
@@ -142,6 +142,29 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
 
         self.ui.action_Volume_Slicer.triggered.connect(self.launchVolumeSlicer)
 
+    def safeSetInterpDistance(self):
+        try:
+            val = toFloat(self.ui.lineEdit_interpolationCutoffDistance.text())
+        except:
+            val = 1.0
+            self.ui.lineEdit_interpolationCutoffDistance.setText('1.0')
+        self.GENFIRE_ReconstructionParameters.setInterpolationCutoffDistance(val)
+
+    def safeSetNumIterations(self):
+        try:
+            val = toInt(self.ui.lineEdit_numIterations.text())
+        except:
+            val = 1
+            self.ui.lineEdit_numIterations.setText('1')
+        self.GENFIRE_ReconstructionParameters.setNumberOfIterations(val)
+
+    def safeSetOversamplingRatio(self):
+        try:
+            val = toInt(self.ui.lineEdit_oversamplingRatio.text())
+        except:
+            val = 1
+            self.ui.lineEdit_oversamplingRatio.setText('1')
+        self.GENFIRE_ReconstructionParameters.setOversamplingRatio(val)
 
     def setNumberOfIterations(self, value):
         number_of_iterations = toInt(value)
