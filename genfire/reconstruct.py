@@ -701,9 +701,9 @@ class ReconstructionParameters():
     _supportedFiletypes = ['.tif', '.mrc', '.mat', '.npy']
     _supportedAngleFiletypes = ['.txt', '.mat', '.npy']
     def __init__(self):
-        self.projectionFilename                  = ""
-        self.angleFilename                       = ""
-        self.supportFilename                     = ""
+        self.projections                         = ""
+        self.euler_angles                        = ""
+        self.support                     = ""
         self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.numIterations                       = 100
         self.displayFigure                       = DisplayFigure()
@@ -713,7 +713,7 @@ class ReconstructionParameters():
         self.resultsFilename                     = os.path.join(os.getcwd(), 'results.mrc')
         self.useDefaultSupport                   = True
         self.calculateRfree                      = True
-        self.initialObjectFilename               = None
+        self.initial                             = None
         self.constraint_positivity               = True
         self.constraint_support                  = True
         self.griddingMethod                      = "FFT"
@@ -724,21 +724,21 @@ class ReconstructionParameters():
         import os
         parametersAreGood = 1
 
-        projection_extension = os.path.splitext(self.projectionFilename)
+        projection_extension = os.path.splitext(self.projections)
         if projection_extension[1] not in ReconstructionParameters._supportedFiletypes \
-                or not os.path.isfile(self.projectionFilename):
+                or not os.path.isfile(self.projections):
             parametersAreGood = 0
 
-        angle_extension = os.path.splitext(self.angleFilename)
+        angle_extension = os.path.splitext(self.euler_angles)
         if angle_extension[1] not in ReconstructionParameters._supportedAngleFiletypes \
-                or not os.path.isfile(self.angleFilename):
+                or not os.path.isfile(self.euler_angles):
             parametersAreGood = 0
 
         if not self.useDefaultSupport:
-            if self.supportFilename != "": #empty support filename is okay, as this will trigger generation of a default support
-                support_extension = os.path.splitext(self.supportFilename)
+            if self.support != "": #empty support filename is okay, as this will trigger generation of a default support
+                support_extension = os.path.splitext(self.support)
                 if support_extension[1] not in ReconstructionParameters._supportedFiletypes \
-                        or not os.path.isfile(self.supportFilename):
+                        or not os.path.isfile(self.support):
                     parametersAreGood = 0
 
         if not self.getResultsFilename():
@@ -748,26 +748,26 @@ class ReconstructionParameters():
     # Define setters/getters. It's not very pythonic to do so, but  I came from C++ and wrote
     # this before I knew better. In any case it doesn't affect much.
 
-    def setProjectionFilename(self, projectionFilename):
-        if projectionFilename:
-            self.projectionFilename = os.path.join(os.getcwd(), toString(projectionFilename))
+    def setProjectionFilename(self, projections):
+        if projections:
+            self.projections = os.path.join(os.getcwd(), toString(projections))
 
     def getProjectionFilename(self):
-        return self.projectionFilename
+        return self.projections
 
-    def setAngleFilename(self, angleFilename):
-        if angleFilename:
-            self.angleFilename = os.path.join(os.getcwd(), toString(angleFilename))
+    def setAngleFilename(self, euler_angles):
+        if euler_angles:
+            self.euler_angles = os.path.join(os.getcwd(), toString(euler_angles))
 
     def getAngleFilename(self):
-        return self.angleFilename
+        return self.euler_angles
 
-    def setSupportFilename(self, supportFilename):
-        if supportFilename:
-            self.supportFilename = os.path.join(os.getcwd(), toString(supportFilename))
+    def setSupportFilename(self, support):
+        if support:
+            self.support = os.path.join(os.getcwd(), toString(support))
 
     def getSupportFilename(self):
-        return self.supportFilename
+        return self.support
 
     def setResultsFilename(self, resultsFilename):
         if resultsFilename:
@@ -776,13 +776,13 @@ class ReconstructionParameters():
     def getResultsFilename(self):
         return self.resultsFilename
 
-    def setInitialObjectFilename(self, initialObjectFilename):
-        self.initialObjectFilename = os.path.join(os.getcwd(), toString(initialObjectFilename))
+    def setInitialObjectFilename(self, initialObject):
+        self.initialObject = os.path.join(os.getcwd(), toString(initialObject))
         self.isInitialObjectDefined = True
 
     def getInitialObjectFilename(self):
         if self.CheckIfInitialObjectIsDefined():
-            return self.initialObjectFilename
+            return self.initialObject
         else:
             pass
 
@@ -831,18 +831,18 @@ class GenfireReconstructor():
     """
     Primary class for running GENFIRE Reconstructions
     """
-    def __init__(self, projectionFilename="", angleFilename="", supportFilename="", initialObjectFilename=None,
+    def __init__(self, projections="", euler_angles="", support="", initialObject=None,
                  resultsFilename=os.path.join(os.getcwd(), 'results.mrc'), resolutionExtensionSuppressionState=1,
                  numIterations=100, oversamplingRatio=3, interpolationCutoffDistance=0.5, useDefaultSupport=True,
                  calculateRfree=True, constraint_positivity=True, constraint_support=True, griddingMethod="FFT",
                  enforceResolutionCircle=True, permitMultipleGridding=True, verbose=True):
 
         """
-        :param projectionFilename: (string or numpy.ndarray) file containing projections or numpy array with projections
-        :param angleFilename: (string or numpy.ndarray) file containing Euler angles or numpy array with Euler angles
-        :param supportFilename: (string or numpy.ndarray) file containing support or numpy array with support
+        :param projections: (string or numpy.ndarray) file containing projections or numpy array with projections
+        :param euler_angles: (string or numpy.ndarray) file containing Euler angles or numpy array with Euler angles
+        :param support: (string or numpy.ndarray) file containing support or numpy array with support
         :param resultsFilename: (string or numpy.ndarray) file in which to store reconstruction volume
-        :param initialObjectFilename: (string or numpy.ndarray) (optional) filename containing intial object or numpy array with initial object
+        :param initialObject: (string or numpy.ndarray) (optional) filename containing intial object or numpy array with initial object
         :param resolutionExtensionSuppressionState: (int) 1: use resolution extension/suppression;
         2: do not use; 3: extension only
         :param numIterations: (int) number of GENFIRE iterations
@@ -867,9 +867,9 @@ class GenfireReconstructor():
         self.R_free_total_ = None
 
         self.params = ReconstructionParameters()
-        self.params.projectionFilename = projectionFilename
-        self.params.angleFilename = angleFilename
-        self.params.supportFilename = supportFilename
+        self.params.projections = projections
+        self.params.euler_angles = euler_angles
+        self.params.support = support
         self.params.resultsFilename = resultsFilename
         self.params.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.params.numIterations = numIterations
@@ -878,7 +878,7 @@ class GenfireReconstructor():
         self.params.isInitialObjectDefined = False
         self.params.useDefaultSupport = useDefaultSupport
         self.params.calculateRfree = calculateRfree
-        self.params.initialObjectFilename = initialObjectFilename
+        self.params.initialObject = initialObject
         self.params.constraint_positivity = constraint_positivity
         self.params.constraint_support = constraint_support
         self.params.griddingMethod = griddingMethod
@@ -899,10 +899,10 @@ class GenfireReconstructor():
 
     def printParams(self):
         from genfire.utility import printStringOrNumpyArray
-        printStringOrNumpyArray(self.params.projectionFilename, 'projectionFilename')
-        printStringOrNumpyArray(self.params.angleFilename, 'angleFilename')
-        printStringOrNumpyArray(self.params.supportFilename, 'supportFilename')
-        printStringOrNumpyArray(self.params.initialObjectFilename, 'initialObjectFilename')
+        printStringOrNumpyArray(self.params.projections, 'Projections')
+        printStringOrNumpyArray(self.params.euler_angles, 'Euler angles')
+        printStringOrNumpyArray(self.params.support, 'Support')
+        printStringOrNumpyArray(self.params.initialObject, 'Initial Object')
         print("resultsFilename = {}".format(self.params.resultsFilename))
         print("resolutionExtensionSuppressionState = {}".format(self.params.resolutionExtensionSuppressionState))
         print("numIterations = {}".format(self.params.numIterations))
@@ -921,15 +921,15 @@ class GenfireReconstructor():
             self.printParams()
 
         # Handle parameters that can be either passed as a filename or a numpy array
-        if isinstance(self.params.projectionFilename, str):
-            projections = genfire.fileio.loadProjections(self.params.projectionFilename) # load projections into a 3D numpy array
+        if isinstance(self.params.projections, str):
+            projections = genfire.fileio.loadProjections(self.params.projections) # load projections into a 3D numpy array
         else:
-            projections = self.params.projectionFilename
+            projections = self.params.projections
 
-        if isinstance(self.params.angleFilename, str):
-            euler_angles = genfire.fileio.loadAngles(self.params.angleFilename)
+        if isinstance(self.params.euler_angles, str):
+            euler_angles = genfire.fileio.loadAngles(self.params.euler_angles)
         else:
-            euler_angles = self.params.angleFilename
+            euler_angles = self.params.euler_angles
 
         # Do a check of validity of Euler angle input
         if np.shape(euler_angles)[1] > 3:
@@ -946,23 +946,23 @@ class GenfireReconstructor():
         padding = int((paddedDim-dims[0])/2)
 
         # load the support, or generate one if none was provided
-        if (self.params.useDefaultSupport or self.params.supportFilename == ""):
+        if (self.params.useDefaultSupport or self.params.support == ""):
             support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
-        elif isinstance(self.params.supportFilename, str):
-            support = (genfire.fileio.readVolume(self.params.supportFilename) != 0).astype(bool)
+        elif isinstance(self.params.support, str):
+            support = (genfire.fileio.readVolume(self.params.support) != 0).astype(bool)
         else:
-            support = self.params.supportFilename
+            support = self.params.support
 
         # now zero-pad to match the oversampling ratio
         support = np.pad(support,((padding,padding),(padding,padding),(padding,padding)),'constant')
         projections = np.pad(projections,((padding,padding),(padding,padding),(0,0)),'constant')
 
         #load initial object, or initialize it to zeros if none was given
-        if isinstance(self.params.initialObjectFilename, np.ndarray):
-            initialObject = self.params.initialObjectFilename
+        if isinstance(self.params.initialObject, np.ndarray):
+            initialObject = self.params.initialObject
         else:
-            if self.params.initialObjectFilename is not None and os.path.isfile(self.params.initialObjectFilename):
-                initialObject = genfire.fileio.readVolume(self.params.initialObjectFilename)
+            if self.params.initialObject is not None and os.path.isfile(self.params.initialObject):
+                initialObject = genfire.fileio.readVolume(self.params.initialObject)
                 initialObject = np.pad(initialObject,((padding,padding),(padding,padding),(padding,padding)),'constant')
             else:
                 initialObject = np.zeros_like(support)

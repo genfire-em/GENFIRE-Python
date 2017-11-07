@@ -46,9 +46,9 @@ def main_InteractivelySetParameters():
         useDefaultSupport = False
 
     reconstruction_parameters                                      = ReconstructionParameters()
-    reconstruction_parameters.projectionFilename                   = filename_projections
-    reconstruction_parameters.angleFilename                        = filename_angles
-    reconstruction_parameters.supportFilename                      = filename_support
+    reconstruction_parameters.projections                          = filename_projections
+    reconstruction_parameters.euler_angles                         = filename_angles
+    reconstruction_parameters.support                              = filename_support
     reconstruction_parameters.interpolationCutoffDistance          = interpolationCutoffDistance
     reconstruction_parameters.numIterations                        = numIterations
     reconstruction_parameters.oversamplingRatio                    = oversamplingRatio
@@ -57,16 +57,16 @@ def main_InteractivelySetParameters():
     reconstruction_parameters.resolutionExtensionSuppressionState  = resolutionExtensionSuppressionState
     reconstruction_parameters.useDefaultSupport                    = useDefaultSupport
     if os.path.isfile(filename_results): # If a valid initial object was provided, use it
-        reconstruction_parameters.initialObjectFilename           = filename_results
+        reconstruction_parameters.initialObject                    = filename_results
 
     main(reconstruction_parameters)
 
 def main(reconstruction_parameters):
     import genfire.fileio
 
-    filename_projections                    = reconstruction_parameters.projectionFilename
-    filename_angles                         = reconstruction_parameters.angleFilename
-    filename_support                        = reconstruction_parameters.supportFilename
+    filename_projections                    = reconstruction_parameters.projections
+    filename_angles                         = reconstruction_parameters.euler_angles
+    filename_support                        = reconstruction_parameters.support
     filename_results                        = reconstruction_parameters.resultsFilename
     numIterations                           = reconstruction_parameters.numIterations
     oversamplingRatio                       = reconstruction_parameters.oversamplingRatio
@@ -82,7 +82,7 @@ def main(reconstruction_parameters):
     permitMultipleGridding                  = reconstruction_parameters.permitMultipleGridding
 
     if reconstruction_parameters.isInitialObjectDefined:
-        filename_initialObject          = reconstruction_parameters.initialObjectFilename
+        filename_initialObject          = reconstruction_parameters.initialObject
     else:
         filename_initialObject               = None
 
