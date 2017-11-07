@@ -776,7 +776,6 @@ class ReconstructionParameters():
     def getResultsFilename(self):
         return self.resultsFilename
 
-
     def setInitialObjectFilename(self, initialObjectFilename):
         self.initialObjectFilename = os.path.join(os.getcwd(), toString(initialObjectFilename))
         self.isInitialObjectDefined = True
@@ -827,3 +826,185 @@ class ReconstructionParameters():
 
     def getInterpolationCutoffDistance(self):
         return self.interpolationCutoffDistance
+
+class GenfireReconstructor():
+    def __init__(self, projectionFilename="", angleFilename="", supportFilename="",
+                 resultsFilename=os.path.join(os.getcwd(), 'results.mrc'), resolutionExtensionSuppressionState=1,
+                 numIterations=100, displayFigure=DisplayFigure(), oversamplingRatio=3, interpolationCutoffDistance=0.5,
+                 isInitialObjectDefined=False,useDefaultSupport=True, calculateRfree=True, initialObjectFilename=None,
+                 constraint_positivity=True, constraint_support=True, griddingMethod="FFT",
+                 enforceResolutionCircle=True, permitMultipleGridding=True, verbose=True):
+
+        self.reconstruction_ = None
+        self.errK_ = None
+        self.R_free_bybin_ = None
+        self.R_free_total_ = None
+
+        self.params = ReconstructionParameters()
+        self.params.projectionFilename = projectionFilename
+        self.params.angleFilename = angleFilename
+        self.params.supportFilename = supportFilename
+        self.params.resultsFilename = resultsFilename
+        self.params.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState #1 for resolution extension/suppression, 2 for off, 3 for just extension
+        self.params.numIterations = numIterations
+        self.params.displayFigure = displayFigure
+        self.params.oversamplingRatio = oversamplingRatio
+        self.params.interpolationCutoffDistance = interpolationCutoffDistance
+        self.params.isInitialObjectDefined = isInitialObjectDefined
+        self.params.useDefaultSupport = useDefaultSupport
+        self.params.calculateRfree = calculateRfree
+        self.params.initialObjectFilename = initialObjectFilename
+        self.params.constraint_positivity = constraint_positivity
+        self.params.constraint_support = constraint_support
+        self.params.griddingMethod = griddingMethod
+        self.params.enforceResolutionCircle = enforceResolutionCircle
+        self.params.permitMultipleGridding = permitMultipleGridding
+        self.verbose = verbose
+
+    def printParams(self):
+        print("projectionFilename = {}".format(self.params.projectionFilename))
+        print("angleFilename = {}".format(self.params.angleFilename))
+        print("supportFilename = {}".format(self.params.supportFilename))
+        print("resultsFilename = {}".format(self.params.resultsFilename))
+        print("resolutionExtensionSuppressionState = {}".format(self.params.resolutionExtensionSuppressionState))
+        print("numIterations = {}".format(self.params.numIterations))
+        print("oversamplingRatio = {}".format(self.params.oversamplingRatio))
+        print("interpolationCutoffDistance = {}".format(self.params.interpolationCutoffDistance))
+        print("useDefaultSupport = {}".format(self.params.useDefaultSupport))
+        print("calculateRfree = {}".format(self.params.calculateRfree))
+        print("initialObjectFilename = {}".format(self.params.initialObjectFilename))
+        print("constraint_positivity = {}".format(self.params.constraint_positivity))
+        print("constraint_support = {}".format(self.params.constraint_support))
+        print("enforceResolutionCircle = {}".format(self.params.enforceResolutionCircle))
+        print("permitMultipleGridding = {}".format(self.params.permitMultipleGridding))
+
+    def reconstruct(self):
+        print("Reconstructing now")
+        if self.verbose:
+            self.printParams()
+        projections = genfire.fileio.loadProjections(self.params.projectionFilename) # load projections into a 3D numpy array
+
+        # get dimensions of array and determine the array size after padding
+        dims = np.shape(projections)
+        paddedDim = dims[0] * self.params.oversamplingRatio
+        padding = int((paddedDim-dims[0])/2)
+
+        # load the support, or generate one if none was provided
+        if self.params.useDefaultSupport or self.params.supportFilename == "":
+            support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
+        else:
+            support = (genfire.fileio.readVolume(self.params.supportFilename) != 0).astype(bool)
+
+        # now zero-pad to match the oversampling ratio
+        support = np.pad(support,((padding,padding),(padding,padding),(padding,padding)),'constant')
+        projections = np.pad(projections,((padding,padding),(padding,padding),(0,0)),'constant')
+
+        #load initial object, or initialize it to zeros if none was given
+        if self.params.initialObjectFilename is not None and os.path.isfile(self.params.initialObjectFilename):
+            initialObject = genfire.fileio.readVolume(self.params.initialObjectFilename)
+            initialObject = np.pad(initialObject,((padding,padding),(padding,padding),(padding,padding)),'constant')
+        else:
+            initialObject = np.zeros_like(support)
+
+        euler_angles = genfire.fileio.loadAngles(self.params.angleFilename)
+        if np.shape(euler_angles)[1] > 3:
+            raise ValueError("Error! Dimension of angles incorrect.")
+        if np.shape(euler_angles)[1] == 1:
+            tmp = np.zeros([np.shape(euler_angles)[1], 3])
+            tmp[1, :] = euler_angles
+            angles = tmp
+            del tmp
+
+        # grid the projections
+        if self.params.griddingMethod == "DFT":
+            measuredK = genfire.reconstruct.fillInFourierGrid_DFT(projections,
+                                                                  euler_angles,
+                                                                  self.params.interpolationCutoffDistance,
+                                                                  self.params.enforceResolutionCircle)
+        else:
+            measuredK = genfire.reconstruct.fillInFourierGrid(projections,
+                                                              euler_angles,
+                                                              self.params.interpolationCutoffDistance,
+                                                              self.params.enforceResolutionCircle,
+                                                              self.params.permitMultipleGridding)
+
+        measuredK = np.fft.ifftshift(measuredK)
+
+        # create a map of the spatial frequency to be used to control resolution extension/suppression behavior
+        K_indices = genfire.utility.generateKspaceIndices(support)
+        K_indices = np.fft.fftshift(K_indices)
+        resolutionIndicators = np.zeros_like(K_indices)
+        resolutionIndicators[measuredK != 0] = 1-K_indices[measuredK != 0]
+
+        # if calculating Rfree, setup some infrastructure
+        if self.params.calculateRfree:
+            R_freeInd_complexX = []
+            R_freeInd_complexY = []
+            R_freeInd_complexZ = []
+            R_freeVals_complex = []
+            shell_thickness_pixels = 1 # pixel thickness of an individual shell of Rfree points
+            numberOfBins = int(round(dims[0]/2/shell_thickness_pixels)) # number of frequency bins. Rfree will be tracked within each shell separately
+            percentValuesForRfree = 0.05 # percentage of measured points to withhold
+            spatialFrequencyForRfree = np.linspace(0,1,numberOfBins+1)
+            K_indicesSmall =(K_indices)[:, :, 0:(np.shape(measuredK)[-1]//2+1)]
+
+            for shellNum in range(0,numberOfBins):
+                # collect relevant points
+                measuredPointInd_complex = np.where((measuredK[:, :, 0:(np.shape(measuredK)[-1]//2+1)] != 0) & (K_indicesSmall>=(spatialFrequencyForRfree[shellNum])) & (K_indicesSmall<=(spatialFrequencyForRfree[shellNum+1])))
+
+                # randomly shuffle
+                shuffledPoints = np.random.permutation(np.shape(measuredPointInd_complex)[1])
+                measuredPointInd_complex = (measuredPointInd_complex[0][shuffledPoints], measuredPointInd_complex[1][shuffledPoints], measuredPointInd_complex[2][shuffledPoints])
+
+                # determine how many values to take
+                cutoffInd_complex = np.floor(np.shape(measuredPointInd_complex)[1] * percentValuesForRfree).astype(int)
+
+                # collect the Rfree values and coordinates
+                R_freeInd_complexX.append(measuredPointInd_complex[0][:cutoffInd_complex])
+                R_freeInd_complexY.append(measuredPointInd_complex[1][:cutoffInd_complex])
+                R_freeInd_complexZ.append(measuredPointInd_complex[2][:cutoffInd_complex])
+                R_freeVals_complex.append(measuredK[R_freeInd_complexX[shellNum], R_freeInd_complexY[shellNum], R_freeInd_complexZ[shellNum] ])
+
+                # delete the points from the measured data
+                measuredK[R_freeInd_complexX[shellNum], R_freeInd_complexY[shellNum], R_freeInd_complexZ[shellNum]] = 0
+
+            # create tuple of coordinates
+            R_freeInd_complex = [[R_freeInd_complexX], [R_freeInd_complexY], [R_freeInd_complexZ]]
+            del R_freeInd_complexX
+            del R_freeInd_complexY
+            del R_freeInd_complexZ
+        else:
+            R_freeInd_complex = []
+            R_freeVals_complex = []
+
+        if self.params.resolutionExtensionSuppressionState==1: # resolution extension/suppression
+            constraintEnforcementDelayIndicators = np.array(np.concatenate((np.arange(0.95, -.25, -0.15), np.arange(-0.15, .95, .1)), axis=0))
+        elif self.params.resolutionExtensionSuppressionState==2:# no resolution extension or suppression
+            constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
+        elif self.params.resolutionExtensionSuppressionState==3:# resolution extension only
+            constraintEnforcementDelayIndicators = np.concatenate((np.arange(0.95, -.15, -0.15),[-0.15, -0.15, -0.15]))
+        else:
+            print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
+            constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
+
+
+        results = reconstruct(self.params.numIterations,
+                              np.fft.fftshift(initialObject),
+                              np.fft.fftshift(support),
+                              (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)],
+                              (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)],
+                              constraintEnforcementDelayIndicators,
+                              R_freeInd_complex,
+                              R_freeVals_complex,
+                              self.params.displayFigure,
+                              self.params.constraint_positivity,
+                              self.params.constraint_support)
+        ncBig = paddedDim//2
+        n2 = dims[0]//2
+        results['reconstruction'] = results['reconstruction'][ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2]
+        return results
+        # self.reconstruction_ = results['reconstruction']
+        # self.errK_ = results['R_free_bybin']
+        # if "R_freeInd_complex" in results.keys():
+        #     self.R_free_bybin_ = results['R_free_bybin']
+        #     self.R_free_total_ = results['R_free_total']

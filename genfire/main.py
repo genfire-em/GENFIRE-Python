@@ -82,7 +82,7 @@ def main(reconstruction_parameters):
     permitMultipleGridding                  = reconstruction_parameters.permitMultipleGridding
 
     if reconstruction_parameters.isInitialObjectDefined:
-            filename_initialObject          = reconstruction_parameters.initialObjectFilename
+        filename_initialObject          = reconstruction_parameters.initialObjectFilename
     else:
         filename_initialObject               = None
 
