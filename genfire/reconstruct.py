@@ -828,12 +828,38 @@ class ReconstructionParameters():
         return self.interpolationCutoffDistance
 
 class GenfireReconstructor():
-    def __init__(self, projectionFilename="", angleFilename="", supportFilename="",
+    """
+    Primary class for running GENFIRE Reconstructions
+    """
+    def __init__(self, projectionFilename="", angleFilename="", supportFilename="", initialObjectFilename=None,
                  resultsFilename=os.path.join(os.getcwd(), 'results.mrc'), resolutionExtensionSuppressionState=1,
-                 numIterations=100, displayFigure=DisplayFigure(), oversamplingRatio=3, interpolationCutoffDistance=0.5,
-                 isInitialObjectDefined=False,useDefaultSupport=True, calculateRfree=True, initialObjectFilename=None,
-                 constraint_positivity=True, constraint_support=True, griddingMethod="FFT",
+                 numIterations=100, oversamplingRatio=3, interpolationCutoffDistance=0.5, useDefaultSupport=True,
+                 calculateRfree=True, constraint_positivity=True, constraint_support=True, griddingMethod="FFT",
                  enforceResolutionCircle=True, permitMultipleGridding=True, verbose=True):
+
+        """
+        :param projectionFilename: (string) file containing projections
+        :param angleFilename: (string) file containing Euler angles
+        :param supportFilename: (string) file containing support
+        :param resultsFilename: (string) file in which to store reconstruction volume
+        :param initialObjectFilename: optional filename containing intial object
+        :param resolutionExtensionSuppressionState: (int) 1: use resolution extension/suppression;
+        2: do not use; 3: extension only
+        :param numIterations: (int) number of GENFIRE iterations
+        :param oversamplingRatio: (int) oversampling ratio; determines how much zero-padding is applied prior to
+         gridding
+        :param interpolationCutoffDistance: (float) distance in pixels within which to consider data for gridding
+        :param useDefaultSupport: (bool) create a default support; defined as a cube with dimensions identical to
+         input projections
+        :param calculateRfree: (bool) whether or not to compute Rfree
+        :param constraint_positivity: (bool) whether to enforce positivity constraint
+        :param constraint_support: (bool) whether to enforce support constraint
+        :param griddingMethod: (string) "FFT" or "DFT"
+        :param enforceResolutionCircle: (bool) whether to limit gridded data to within Nyquist frequency
+        :param permitMultipleGridding: (bool) whether to allow a given measured datapoint to be included in calculation
+         of multiple Fourier grid points
+        :param verbose: (bool) prints additional information about the reconstruction
+        """
 
         self.reconstruction_ = None
         self.errK_ = None
@@ -847,10 +873,9 @@ class GenfireReconstructor():
         self.params.resultsFilename = resultsFilename
         self.params.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.params.numIterations = numIterations
-        self.params.displayFigure = displayFigure
         self.params.oversamplingRatio = oversamplingRatio
         self.params.interpolationCutoffDistance = interpolationCutoffDistance
-        self.params.isInitialObjectDefined = isInitialObjectDefined
+        self.params.isInitialObjectDefined = False
         self.params.useDefaultSupport = useDefaultSupport
         self.params.calculateRfree = calculateRfree
         self.params.initialObjectFilename = initialObjectFilename
@@ -860,6 +885,17 @@ class GenfireReconstructor():
         self.params.enforceResolutionCircle = enforceResolutionCircle
         self.params.permitMultipleGridding = permitMultipleGridding
         self.verbose = verbose
+
+    def printGenfire(self):
+        print("""
+       ______  ________  ____  _____  ________  _____  _______     ________
+     .' ___  ||_   __  ||_   \|_   _||_   __  ||_   _||_   __ \   |_   __  |
+    / .'   \_|  | |_ \_|  |   \ | |    | |_ \_|  | |    | |__) |    | |_ \_|
+    | |   ____  |  _| _   | |\ \| |    |  _|     | |    |  __ /     |  _| _
+    \ `.___]  |_| |__/ | _| |_\   |_  _| |_     _| |_  _| |  \ \_  _| |__/ |
+     `._____.'|________||_____|\____||_____|   |_____||____| |___||________|
+
+        """)
 
     def printParams(self):
         print("projectionFilename = {}".format(self.params.projectionFilename))
@@ -879,8 +915,8 @@ class GenfireReconstructor():
         print("permitMultipleGridding = {}".format(self.params.permitMultipleGridding))
 
     def reconstruct(self):
-        print("Reconstructing now")
         if self.verbose:
+            self.printGenfire()
             self.printParams()
         projections = genfire.fileio.loadProjections(self.params.projectionFilename) # load projections into a 3D numpy array
 
