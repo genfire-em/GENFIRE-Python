@@ -405,7 +405,6 @@ class CalculateProjectionSeries_popup(QtWidgets.QDialog):
         self.status = 0
 
     def validateFloatFromLineEdit(self, line_edit):
-        print("validating!")
         try:
             val = toFloat(line_edit.text())
         except ValueError:
