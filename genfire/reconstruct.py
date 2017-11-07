@@ -105,7 +105,7 @@ if __name__ != "__main__":
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(np.abs(k[errInd])-np.abs(measuredK[errInd])))/np.sum(abs(measuredK[errInd]))#monitor error
-            print("Iteration number: {0}           error = {1:0.5f}".format(iterationNum, errK[iterationNum-1]))
+            print("Iteration number: {0}/{1}           error = {2:0.5f}".format(iterationNum, numIterations, errK[iterationNum-1]))
 
             #update best object if a better one has been found
             if errK[iterationNum-1] < bestErr:
@@ -702,8 +702,8 @@ class ReconstructionParameters():
     _supportedAngleFiletypes = ['.txt', '.mat', '.npy']
     def __init__(self):
         self.projections                         = ""
-        self.euler_angles                        = ""
-        self.support                     = ""
+        self.eulerAngles                        = ""
+        self.support                             = ""
         self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.numIterations                       = 100
         self.displayFigure                       = DisplayFigure()
@@ -714,8 +714,8 @@ class ReconstructionParameters():
         self.useDefaultSupport                   = True
         self.calculateRfree                      = True
         self.initial                             = None
-        self.constraint_positivity               = True
-        self.constraint_support                  = True
+        self.constraintPositivity               = True
+        self.constraintSupport                  = True
         self.griddingMethod                      = "FFT"
         self.enforceResolutionCircle             = True
         self.permitMultipleGridding              = True
@@ -729,9 +729,9 @@ class ReconstructionParameters():
                 or not os.path.isfile(self.projections):
             parametersAreGood = 0
 
-        angle_extension = os.path.splitext(self.euler_angles)
+        angle_extension = os.path.splitext(self.eulerAngles)
         if angle_extension[1] not in ReconstructionParameters._supportedAngleFiletypes \
-                or not os.path.isfile(self.euler_angles):
+                or not os.path.isfile(self.eulerAngles):
             parametersAreGood = 0
 
         if not self.useDefaultSupport:
@@ -755,12 +755,12 @@ class ReconstructionParameters():
     def getProjectionFilename(self):
         return self.projections
 
-    def setAngleFilename(self, euler_angles):
-        if euler_angles:
-            self.euler_angles = os.path.join(os.getcwd(), toString(euler_angles))
+    def setAngleFilename(self, eulerAngles):
+        if eulerAngles:
+            self.eulerAngles = os.path.join(os.getcwd(), toString(eulerAngles))
 
     def getAngleFilename(self):
-        return self.euler_angles
+        return self.eulerAngles
 
     def setSupportFilename(self, support):
         if support:
@@ -831,15 +831,15 @@ class GenfireReconstructor():
     """
     Primary class for running GENFIRE Reconstructions
     """
-    def __init__(self, projections="", euler_angles="", support="", initialObject=None,
+    def __init__(self, projections="", eulerAngles="", support="", initialObject=None,
                  resultsFilename=os.path.join(os.getcwd(), 'results.mrc'), resolutionExtensionSuppressionState=1,
                  numIterations=100, oversamplingRatio=3, interpolationCutoffDistance=0.5, useDefaultSupport=True,
-                 calculateRfree=True, constraint_positivity=True, constraint_support=True, griddingMethod="FFT",
+                 calculateRfree=True, constraintPositivity=True, constraintSupport=True, griddingMethod="FFT",
                  enforceResolutionCircle=True, permitMultipleGridding=True, verbose=True):
 
         """
         :param projections: (string or numpy.ndarray) file containing projections or numpy array with projections
-        :param euler_angles: (string or numpy.ndarray) file containing Euler angles or numpy array with Euler angles
+        :param eulerAngles: (string or numpy.ndarray) file containing Euler angles or numpy array with Euler angles
         :param support: (string or numpy.ndarray) file containing support or numpy array with support
         :param resultsFilename: (string or numpy.ndarray) file in which to store reconstruction volume
         :param initialObject: (string or numpy.ndarray) (optional) filename containing intial object or numpy array with initial object
@@ -852,8 +852,8 @@ class GenfireReconstructor():
         :param useDefaultSupport: (bool) create a default support; defined as a cube with dimensions identical to
          input projections
         :param calculateRfree: (bool) whether or not to compute Rfree
-        :param constraint_positivity: (bool) whether to enforce positivity constraint
-        :param constraint_support: (bool) whether to enforce support constraint
+        :param constraintPositivity: (bool) whether to enforce positivity constraint
+        :param constraintSupport: (bool) whether to enforce support constraint
         :param griddingMethod: (string) "FFT" or "DFT"
         :param enforceResolutionCircle: (bool) whether to limit gridded data to within Nyquist frequency
         :param permitMultipleGridding: (bool) whether to allow a given measured datapoint to be included in calculation
@@ -868,7 +868,7 @@ class GenfireReconstructor():
 
         self.params = ReconstructionParameters()
         self.params.projections = projections
-        self.params.euler_angles = euler_angles
+        self.params.eulerAngles = eulerAngles
         self.params.support = support
         self.params.resultsFilename = resultsFilename
         self.params.resolutionExtensionSuppressionState = resolutionExtensionSuppressionState #1 for resolution extension/suppression, 2 for off, 3 for just extension
@@ -879,8 +879,8 @@ class GenfireReconstructor():
         self.params.useDefaultSupport = useDefaultSupport
         self.params.calculateRfree = calculateRfree
         self.params.initialObject = initialObject
-        self.params.constraint_positivity = constraint_positivity
-        self.params.constraint_support = constraint_support
+        self.params.constraintPositivity = constraintPositivity
+        self.params.constraintSupport = constraintSupport
         self.params.griddingMethod = griddingMethod
         self.params.enforceResolutionCircle = enforceResolutionCircle
         self.params.permitMultipleGridding = permitMultipleGridding
@@ -900,18 +900,19 @@ class GenfireReconstructor():
     def printParams(self):
         from genfire.utility import printStringOrNumpyArray
         printStringOrNumpyArray(self.params.projections, 'Projections')
-        printStringOrNumpyArray(self.params.euler_angles, 'Euler angles')
+        printStringOrNumpyArray(self.params.eulerAngles, 'Euler angles')
         printStringOrNumpyArray(self.params.support, 'Support')
         printStringOrNumpyArray(self.params.initialObject, 'Initial Object')
         print("resultsFilename = {}".format(self.params.resultsFilename))
+        print("griddingMethod = {}".format(self.params.griddingMethod))
         print("resolutionExtensionSuppressionState = {}".format(self.params.resolutionExtensionSuppressionState))
         print("numIterations = {}".format(self.params.numIterations))
         print("oversamplingRatio = {}".format(self.params.oversamplingRatio))
         print("interpolationCutoffDistance = {}".format(self.params.interpolationCutoffDistance))
         print("useDefaultSupport = {}".format(self.params.useDefaultSupport))
         print("calculateRfree = {}".format(self.params.calculateRfree))
-        print("constraint_positivity = {}".format(self.params.constraint_positivity))
-        print("constraint_support = {}".format(self.params.constraint_support))
+        print("constraintPositivity = {}".format(self.params.constraintPositivity))
+        print("constraintSupport = {}".format(self.params.constraintSupport))
         print("enforceResolutionCircle = {}".format(self.params.enforceResolutionCircle))
         print("permitMultipleGridding = {}".format(self.params.permitMultipleGridding))
 
@@ -926,17 +927,17 @@ class GenfireReconstructor():
         else:
             projections = self.params.projections
 
-        if isinstance(self.params.euler_angles, str):
-            euler_angles = genfire.fileio.loadAngles(self.params.euler_angles)
+        if isinstance(self.params.eulerAngles, str):
+            eulerAngles = genfire.fileio.loadAngles(self.params.eulerAngles)
         else:
-            euler_angles = self.params.euler_angles
+            eulerAngles = self.params.eulerAngles
 
         # Do a check of validity of Euler angle input
-        if np.shape(euler_angles)[1] > 3:
+        if np.shape(eulerAngles)[1] > 3:
                 raise ValueError("Error! Dimension of angles incorrect.")
-        if np.shape(euler_angles)[1] == 1:
-            tmp = np.zeros([np.shape(euler_angles)[1], 3])
-            tmp[1, :] = euler_angles
+        if np.shape(eulerAngles)[1] == 1:
+            tmp = np.zeros([np.shape(eulerAngles)[1], 3])
+            tmp[1, :] = eulerAngles
             angles = tmp
             del tmp
 
@@ -970,12 +971,12 @@ class GenfireReconstructor():
         # grid the projections
         if self.params.griddingMethod == "DFT":
             measuredK = genfire.reconstruct.fillInFourierGrid_DFT(projections,
-                                                                  euler_angles,
+                                                                  eulerAngles,
                                                                   self.params.interpolationCutoffDistance,
                                                                   self.params.enforceResolutionCircle)
         else:
             measuredK = genfire.reconstruct.fillInFourierGrid(projections,
-                                                              euler_angles,
+                                                              eulerAngles,
                                                               self.params.interpolationCutoffDistance,
                                                               self.params.enforceResolutionCircle,
                                                               self.params.permitMultipleGridding)
@@ -1049,8 +1050,8 @@ class GenfireReconstructor():
                               R_freeInd_complex,
                               R_freeVals_complex,
                               self.params.displayFigure,
-                              self.params.constraint_positivity,
-                              self.params.constraint_support)
+                              self.params.constraintPositivity,
+                              self.params.constraintSupport)
         ncBig = paddedDim//2
         n2 = dims[0]//2
         results['reconstruction'] = results['reconstruction'][ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2]

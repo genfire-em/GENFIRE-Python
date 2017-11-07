@@ -47,7 +47,7 @@ def main_InteractivelySetParameters():
 
     reconstruction_parameters                                      = ReconstructionParameters()
     reconstruction_parameters.projections                          = filename_projections
-    reconstruction_parameters.euler_angles                         = filename_angles
+    reconstruction_parameters.eulerAngles                          = filename_angles
     reconstruction_parameters.support                              = filename_support
     reconstruction_parameters.interpolationCutoffDistance          = interpolationCutoffDistance
     reconstruction_parameters.numIterations                        = numIterations
@@ -65,7 +65,7 @@ def main(reconstruction_parameters):
     import genfire.fileio
 
     filename_projections                    = reconstruction_parameters.projections
-    filename_angles                         = reconstruction_parameters.euler_angles
+    filename_angles                         = reconstruction_parameters.eulerAngles
     filename_support                        = reconstruction_parameters.support
     filename_results                        = reconstruction_parameters.resultsFilename
     numIterations                           = reconstruction_parameters.numIterations
@@ -75,8 +75,8 @@ def main(reconstruction_parameters):
     resolutionExtensionSuppressionState     = reconstruction_parameters.resolutionExtensionSuppressionState
     calculateRFree                          = reconstruction_parameters.calculateRfree
     useDefaultSupport                       = reconstruction_parameters.useDefaultSupport
-    use_positivity                          = reconstruction_parameters.constraint_positivity
-    use_support                             = reconstruction_parameters.constraint_support
+    use_positivity                          = reconstruction_parameters.constraintPositivity
+    use_support                             = reconstruction_parameters.constraintSupport
     gridding_method                         = reconstruction_parameters.griddingMethod
     enforceResolutionCircle                 = reconstruction_parameters.enforceResolutionCircle
     permitMultipleGridding                  = reconstruction_parameters.permitMultipleGridding

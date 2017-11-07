@@ -233,15 +233,15 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
 
     def toggleSupportConstraint(self):
         if self.ui.checkBox_support_constraint.isChecked():
-            self.GENFIRE_ReconstructionParameters.constraint_support = True
+            self.GENFIRE_ReconstructionParameters.constraintSupport = True
         else:
-            self.GENFIRE_ReconstructionParameters.constraint_support = False
+            self.GENFIRE_ReconstructionParameters.constraintSupport = False
 
     def togglePositivityConstraint(self):
         if self.ui.checkBox_positivity_constraint.isChecked():
-            self.GENFIRE_ReconstructionParameters.constraint_positivity = True
+            self.GENFIRE_ReconstructionParameters.constraintPositivity = True
         else:
-            self.GENFIRE_ReconstructionParameters.constraint_positivity = False
+            self.GENFIRE_ReconstructionParameters.constraintPositivity = False
 
     def toggleUseDefaultSupport(self):
         if self.ui.checkBox_default_support.isChecked():
