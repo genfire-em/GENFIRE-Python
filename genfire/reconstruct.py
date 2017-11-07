@@ -838,11 +838,11 @@ class GenfireReconstructor():
                  enforceResolutionCircle=True, permitMultipleGridding=True, verbose=True):
 
         """
-        :param projectionFilename: (string) file containing projections
-        :param angleFilename: (string) file containing Euler angles
-        :param supportFilename: (string) file containing support
-        :param resultsFilename: (string) file in which to store reconstruction volume
-        :param initialObjectFilename: optional filename containing intial object
+        :param projectionFilename: (string or numpy.ndarray) file containing projections or numpy array with projections
+        :param angleFilename: (string or numpy.ndarray) file containing Euler angles or numpy array with Euler angles
+        :param supportFilename: (string or numpy.ndarray) file containing support or numpy array with support
+        :param resultsFilename: (string or numpy.ndarray) file in which to store reconstruction volume
+        :param initialObjectFilename: (string or numpy.ndarray) (optional) filename containing intial object or numpy array with initial object
         :param resolutionExtensionSuppressionState: (int) 1: use resolution extension/suppression;
         2: do not use; 3: extension only
         :param numIterations: (int) number of GENFIRE iterations
