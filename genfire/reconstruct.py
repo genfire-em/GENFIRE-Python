@@ -898,9 +898,11 @@ class GenfireReconstructor():
         """)
 
     def printParams(self):
-        print("projectionFilename = {}".format(self.params.projectionFilename))
-        print("angleFilename = {}".format(self.params.angleFilename))
-        print("supportFilename = {}".format(self.params.supportFilename))
+        from genfire.utility import printStringOrNumpyArray
+        printStringOrNumpyArray(self.params.projectionFilename, 'projectionFilename')
+        printStringOrNumpyArray(self.params.angleFilename, 'angleFilename')
+        printStringOrNumpyArray(self.params.supportFilename, 'supportFilename')
+        printStringOrNumpyArray(self.params.initialObjectFilename, 'initialObjectFilename')
         print("resultsFilename = {}".format(self.params.resultsFilename))
         print("resolutionExtensionSuppressionState = {}".format(self.params.resolutionExtensionSuppressionState))
         print("numIterations = {}".format(self.params.numIterations))
@@ -908,7 +910,6 @@ class GenfireReconstructor():
         print("interpolationCutoffDistance = {}".format(self.params.interpolationCutoffDistance))
         print("useDefaultSupport = {}".format(self.params.useDefaultSupport))
         print("calculateRfree = {}".format(self.params.calculateRfree))
-        print("initialObjectFilename = {}".format(self.params.initialObjectFilename))
         print("constraint_positivity = {}".format(self.params.constraint_positivity))
         print("constraint_support = {}".format(self.params.constraint_support))
         print("enforceResolutionCircle = {}".format(self.params.enforceResolutionCircle))
@@ -918,7 +919,26 @@ class GenfireReconstructor():
         if self.verbose:
             self.printGenfire()
             self.printParams()
-        projections = genfire.fileio.loadProjections(self.params.projectionFilename) # load projections into a 3D numpy array
+
+        # Handle parameters that can be either passed as a filename or a numpy array
+        if isinstance(self.params.projectionFilename, str):
+            projections = genfire.fileio.loadProjections(self.params.projectionFilename) # load projections into a 3D numpy array
+        else:
+            projections = self.params.projectionFilename
+
+        if isinstance(self.params.angleFilename, str):
+            euler_angles = genfire.fileio.loadAngles(self.params.angleFilename)
+        else:
+            euler_angles = self.params.angleFilename
+
+        # Do a check of validity of Euler angle input
+        if np.shape(euler_angles)[1] > 3:
+                raise ValueError("Error! Dimension of angles incorrect.")
+        if np.shape(euler_angles)[1] == 1:
+            tmp = np.zeros([np.shape(euler_angles)[1], 3])
+            tmp[1, :] = euler_angles
+            angles = tmp
+            del tmp
 
         # get dimensions of array and determine the array size after padding
         dims = np.shape(projections)
@@ -926,31 +946,27 @@ class GenfireReconstructor():
         padding = int((paddedDim-dims[0])/2)
 
         # load the support, or generate one if none was provided
-        if self.params.useDefaultSupport or self.params.supportFilename == "":
+        if (self.params.useDefaultSupport or self.params.supportFilename == ""):
             support = np.ones((dims[0],dims[0],dims[0]),dtype=float)
-        else:
+        elif isinstance(self.params.supportFilename, str):
             support = (genfire.fileio.readVolume(self.params.supportFilename) != 0).astype(bool)
+        else:
+            support = self.params.supportFilename
 
         # now zero-pad to match the oversampling ratio
         support = np.pad(support,((padding,padding),(padding,padding),(padding,padding)),'constant')
         projections = np.pad(projections,((padding,padding),(padding,padding),(0,0)),'constant')
 
         #load initial object, or initialize it to zeros if none was given
-        if self.params.initialObjectFilename is not None and os.path.isfile(self.params.initialObjectFilename):
-            initialObject = genfire.fileio.readVolume(self.params.initialObjectFilename)
-            initialObject = np.pad(initialObject,((padding,padding),(padding,padding),(padding,padding)),'constant')
+        if isinstance(self.params.initialObjectFilename, np.ndarray):
+            initialObject = self.params.initialObjectFilename
         else:
-            initialObject = np.zeros_like(support)
-
-        euler_angles = genfire.fileio.loadAngles(self.params.angleFilename)
-        if np.shape(euler_angles)[1] > 3:
-            raise ValueError("Error! Dimension of angles incorrect.")
-        if np.shape(euler_angles)[1] == 1:
-            tmp = np.zeros([np.shape(euler_angles)[1], 3])
-            tmp[1, :] = euler_angles
-            angles = tmp
-            del tmp
-
+            if self.params.initialObjectFilename is not None and os.path.isfile(self.params.initialObjectFilename):
+                initialObject = genfire.fileio.readVolume(self.params.initialObjectFilename)
+                initialObject = np.pad(initialObject,((padding,padding),(padding,padding),(padding,padding)),'constant')
+            else:
+                initialObject = np.zeros_like(support)
+                
         # grid the projections
         if self.params.griddingMethod == "DFT":
             measuredK = genfire.reconstruct.fillInFourierGrid_DFT(projections,
@@ -1044,3 +1060,4 @@ class GenfireReconstructor():
         # if "R_freeInd_complex" in results.keys():
         #     self.R_free_bybin_ = results['R_free_bybin']
         #     self.R_free_total_ = results['R_free_total']
+

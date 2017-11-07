@@ -529,3 +529,8 @@ def pointToPlaneClosest(points, norm_vec, distances):
         return closest_points
     return points + (distances- np.dot(points, norm_vec)) * norm_vec
 
+def printStringOrNumpyArray(value, name):
+    if isinstance(value, np.ndarray):
+        print("{} = {} NumPy array of type {}".format(name, value.shape, value.dtype))
+    else:
+        print("{} = {}".format(name, value))
