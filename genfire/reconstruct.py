@@ -24,7 +24,7 @@ from genfire.utility import *
 
 PI = np.pi
 if __name__ != "__main__":
-    def reconstruct(numIterations, initialObject, support, measuredK, constraintIndicators, constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity=True, use_support=True):
+    def reconstruct(numIterations, initialObject, support, measuredK, constraintIndicators, constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity=True, use_support=True, verbose=True):
         """
          * reconstruct *
 
@@ -48,7 +48,8 @@ if __name__ != "__main__":
         """
         import time
         t0 = time.time()
-        print("Reconstruction started")
+        if verbose:
+            print("Reconstruction started")
         bestErr = 1e30 #initialize error
 
         #initialize arrays for error metrics
@@ -105,7 +106,8 @@ if __name__ != "__main__":
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(np.abs(k[errInd])-np.abs(measuredK[errInd])))/np.sum(abs(measuredK[errInd]))#monitor error
-            print("Iteration number: {0}/{1}           error = {2:0.5f}".format(iterationNum, numIterations, errK[iterationNum-1]))
+            if verbose:
+                print("Iteration number: {0}/{1}           error = {2:0.5f}".format(iterationNum, numIterations, errK[iterationNum-1]))
 
             #update best object if a better one has been found
             if errK[iterationNum-1] < bestErr:
@@ -137,8 +139,9 @@ if __name__ != "__main__":
             #update display
             if displayFigure.DisplayFigureON:
                 if iterationNum % displayFigure.displayFrequency == 0:
-                    print("n_half_x = ", n_half_x)
-                    print("half_window_y = ", half_window_y)
+                    if verbose:
+                        print("n_half_x = ", n_half_x)
+                        print("half_window_y = ", half_window_y)
                     plt.figure(1000)
                     plt.subplot(233)
                     plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
@@ -202,11 +205,12 @@ if __name__ != "__main__":
             outputs['R_free_bybin'] = Rfree_complex_bybin
             outputs['R_free_total'] = Rfree_complex_total
         outputs['reconstruction'] = np.fft.fftshift(outputs['reconstruction'])
-        print("Reconstruction finished in {0:0.1f} seconds".format(time.time()-t0))
+        if verbose:
+            print("Reconstruction finished in {0:0.1f} seconds".format(time.time()-t0))
         return outputs
 
 
-    def fillInFourierGrid(projections,angles,interpolationCutoffDistance, enforce_resolution_circle=True, permitMultipleGridding=True):
+    def fillInFourierGrid(projections,angles,interpolationCutoffDistance, enforce_resolution_circle=True, permitMultipleGridding=True, verbose=True):
         """
         * fillInFourierGrid *
 
@@ -224,7 +228,8 @@ if __name__ != "__main__":
         Copyright 2015-2016. All rights reserved.
 
         """
-        print ("Assembling Fourier grid.")
+        if verbose:
+            print ("Assembling Fourier grid.")
         tic = time.time()
         dim1 = np.shape(projections)[0]
         dim2 = np.shape(projections)[1]
@@ -341,12 +346,13 @@ if __name__ != "__main__":
         # apply Hermitian symmetry
         measuredK = genfire.utility.hermitianSymmetrize(measuredK)
 
-        print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
+        if verbose:
+            print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
         return measuredK
 
 
 
-    def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance, enforce_resolution_circle):
+    def fillInFourierGrid_DFT(projections,angles,interpolationCutoffDistance, enforce_resolution_circle, verbose=True):
         """
         * fillInFourierGrid_DFT *
 
@@ -366,8 +372,9 @@ if __name__ != "__main__":
         Copyright 2015-2016. All rights reserved.
         """
 
+        if verbose:
+            print ("Assembling Fourier grid.")
 
-        print ("Assembling Fourier grid.")
         tic = time.time()
         from genfire.utility import pointToPlaneClosest, pointToPlaneDistance
         (n1, n2) = (np.shape(projections)[0],np.shape(projections)[1])
@@ -463,7 +470,8 @@ if __name__ != "__main__":
         # measuredK = np.zeros((n1,n2,n1), dtype=complex)
         measuredK = np.zeros((n1+1,n2+1,n1+1), dtype=complex)
         measuredK[:n1//2 + 1, :, :] = FS[:, :, :]
-        print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
+        if verbose:
+            print ("Fourier grid assembled in {0:0.1f} seconds".format(time.time()-tic))
 
         if enforce_resolution_circle:
             Q = genfire.utility.generateKspaceIndices(measuredK)
@@ -702,7 +710,7 @@ class ReconstructionParameters():
     _supportedAngleFiletypes = ['.txt', '.mat', '.npy']
     def __init__(self):
         self.projections                         = ""
-        self.eulerAngles                        = ""
+        self.eulerAngles                         = ""
         self.support                             = ""
         self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.numIterations                       = 100
@@ -714,11 +722,12 @@ class ReconstructionParameters():
         self.useDefaultSupport                   = True
         self.calculateRfree                      = True
         self.initial                             = None
-        self.constraintPositivity               = True
-        self.constraintSupport                  = True
+        self.constraintPositivity                = True
+        self.constraintSupport                   = True
         self.griddingMethod                      = "FFT"
         self.enforceResolutionCircle             = True
         self.permitMultipleGridding              = True
+        self.verbose                             = True
 
     def checkParameters(self): #verify file extensions are supported
         import os
@@ -884,7 +893,7 @@ class GenfireReconstructor():
         self.params.griddingMethod = griddingMethod
         self.params.enforceResolutionCircle = enforceResolutionCircle
         self.params.permitMultipleGridding = permitMultipleGridding
-        self.verbose = verbose
+        self.params.verbose = verbose
 
     def printGenfire(self):
         print("""
@@ -917,7 +926,7 @@ class GenfireReconstructor():
         print("permitMultipleGridding = {}".format(self.params.permitMultipleGridding))
 
     def reconstruct(self):
-        if self.verbose:
+        if self.params.verbose:
             self.printGenfire()
             self.printParams()
 
@@ -973,13 +982,15 @@ class GenfireReconstructor():
             measuredK = genfire.reconstruct.fillInFourierGrid_DFT(projections,
                                                                   eulerAngles,
                                                                   self.params.interpolationCutoffDistance,
-                                                                  self.params.enforceResolutionCircle)
+                                                                  self.params.enforceResolutionCircle,
+                                                                  self.params.verbose)
         else:
             measuredK = genfire.reconstruct.fillInFourierGrid(projections,
                                                               eulerAngles,
                                                               self.params.interpolationCutoffDistance,
                                                               self.params.enforceResolutionCircle,
-                                                              self.params.permitMultipleGridding)
+                                                              self.params.permitMultipleGridding,
+                                                              self.params.verbose)
 
         measuredK = np.fft.ifftshift(measuredK)
 
@@ -1037,8 +1048,9 @@ class GenfireReconstructor():
         elif self.params.resolutionExtensionSuppressionState==3:# resolution extension only
             constraintEnforcementDelayIndicators = np.concatenate((np.arange(0.95, -.15, -0.15),[-0.15, -0.15, -0.15]))
         else:
-            print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
-            constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
+            if self.params.verbose:
+                print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
+                constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
 
 
         results = reconstruct(self.params.numIterations,
@@ -1051,7 +1063,8 @@ class GenfireReconstructor():
                               R_freeVals_complex,
                               self.params.displayFigure,
                               self.params.constraintPositivity,
-                              self.params.constraintSupport)
+                              self.params.constraintSupport,
+                              self.params.verbose)
         ncBig = paddedDim//2
         n2 = dims[0]//2
         results['reconstruction'] = results['reconstruction'][ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2,ncBig-n2:ncBig+n2]

@@ -96,7 +96,7 @@ def readMRC(filename, dtype=float, order="C"):
 
         return np.fromfile(file=fid, dtype=datatype,count=dimx*dimy*dimz).reshape((dimx,dimy,dimz),order=order).astype(dtype)
 
-def writeMRC(filename, arr, datatype='f4', order="C"):
+def writeMRC(filename, arr, datatype='f4', order="C", pixel_size=1):
     """
     * writeMRC *
 
@@ -144,7 +144,7 @@ def writeMRC(filename, arr, datatype='f4', order="C"):
         raise ValueError("No supported datatype found!\n")
     int_header1[:4] = (dimx,dimy,dimz,data_flag)
     int_header1[7:10] = (dimx,dimy,dimz)
-    float_header1[:3] = 1
+    float_header1[:3] = (pixel_size * dimx, pixel_size * dimy, pixel_size * dimz)
     int_header2[:3] = (1, 2, 3)
     float_header2[:3] = np.min(arr), np.max(arr), np.mean(arr)
     char_header = str(' '*800)
@@ -176,17 +176,12 @@ def loadProjections(filename):
     import os
     filename, file_extension = os.path.splitext(filename)
     if file_extension == ".mat":
-        print ("Reading projections from MATLAB file.\n")
-        # return readMAT_projections(filename + file_extension)
         return readMAT_volume(filename + file_extension)
     elif file_extension == ".tif":
-        print ("Reading projections from .tif file.\n")
         return readTIFF_projections(filename + file_extension)
     elif file_extension == ".mrc":
-        print ("Reading projections from .mrc file.\n")
         return readMRC(filename + file_extension)
     elif file_extension == ".npy":
-        print ("Reading projections from .npy file.\n")
         return readNPY(filename + file_extension)
     else:
         raise Exception('File format %s not supported.', file_extension)
